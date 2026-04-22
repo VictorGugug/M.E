@@ -1,0 +1,10 @@
+{
+  "name": "mi-windows-xp-personal",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Base autobiografica estilo Windows XP",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  }
+}
