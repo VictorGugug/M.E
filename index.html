@@ -1,0 +1,984 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light only">
+    <title>Windows XP Personal</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <!-- ===================================================
+         PANTALLA DE BIENVENIDA (Welcome Screen de XP)
+    ==================================================== -->
+    <section class="screen screen--active login-screen" id="login-screen" aria-label="Pantalla de bienvenida">
+      <header class="login-top-bar">
+        <div class="login-brand-icon">
+          <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/User Accounts.png" alt="">
+        </div>
+        <div class="login-brand-text">
+          <p>Para empezar, haz clic en tu nombre de usuario</p>
+        </div>
+      </header>
+
+      <div class="login-main">
+        <div class="login-left">
+          <h2>Bienvenido</h2>
+          <p>Inicia sesión en tu equipo</p>
+          <p>para ver tu autobiografía personal</p>
+        </div>
+
+        <div class="login-divider-v" aria-hidden="true"></div>
+
+        <div class="login-right">
+          <button class="user-tile" type="button" id="user-tile">
+            <span class="user-tile__avatar">
+              <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/User Accounts.png" alt="">
+            </span>
+            <span class="user-tile__info">
+              <strong id="login-user-caption">Invitado</strong>
+              <small>Escribe tu nombre para entrar</small>
+            </span>
+          </button>
+
+          <form class="login-password-row" id="login-form" autocomplete="on">
+            <label for="username">Nombre</label>
+            <input id="username" name="username" type="text" value="Invitado" spellcheck="false" required>
+            <label for="password">Clave</label>
+            <input id="password" name="password" type="password" placeholder="(cualquiera)">
+            <button class="login-arrow-btn" type="submit" aria-label="Iniciar sesión"></button>
+            <button class="login-help-btn" id="login-help-button" type="button" aria-label="Ayuda">?</button>
+          </form>
+
+          <p class="login-hint" id="login-status">
+            Escribe cualquier usuario y contraseña para entrar.
+          </p>
+        </div>
+      </div>
+
+      <footer class="login-bottom-bar">
+        <button class="login-power-btn" type="button" id="login-power-button">
+          <span class="login-power-btn__icon" aria-hidden="true"></span>
+          <span>Apagar equipo</span>
+        </button>
+        <div class="login-bottom-info">
+          Después de iniciar sesión, puedes agregar o cambiar cuentas.<br>
+          Dirígete a Panel de control y haz clic en Cuentas de usuario.
+        </div>
+      </footer>
+
+      <aside class="protocol-notice" id="protocol-notice" hidden>
+        <strong>Modo local detectado</strong>
+        <p>Si abres el archivo con <code>file://</code>, algunos sonidos y funciones pueden fallar. Usa <code>node server.js</code> y abre <code>http://127.0.0.1:3000</code>.</p>
+      </aside>
+    </section>
+
+    <!-- ===================================================
+         ESCRITORIO (Desktop + Taskbar + Start Menu)
+    ==================================================== -->
+    <section class="screen" id="desktop-screen" aria-label="Escritorio" hidden>
+      <div class="desktop-shell" id="desktop">
+        <div class="desktop-icons" id="desktop-icons">
+          <button class="desktop-icon" type="button" data-selectable data-desktop-icon data-icon-id="my-computer" data-open-window="my-computer" aria-label="Mi PC" style="top: 10px; left: 10px;">
+            <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/My Computer.png" alt="">
+            <span>Mi PC</span>
+          </button>
+          <button class="desktop-icon" type="button" data-selectable data-desktop-icon data-icon-id="documents" data-open-window="documents" aria-label="Mis documentos" style="top: 92px; left: 10px;">
+            <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/My Documents.png" alt="">
+            <span>Mis documentos</span>
+          </button>
+          <button class="desktop-icon" type="button" data-selectable data-desktop-icon data-icon-id="network" data-open-window="network" aria-label="Mis sitios de red" style="top: 174px; left: 10px;">
+            <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/My Network Places.png" alt="">
+            <span>Mis sitios de red</span>
+          </button>
+          <button class="desktop-icon" type="button" data-selectable data-desktop-icon data-icon-id="recycle" data-open-window="recycle" aria-label="Papelera de reciclaje" style="top: 256px; left: 10px;">
+            <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Recycle Bin (empty).png" alt="">
+            <span>Papelera de reciclaje</span>
+          </button>
+          <button class="desktop-icon" type="button" data-selectable data-desktop-icon data-icon-id="internet" data-open-window="internet" aria-label="Internet Explorer" style="top: 338px; left: 10px;">
+            <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Internet Explorer 6.png" alt="">
+            <span>Internet Explorer</span>
+          </button>
+        </div>
+
+        <!-- Capa de ventanas -->
+        <div class="window-layer" id="window-layer">
+
+          <!-- Mi PC -->
+          <article class="xp-window" data-window-id="my-computer" data-window-title="Mi PC" style="top: 40px; left: 120px; width: 620px; height: 400px;" hidden>
+            <header class="window-titlebar" data-drag-handle>
+              <div class="window-title">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/My Computer.png" alt="">
+                <span>Mi PC</span>
+              </div>
+              <div class="window-controls">
+                <button type="button" class="window-control" data-window-action="minimize" aria-label="Minimizar">0</button>
+                <button type="button" class="window-control" data-window-action="maximize" aria-label="Maximizar">1</button>
+                <button type="button" class="window-control window-control--close" data-window-action="close" aria-label="Cerrar">r</button>
+              </div>
+            </header>
+            <div class="window-menubar">
+              <span><u>A</u>rchivo</span><span><u>E</u>dición</span><span><u>V</u>er</span><span>Fa<u>v</u>oritos</span><span><u>H</u>erramientas</span><span>A<u>y</u>uda</span>
+            </div>
+            <div class="window-toolbar">
+              <button class="xp-button xp-button--small" type="button" data-nav-action="back">Atrás</button>
+              <button class="xp-button xp-button--small" type="button" data-nav-action="forward">Adelante</button>
+              <button class="xp-button xp-button--small" type="button" data-nav-action="up">Arriba</button>
+              <button class="xp-button xp-button--small" type="button" data-open-window="search">Buscar</button>
+              <button class="xp-button xp-button--small" type="button" data-toggle-sidebar>Carpetas</button>
+            </div>
+            <div class="window-body window-body--explorer">
+              <aside class="explorer-sidebar">
+                <section class="explorer-pane explorer-pane--blue">
+                  <h3>Tareas del sistema</h3>
+                  <button class="sidebar-action" type="button" data-open-window="control-panel">Ver información del sistema</button>
+                  <button class="sidebar-action" type="button" data-open-window="control-panel">Agregar o quitar programas</button>
+                  <button class="sidebar-action" type="button" data-open-window="control-panel">Cambiar una configuración</button>
+                </section>
+                <section class="explorer-pane">
+                  <h3>Otros sitios</h3>
+                  <button class="sidebar-action" type="button" data-open-window="network">Mis sitios de red</button>
+                  <button class="sidebar-action" type="button" data-open-window="documents">Mis documentos</button>
+                  <button class="sidebar-action" type="button" data-open-window="control-panel">Panel de control</button>
+                </section>
+                <section class="explorer-pane">
+                  <h3>Detalles</h3>
+                  <p><strong>Mi PC</strong></p>
+                  <p>Carpeta del sistema</p>
+                </section>
+              </aside>
+              <div class="explorer-main">
+                <div class="folder-grid">
+                  <button class="folder-item" type="button" data-selectable data-open-window="documents">
+                    <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/My Documents.png" alt="">
+                    <strong>Mis documentos</strong>
+                  </button>
+                  <button class="folder-item" type="button" data-selectable data-open-window="pictures">
+                    <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/My Pictures.png" alt="">
+                    <strong>Mis imágenes</strong>
+                  </button>
+                  <button class="folder-item" type="button" data-selectable data-open-window="music">
+                    <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/My Music.png" alt="">
+                    <strong>Mi música</strong>
+                  </button>
+                  <button class="folder-item" type="button" data-selectable data-balloon="Unidad C: disco local del sistema.">
+                    <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Local Disk.png" alt="">
+                    <strong>Disco local (C:)</strong>
+                  </button>
+                  <button class="folder-item" type="button" data-selectable data-balloon="Unidad de CD / DVD lista para leer discos.">
+                    <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/DVD-ROM.png" alt="">
+                    <strong>Unidad DVD (D:)</strong>
+                  </button>
+                  <button class="folder-item" type="button" data-selectable data-open-window="control-panel">
+                    <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Control Panel.png" alt="">
+                    <strong>Panel de control</strong>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Mis documentos -->
+          <article class="xp-window" data-window-id="documents" data-window-title="Mis documentos" style="top: 70px; left: 160px; width: 640px; height: 420px;" hidden>
+            <header class="window-titlebar" data-drag-handle>
+              <div class="window-title">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/My Documents.png" alt="">
+                <span>Mis documentos</span>
+              </div>
+              <div class="window-controls">
+                <button type="button" class="window-control" data-window-action="minimize" aria-label="Minimizar">0</button>
+                <button type="button" class="window-control" data-window-action="maximize" aria-label="Maximizar">1</button>
+                <button type="button" class="window-control window-control--close" data-window-action="close" aria-label="Cerrar">r</button>
+              </div>
+            </header>
+            <div class="window-menubar">
+              <span><u>A</u>rchivo</span><span><u>E</u>dición</span><span><u>V</u>er</span><span>Fa<u>v</u>oritos</span><span><u>H</u>erramientas</span><span>A<u>y</u>uda</span>
+            </div>
+            <div class="window-toolbar">
+              <button class="xp-button xp-button--small" type="button" data-nav-action="back">Atrás</button>
+              <button class="xp-button xp-button--small" type="button" data-nav-action="forward">Adelante</button>
+              <button class="xp-button xp-button--small" type="button" data-nav-action="up">Arriba</button>
+              <button class="xp-button xp-button--small" type="button" data-open-window="search">Buscar</button>
+              <button class="xp-button xp-button--small" type="button" data-toggle-sidebar>Carpetas</button>
+            </div>
+            <div class="window-body window-body--explorer">
+              <aside class="explorer-sidebar">
+                <section class="explorer-pane explorer-pane--blue">
+                  <h3>Tareas de archivo y carpeta</h3>
+                  <button class="sidebar-action" type="button" data-open-window="profile">Abrir Mi perfil</button>
+                  <button class="sidebar-action" type="button" data-open-window="birth">Abrir Nacimiento</button>
+                  <button class="sidebar-action" type="button" data-open-window="personality">Abrir Personalidad</button>
+                </section>
+                <section class="explorer-pane">
+                  <h3>Otros sitios</h3>
+                  <button class="sidebar-action" type="button" data-open-window="my-computer">Mi PC</button>
+                  <button class="sidebar-action" type="button" data-open-window="pictures">Mis imágenes</button>
+                  <button class="sidebar-action" type="button" data-open-window="music">Mi música</button>
+                </section>
+                <section class="explorer-pane">
+                  <h3>Detalles</h3>
+                  <p>Carpeta principal de la autobiografía. Aquí se guardarán los textos personales.</p>
+                </section>
+              </aside>
+              <div class="explorer-main">
+                <div class="folder-grid">
+                  <button class="folder-item" type="button" data-selectable data-open-window="profile">
+                    <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/User Accounts.png" alt="">
+                    <strong>Mi perfil</strong>
+                    <span>Presentación general</span>
+                  </button>
+                  <button class="folder-item" type="button" data-selectable data-open-window="birth">
+                    <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Date and Time.png" alt="">
+                    <strong>Nacimiento</strong>
+                    <span>Fecha y lugar</span>
+                  </button>
+                  <button class="folder-item" type="button" data-selectable data-open-window="personality">
+                    <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Address Book.png" alt="">
+                    <strong>Personalidad</strong>
+                    <span>Rasgos y gustos</span>
+                  </button>
+                  <button class="folder-item" type="button" data-selectable data-open-window="pictures">
+                    <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/My Pictures.png" alt="">
+                    <strong>Mis imágenes</strong>
+                    <span>Galería</span>
+                  </button>
+                  <button class="folder-item" type="button" data-selectable data-open-window="music">
+                    <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/My Music.png" alt="">
+                    <strong>Mi música</strong>
+                    <span>Playlist</span>
+                  </button>
+                  <button class="folder-item" type="button" data-selectable data-open-window="notepad">
+                    <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Notepad.png" alt="">
+                    <strong>Notas.txt</strong>
+                    <span>Documento de texto</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Mi perfil -->
+          <article class="xp-window" data-window-id="profile" data-window-title="Mi perfil" style="top: 90px; left: 240px; width: 620px; height: 420px;" hidden>
+            <header class="window-titlebar" data-drag-handle>
+              <div class="window-title">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/User Accounts.png" alt="">
+                <span>Mi perfil</span>
+              </div>
+              <div class="window-controls">
+                <button type="button" class="window-control" data-window-action="minimize" aria-label="Minimizar">0</button>
+                <button type="button" class="window-control" data-window-action="maximize" aria-label="Maximizar">1</button>
+                <button type="button" class="window-control window-control--close" data-window-action="close" aria-label="Cerrar">r</button>
+              </div>
+            </header>
+            <div class="window-body">
+              <div class="profile-banner">
+                <div class="profile-banner__avatar">
+                  <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/User Accounts.png" alt="">
+                </div>
+                <div>
+                  <p class="profile-label">Cuenta principal</p>
+                  <h2 id="profile-display-name">Invitado</h2>
+                  <p>Esta ventana es la portada de tu autobiografía. Aquí puedes agregar tu presentación personal.</p>
+                </div>
+              </div>
+              <div class="info-grid">
+                <section class="info-card"><h3>Presentación</h3><p>Resumen breve de quién eres y qué quieres mostrar.</p></section>
+                <section class="info-card"><h3>Datos rápidos</h3><p>Edad, ciudad, alias, ocupación e intereses principales.</p></section>
+                <section class="info-card"><h3>Contacto</h3><p>Enlaces a redes sociales, correo o forma de contacto.</p></section>
+              </div>
+            </div>
+          </article>
+
+          <!-- Nacimiento -->
+          <article class="xp-window" data-window-id="birth" data-window-title="Nacimiento" style="top: 120px; left: 300px; width: 520px; height: 340px;" hidden>
+            <header class="window-titlebar" data-drag-handle>
+              <div class="window-title">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Date and Time.png" alt="">
+                <span>Nacimiento</span>
+              </div>
+              <div class="window-controls">
+                <button type="button" class="window-control" data-window-action="minimize" aria-label="Minimizar">0</button>
+                <button type="button" class="window-control" data-window-action="maximize" aria-label="Maximizar">1</button>
+                <button type="button" class="window-control window-control--close" data-window-action="close" aria-label="Cerrar">r</button>
+              </div>
+            </header>
+            <div class="window-body">
+              <div class="detail-list">
+                <div><strong>Fecha de nacimiento</strong><p>Pendiente por completar.</p></div>
+                <div><strong>Lugar de nacimiento</strong><p>Pendiente por completar.</p></div>
+                <div><strong>Contexto</strong><p>Cómo empezó tu historia y el tono biográfico que quieres dar.</p></div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Personalidad -->
+          <article class="xp-window" data-window-id="personality" data-window-title="Personalidad" style="top: 150px; left: 360px; width: 560px; height: 360px;" hidden>
+            <header class="window-titlebar" data-drag-handle>
+              <div class="window-title">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Address Book.png" alt="">
+                <span>Personalidad</span>
+              </div>
+              <div class="window-controls">
+                <button type="button" class="window-control" data-window-action="minimize" aria-label="Minimizar">0</button>
+                <button type="button" class="window-control" data-window-action="maximize" aria-label="Maximizar">1</button>
+                <button type="button" class="window-control window-control--close" data-window-action="close" aria-label="Cerrar">r</button>
+              </div>
+            </header>
+            <div class="window-body">
+              <div class="traits-grid">
+                <div class="trait">Rasgo 1</div><div class="trait">Rasgo 2</div><div class="trait">Rasgo 3</div>
+                <div class="trait">Pasiones</div><div class="trait">Hábitos</div><div class="trait">Frase personal</div>
+              </div>
+              <p class="window-note">Tu forma de ser, gustos, carácter y cómo quieres que te perciban.</p>
+            </div>
+          </article>
+
+          <!-- Mis imágenes -->
+          <article class="xp-window" data-window-id="pictures" data-window-title="Mis imágenes" style="top: 80px; left: 200px; width: 640px; height: 420px;" hidden>
+            <header class="window-titlebar" data-drag-handle>
+              <div class="window-title">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/My Pictures.png" alt="">
+                <span>Mis imágenes</span>
+              </div>
+              <div class="window-controls">
+                <button type="button" class="window-control" data-window-action="minimize" aria-label="Minimizar">0</button>
+                <button type="button" class="window-control" data-window-action="maximize" aria-label="Maximizar">1</button>
+                <button type="button" class="window-control window-control--close" data-window-action="close" aria-label="Cerrar">r</button>
+              </div>
+            </header>
+            <div class="window-body">
+              <div class="gallery-grid">
+                <div class="gallery-card">Imagen 1</div><div class="gallery-card">Imagen 2</div>
+                <div class="gallery-card">Imagen 3</div><div class="gallery-card">Imagen 4</div>
+                <div class="gallery-card">Imagen 5</div><div class="gallery-card">Imagen 6</div>
+              </div>
+              <p class="window-note">Lista para pegar tus fotos. Edita el HTML para reemplazar los marcadores por imágenes reales.</p>
+            </div>
+          </article>
+
+          <!-- Mi música -->
+          <article class="xp-window" data-window-id="music" data-window-title="Mi música" style="top: 110px; left: 260px; width: 540px; height: 340px;" hidden>
+            <header class="window-titlebar" data-drag-handle>
+              <div class="window-title">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/My Music.png" alt="">
+                <span>Mi música</span>
+              </div>
+              <div class="window-controls">
+                <button type="button" class="window-control" data-window-action="minimize" aria-label="Minimizar">0</button>
+                <button type="button" class="window-control" data-window-action="maximize" aria-label="Maximizar">1</button>
+                <button type="button" class="window-control window-control--close" data-window-action="close" aria-label="Cerrar">r</button>
+              </div>
+            </header>
+            <div class="window-body">
+              <div class="system-grid">
+                <section class="system-card"><h3>Playlist principal</h3><p>Canciones favoritas o soundtrack personal.</p></section>
+                <section class="system-card"><h3>Formato</h3><p>Reproductor, lista de pistas o sonidos temáticos.</p></section>
+              </div>
+            </div>
+          </article>
+
+          <!-- Mis sitios de red -->
+          <article class="xp-window" data-window-id="network" data-window-title="Mis sitios de red" style="top: 130px; left: 280px; width: 540px; height: 300px;" hidden>
+            <header class="window-titlebar" data-drag-handle>
+              <div class="window-title">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/My Network Places.png" alt="">
+                <span>Mis sitios de red</span>
+              </div>
+              <div class="window-controls">
+                <button type="button" class="window-control" data-window-action="minimize" aria-label="Minimizar">0</button>
+                <button type="button" class="window-control" data-window-action="maximize" aria-label="Maximizar">1</button>
+                <button type="button" class="window-control window-control--close" data-window-action="close" aria-label="Cerrar">r</button>
+              </div>
+            </header>
+            <div class="window-body">
+              <div class="info-grid">
+                <section class="info-card"><h3>Toda la red</h3><p>Aquí podrán ir enlaces, redes sociales, contacto o un mapa de navegación.</p></section>
+                <section class="info-card"><h3>Grupos de trabajo</h3><p>Espacio para colaboradores, amigos o referencias personales.</p></section>
+              </div>
+            </div>
+          </article>
+
+          <!-- Papelera -->
+          <article class="xp-window" data-window-id="recycle" data-window-title="Papelera de reciclaje" style="top: 150px; left: 320px; width: 520px; height: 280px;" hidden>
+            <header class="window-titlebar" data-drag-handle>
+              <div class="window-title">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Recycle Bin (empty).png" alt="">
+                <span>Papelera de reciclaje</span>
+              </div>
+              <div class="window-controls">
+                <button type="button" class="window-control" data-window-action="minimize" aria-label="Minimizar">0</button>
+                <button type="button" class="window-control" data-window-action="maximize" aria-label="Maximizar">1</button>
+                <button type="button" class="window-control window-control--close" data-window-action="close" aria-label="Cerrar">r</button>
+              </div>
+            </header>
+            <div class="window-body">
+              <p>La papelera de reciclaje está vacía.</p>
+            </div>
+          </article>
+
+          <!-- Internet Explorer -->
+          <article class="xp-window" data-window-id="internet" data-window-title="Internet Explorer" style="top: 60px; left: 140px; width: 720px; height: 460px;" hidden>
+            <header class="window-titlebar" data-drag-handle>
+              <div class="window-title">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Internet Explorer 6.png" alt="">
+                <span>Mi perfil - Microsoft Internet Explorer</span>
+              </div>
+              <div class="window-controls">
+                <button type="button" class="window-control" data-window-action="minimize" aria-label="Minimizar">0</button>
+                <button type="button" class="window-control" data-window-action="maximize" aria-label="Maximizar">1</button>
+                <button type="button" class="window-control window-control--close" data-window-action="close" aria-label="Cerrar">r</button>
+              </div>
+            </header>
+            <div class="window-menubar">
+              <span><u>A</u>rchivo</span><span><u>E</u>dición</span><span><u>V</u>er</span><span>Fa<u>v</u>oritos</span><span><u>H</u>erramientas</span><span>A<u>y</u>uda</span>
+            </div>
+            <div class="browser-toolbar">
+              <button class="xp-button xp-button--small" type="button" data-browser-action="back">Atrás</button>
+              <button class="xp-button xp-button--small" type="button" data-browser-action="forward">Adelante</button>
+              <button class="xp-button xp-button--small" type="button" data-browser-action="home">Inicio</button>
+              <button class="xp-button xp-button--small" type="button" data-browser-action="refresh">Actualizar</button>
+              <label class="browser-address">
+                <span>Dirección</span>
+                <input id="browser-address-input" type="text" value="http://127.0.0.1:3000/">
+              </label>
+              <button class="xp-button xp-button--small" type="button" data-browser-action="go">Ir</button>
+            </div>
+            <div class="window-body">
+              <div class="browser-page">
+                <h3 id="browser-page-title">Explorador personal XP</h3>
+                <p id="browser-page-copy">Esta ventana puede convertirse en una portada, blog, sección de enlaces o un navegador interno retro para tu sitio.</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- Correo -->
+          <article class="xp-window" data-window-id="email" data-window-title="Correo electrónico" style="top: 140px; left: 220px; width: 520px; height: 320px;" hidden>
+            <header class="window-titlebar" data-drag-handle>
+              <div class="window-title">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Email.png" alt="">
+                <span>Outlook Express - Bandeja de entrada</span>
+              </div>
+              <div class="window-controls">
+                <button type="button" class="window-control" data-window-action="minimize" aria-label="Minimizar">0</button>
+                <button type="button" class="window-control" data-window-action="maximize" aria-label="Maximizar">1</button>
+                <button type="button" class="window-control window-control--close" data-window-action="close" aria-label="Cerrar">r</button>
+              </div>
+            </header>
+            <div class="window-body">
+              <div class="detail-list">
+                <div><strong>Bandeja de entrada</strong><p>Aquí podrían ir tus mensajes destacados o un formulario de contacto.</p></div>
+                <div><strong>Enviar correo</strong><p>Espacio para formulario simulado de contacto personal.</p></div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Todos los programas -->
+          <article class="xp-window" data-window-id="programs" data-window-title="Todos los programas" style="top: 80px; left: 200px; width: 640px; height: 420px;" hidden>
+            <header class="window-titlebar" data-drag-handle>
+              <div class="window-title">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Start Menu Programs.png" alt="">
+                <span>Todos los programas</span>
+              </div>
+              <div class="window-controls">
+                <button type="button" class="window-control" data-window-action="minimize" aria-label="Minimizar">0</button>
+                <button type="button" class="window-control" data-window-action="maximize" aria-label="Maximizar">1</button>
+                <button type="button" class="window-control window-control--close" data-window-action="close" aria-label="Cerrar">r</button>
+              </div>
+            </header>
+            <div class="window-body">
+              <div class="programs-grid">
+                <button class="folder-item" type="button" data-selectable data-open-window="notepad"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Notepad.png" alt=""><strong>Bloc de notas</strong></button>
+                <button class="folder-item" type="button" data-selectable data-open-window="paint"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Paint.png" alt=""><strong>Paint</strong></button>
+                <button class="folder-item" type="button" data-selectable data-open-window="calculator"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Calculator.png" alt=""><strong>Calculadora</strong></button>
+                <button class="folder-item" type="button" data-selectable data-open-window="media-player"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Windows Media Player 10.png" alt=""><strong>Windows Media Player</strong></button>
+                <button class="folder-item" type="button" data-selectable data-open-window="messenger"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Windows Messenger.png" alt=""><strong>Messenger</strong></button>
+                <button class="folder-item" type="button" data-selectable data-open-window="internet"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Internet Explorer 6.png" alt=""><strong>Internet Explorer</strong></button>
+                <button class="folder-item" type="button" data-selectable data-open-window="help-support"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Tour XP.png" alt=""><strong>Paseo por XP</strong></button>
+                <button class="folder-item" type="button" data-selectable data-open-window="control-panel"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Control Panel.png" alt=""><strong>Panel de control</strong></button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Bloc de notas -->
+          <article class="xp-window" data-window-id="notepad" data-window-title="Bloc de notas" style="top: 100px; left: 260px; width: 520px; height: 360px;" hidden>
+            <header class="window-titlebar" data-drag-handle>
+              <div class="window-title">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Notepad.png" alt="">
+                <span>Sin título - Bloc de notas</span>
+              </div>
+              <div class="window-controls">
+                <button type="button" class="window-control" data-window-action="minimize" aria-label="Minimizar">0</button>
+                <button type="button" class="window-control" data-window-action="maximize" aria-label="Maximizar">1</button>
+                <button type="button" class="window-control window-control--close" data-window-action="close" aria-label="Cerrar">r</button>
+              </div>
+            </header>
+            <div class="window-menubar">
+              <span><u>A</u>rchivo</span><span><u>E</u>dición</span><span><u>F</u>ormato</span><span><u>V</u>er</span><span>A<u>y</u>uda</span>
+            </div>
+            <div class="window-body" style="padding: 0;">
+              <textarea id="notepad-textarea" data-autofocus style="width: 100%; height: 100%; border: 0; resize: none; font-family: 'Lucida Console', monospace; font-size: 12px; padding: 4px 6px; outline: none;">Escribe aquí tus notas personales...
+</textarea>
+            </div>
+          </article>
+
+          <!-- Paint (placeholder) -->
+          <article class="xp-window" data-window-id="paint" data-window-title="Paint" style="top: 110px; left: 240px; width: 540px; height: 360px;" hidden>
+            <header class="window-titlebar" data-drag-handle>
+              <div class="window-title">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Paint.png" alt="">
+                <span>Sin título - Paint</span>
+              </div>
+              <div class="window-controls">
+                <button type="button" class="window-control" data-window-action="minimize" aria-label="Minimizar">0</button>
+                <button type="button" class="window-control" data-window-action="maximize" aria-label="Maximizar">1</button>
+                <button type="button" class="window-control window-control--close" data-window-action="close" aria-label="Cerrar">r</button>
+              </div>
+            </header>
+            <div class="window-menubar">
+              <span><u>A</u>rchivo</span><span><u>E</u>dición</span><span><u>V</u>er</span><span><u>I</u>magen</span><span><u>C</u>olores</span><span>A<u>y</u>uda</span>
+            </div>
+            <div class="window-body" style="padding: 0; display: flex; flex-direction: column;">
+              <canvas id="paint-canvas" width="800" height="600" style="background: #FFF; cursor: crosshair; flex: 1; width: 100%; height: 100%;"></canvas>
+            </div>
+          </article>
+
+          <!-- Calculadora -->
+          <article class="xp-window" data-window-id="calculator" data-window-title="Calculadora" style="top: 140px; left: 360px; width: 260px; height: 320px;" hidden>
+            <header class="window-titlebar" data-drag-handle>
+              <div class="window-title">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Calculator.png" alt="">
+                <span>Calculadora</span>
+              </div>
+              <div class="window-controls">
+                <button type="button" class="window-control" data-window-action="minimize" aria-label="Minimizar">0</button>
+                <button type="button" class="window-control window-control--close" data-window-action="close" aria-label="Cerrar">r</button>
+              </div>
+            </header>
+            <div class="window-menubar">
+              <span><u>E</u>dición</span><span><u>V</u>er</span><span>A<u>y</u>uda</span>
+            </div>
+            <div class="window-body" style="display:flex; flex-direction: column; gap: 6px;">
+              <input id="calc-display" type="text" value="0" readonly style="text-align:right; padding: 4px 6px; border: 1px solid #7F9DB9; font-family: 'Lucida Console', monospace; font-size: 14px; background:#FFF;">
+              <div id="calc-buttons" style="display:grid; grid-template-columns: repeat(4, 1fr); gap:4px;">
+                <button class="xp-button xp-button--small" data-calc-key="C">C</button>
+                <button class="xp-button xp-button--small" data-calc-key="back">←</button>
+                <button class="xp-button xp-button--small" data-calc-key="%">%</button>
+                <button class="xp-button xp-button--small" data-calc-key="/">/</button>
+                <button class="xp-button xp-button--small" data-calc-key="7">7</button>
+                <button class="xp-button xp-button--small" data-calc-key="8">8</button>
+                <button class="xp-button xp-button--small" data-calc-key="9">9</button>
+                <button class="xp-button xp-button--small" data-calc-key="*">*</button>
+                <button class="xp-button xp-button--small" data-calc-key="4">4</button>
+                <button class="xp-button xp-button--small" data-calc-key="5">5</button>
+                <button class="xp-button xp-button--small" data-calc-key="6">6</button>
+                <button class="xp-button xp-button--small" data-calc-key="-">-</button>
+                <button class="xp-button xp-button--small" data-calc-key="1">1</button>
+                <button class="xp-button xp-button--small" data-calc-key="2">2</button>
+                <button class="xp-button xp-button--small" data-calc-key="3">3</button>
+                <button class="xp-button xp-button--small" data-calc-key="+">+</button>
+                <button class="xp-button xp-button--small" data-calc-key="0" style="grid-column: span 2;">0</button>
+                <button class="xp-button xp-button--small" data-calc-key=".">.</button>
+                <button class="xp-button xp-button--small" data-calc-key="=">=</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Windows Media Player placeholder -->
+          <article class="xp-window" data-window-id="media-player" data-window-title="Windows Media Player" style="top: 120px; left: 280px; width: 520px; height: 340px;" hidden>
+            <header class="window-titlebar" data-drag-handle>
+              <div class="window-title">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Windows Media Player 10.png" alt="">
+                <span>Windows Media Player</span>
+              </div>
+              <div class="window-controls">
+                <button type="button" class="window-control" data-window-action="minimize" aria-label="Minimizar">0</button>
+                <button type="button" class="window-control" data-window-action="maximize" aria-label="Maximizar">1</button>
+                <button type="button" class="window-control window-control--close" data-window-action="close" aria-label="Cerrar">r</button>
+              </div>
+            </header>
+            <div class="window-body">
+              <div class="system-grid">
+                <section class="system-card"><h3>Lista de reproducción</h3><p>Agrega tus canciones o sonidos favoritos.</p></section>
+                <section class="system-card"><h3>Biblioteca</h3><p>Playlists, álbumes y sonidos del sistema XP.</p></section>
+              </div>
+              <p class="window-note">Próximamente: reproductor integrado con los sonidos de xpsounds2.</p>
+            </div>
+          </article>
+
+          <!-- Messenger placeholder -->
+          <article class="xp-window" data-window-id="messenger" data-window-title="Windows Messenger" style="top: 120px; left: 300px; width: 420px; height: 320px;" hidden>
+            <header class="window-titlebar" data-drag-handle>
+              <div class="window-title">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Windows Messenger.png" alt="">
+                <span>Windows Messenger</span>
+              </div>
+              <div class="window-controls">
+                <button type="button" class="window-control" data-window-action="minimize" aria-label="Minimizar">0</button>
+                <button type="button" class="window-control" data-window-action="maximize" aria-label="Maximizar">1</button>
+                <button type="button" class="window-control window-control--close" data-window-action="close" aria-label="Cerrar">r</button>
+              </div>
+            </header>
+            <div class="window-body">
+              <p>Conexión simulada. Aquí puedes poner tus redes sociales o un chat estilo retro.</p>
+            </div>
+          </article>
+
+          <!-- Panel de control -->
+          <article class="xp-window" data-window-id="control-panel" data-window-title="Panel de control" style="top: 90px; left: 220px; width: 640px; height: 440px;" hidden>
+            <header class="window-titlebar" data-drag-handle>
+              <div class="window-title">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Control Panel.png" alt="">
+                <span>Panel de control</span>
+              </div>
+              <div class="window-controls">
+                <button type="button" class="window-control" data-window-action="minimize" aria-label="Minimizar">0</button>
+                <button type="button" class="window-control" data-window-action="maximize" aria-label="Maximizar">1</button>
+                <button type="button" class="window-control window-control--close" data-window-action="close" aria-label="Cerrar">r</button>
+              </div>
+            </header>
+            <div class="window-body window-body--settings">
+              <div class="settings-shell">
+                <aside class="settings-tabs">
+                  <button class="settings-tab is-active" type="button" data-settings-tab="general">Apariencia y temas</button>
+                  <button class="settings-tab" type="button" data-settings-tab="desktop">Escritorio</button>
+                  <button class="settings-tab" type="button" data-settings-tab="taskbar">Barra de tareas</button>
+                  <button class="settings-tab" type="button" data-settings-tab="sound">Sonido</button>
+                  <button class="settings-tab" type="button" data-settings-tab="user">Cuenta de usuario</button>
+                  <button class="settings-tab" type="button" data-settings-tab="system">Sistema</button>
+                </aside>
+                <div class="settings-panels">
+                  <section class="settings-panel is-active" data-settings-panel="general">
+                    <label class="settings-field">
+                      <span>Nombre visible</span>
+                      <input id="config-display-name" type="text" value="Invitado" spellcheck="false">
+                    </label>
+                    <label class="settings-field">
+                      <span>Fondo actual</span>
+                      <input type="text" value="XP.jpg" readonly>
+                    </label>
+                    <div class="settings-actions">
+                      <button class="xp-button xp-button--small" type="button" data-config-action="reset-icons">Restaurar orden de iconos</button>
+                    </div>
+                  </section>
+                  <section class="settings-panel" data-settings-panel="desktop" hidden>
+                    <label class="settings-field">
+                      <span>Tamaño de iconos</span>
+                      <input id="config-icon-size" type="range" min="28" max="56" step="2" value="32">
+                    </label>
+                    <label class="settings-field settings-field--inline">
+                      <span>Abrir con doble clic</span>
+                      <input id="config-double-click" type="checkbox" checked>
+                    </label>
+                    <p class="settings-note">Los iconos del escritorio se pueden arrastrar libremente.</p>
+                  </section>
+                  <section class="settings-panel" data-settings-panel="taskbar" hidden>
+                    <label class="settings-field">
+                      <span>Texto del botón Inicio</span>
+                      <select id="config-start-label">
+                        <option value="inicio" selected>inicio</option>
+                        <option value="start">start</option>
+                      </select>
+                    </label>
+                    <label class="settings-field settings-field--inline">
+                      <span>Mostrar Inicio rápido</span>
+                      <input id="config-quick-launch" type="checkbox" checked>
+                    </label>
+                    <label class="settings-field">
+                      <span>Formato del reloj</span>
+                      <select id="config-clock-format">
+                        <option value="24" selected>24 horas</option>
+                        <option value="12">12 horas (AM/PM)</option>
+                      </select>
+                    </label>
+                  </section>
+                  <section class="settings-panel" data-settings-panel="sound" hidden>
+                    <label class="settings-field">
+                      <span>Volumen del click</span>
+                      <input id="config-mouse-volume" type="range" min="0" max="100" step="1" value="25">
+                    </label>
+                    <label class="settings-field">
+                      <span>Volumen del teclado</span>
+                      <input id="config-keyboard-volume" type="range" min="0" max="100" step="1" value="10">
+                    </label>
+                    <label class="settings-field settings-field--inline">
+                      <span>Teclado activo</span>
+                      <input id="config-keyboard-enabled" type="checkbox" checked>
+                    </label>
+                    <label class="settings-field settings-field--inline">
+                      <span>Sonidos del sistema</span>
+                      <input id="config-system-sounds-enabled" type="checkbox" checked>
+                    </label>
+                    <p class="settings-note">Volumen reducido por defecto para que no sea molesto.</p>
+                  </section>
+                  <section class="settings-panel" data-settings-panel="user" hidden>
+                    <div class="profile-banner">
+                      <div class="profile-banner__avatar"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/User Accounts.png" alt=""></div>
+                      <div><p class="profile-label">Usuario actual</p><h2 id="config-user-display">Invitado</h2><p>Tipo: administrador del equipo</p></div>
+                    </div>
+                    <button class="xp-button xp-button--small" type="button" data-open-window="profile">Abrir Mi perfil</button>
+                  </section>
+                  <section class="settings-panel" data-settings-panel="system" hidden>
+                    <div class="detail-list">
+                      <div><strong>Sistema</strong><p>Microsoft Windows XP Professional (simulación web)</p></div>
+                      <div><strong>Servidor local</strong><p><code>node server.js</code> en <code>http://127.0.0.1:3000</code></p></div>
+                      <div><strong>Assets</strong><p>Iconos XP HD + sonidos XP + teclado Razer Green Akira</p></div>
+                    </div>
+                  </section>
+                </div>
+              </div>
+              <div class="settings-footer">
+                <button class="xp-button" type="button" data-config-action="defaults">Predeterminados</button>
+                <button class="xp-button" type="button" data-config-action="cancel">Cancelar</button>
+                <button class="xp-button xp-button--primary" type="button" data-config-action="apply">Aplicar</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Ayuda -->
+          <article class="xp-window" data-window-id="help-support" data-window-title="Ayuda y soporte técnico" style="top: 90px; left: 200px; width: 640px; height: 400px;" hidden>
+            <header class="window-titlebar" data-drag-handle>
+              <div class="window-title">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Help and Support.png" alt="">
+                <span>Centro de ayuda y soporte técnico</span>
+              </div>
+              <div class="window-controls">
+                <button type="button" class="window-control" data-window-action="minimize" aria-label="Minimizar">0</button>
+                <button type="button" class="window-control" data-window-action="maximize" aria-label="Maximizar">1</button>
+                <button type="button" class="window-control window-control--close" data-window-action="close" aria-label="Cerrar">r</button>
+              </div>
+            </header>
+            <div class="window-body">
+              <div class="info-grid">
+                <section class="info-card"><h3>¿Qué es esto?</h3><p>Una maqueta XP para armar tu página personal desde una base retro.</p></section>
+                <section class="info-card"><h3>¿Qué hace cada icono?</h3><p>Cada icono abre una ventana real. Doble clic para abrir, arrastrar para mover.</p></section>
+                <section class="info-card"><h3>Atajos</h3><p>Win+D muestra el escritorio. Esc cierra menús. Doble clic en título maximiza.</p></section>
+                <section class="info-card"><h3>Servidor local</h3><p>Usa <code>node server.js</code> para evitar errores de <code>file://</code>.</p></section>
+              </div>
+            </div>
+          </article>
+
+          <!-- Buscar -->
+          <article class="xp-window" data-window-id="search" data-window-title="Buscar" style="top: 100px; left: 240px; width: 560px; height: 360px;" hidden>
+            <header class="window-titlebar" data-drag-handle>
+              <div class="window-title">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Search.png" alt="">
+                <span>Resultados de la búsqueda</span>
+              </div>
+              <div class="window-controls">
+                <button type="button" class="window-control" data-window-action="minimize" aria-label="Minimizar">0</button>
+                <button type="button" class="window-control" data-window-action="maximize" aria-label="Maximizar">1</button>
+                <button type="button" class="window-control window-control--close" data-window-action="close" aria-label="Cerrar">r</button>
+              </div>
+            </header>
+            <div class="window-body">
+              <label class="browser-address browser-address--stack">
+                <span>Buscar en tu sitio</span>
+                <input id="search-input" type="text" placeholder="perfil, nacimiento, música..." data-autofocus>
+              </label>
+              <div class="detail-list" id="search-results">
+                <div><strong>Secciones disponibles</strong><p>Mi perfil, Nacimiento, Personalidad, Mis imágenes, Mi música, Mi PC, Internet.</p></div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Ejecutar -->
+          <article class="xp-window" data-window-id="run" data-window-title="Ejecutar" style="top: 240px; left: 380px; width: 420px; height: 190px;" hidden>
+            <header class="window-titlebar" data-drag-handle>
+              <div class="window-title">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Run.png" alt="">
+                <span>Ejecutar</span>
+              </div>
+              <div class="window-controls">
+                <button type="button" class="window-control window-control--close" data-window-action="close" aria-label="Cerrar">r</button>
+              </div>
+            </header>
+            <div class="window-body run-body">
+              <div class="run-body__header">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Run.png" alt="">
+                <p>Escribe el nombre de un programa, carpeta, documento o sección y Windows lo abrirá.</p>
+              </div>
+              <label class="browser-address browser-address--stack">
+                <span>Abrir:</span>
+                <input id="run-input" data-autofocus type="text" value="perfil" spellcheck="false">
+              </label>
+              <div class="dialog-box__actions">
+                <button class="xp-button xp-button--primary" type="button" id="run-accept-button">Aceptar</button>
+                <button class="xp-button" type="button" id="run-cancel-button">Cancelar</button>
+                <button class="xp-button" type="button" id="run-browse-button">Examinar...</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Impresoras -->
+          <article class="xp-window" data-window-id="printers" data-window-title="Impresoras y faxes" style="top: 140px; left: 300px; width: 520px; height: 300px;" hidden>
+            <header class="window-titlebar" data-drag-handle>
+              <div class="window-title">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Printers and Faxes.png" alt="">
+                <span>Impresoras y faxes</span>
+              </div>
+              <div class="window-controls">
+                <button type="button" class="window-control" data-window-action="minimize" aria-label="Minimizar">0</button>
+                <button type="button" class="window-control" data-window-action="maximize" aria-label="Maximizar">1</button>
+                <button type="button" class="window-control window-control--close" data-window-action="close" aria-label="Cerrar">r</button>
+              </div>
+            </header>
+            <div class="window-body">
+              <p>No hay impresoras instaladas. Espacio preparado para futuros PDFs descargables o versión imprimible.</p>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- ===========================================
+             Menú Inicio
+        ============================================ -->
+        <div class="start-menu" id="start-menu" hidden>
+          <div class="start-menu__header">
+            <div class="start-menu__avatar">
+              <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/User Accounts.png" alt="">
+            </div>
+            <div>
+              <strong id="start-user-name">Invitado</strong>
+              <p>Sesión iniciada</p>
+            </div>
+          </div>
+          <div class="start-menu__body">
+            <div class="start-menu__left">
+              <button type="button" class="start-pinned" data-open-window="internet">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Internet Explorer 6.png" alt="">
+                <span><strong>Internet</strong><small>Internet Explorer</small></span>
+              </button>
+              <button type="button" class="start-pinned" data-open-window="email">
+                <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Email.png" alt="">
+                <span><strong>Correo electrónico</strong><small>Outlook Express</small></span>
+              </button>
+              <div class="start-separator"></div>
+              <button type="button" class="start-item" data-open-window="profile"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/User Accounts.png" alt=""><span>Mi perfil</span></button>
+              <button type="button" class="start-item" data-open-window="notepad"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Notepad.png" alt=""><span>Bloc de notas</span></button>
+              <button type="button" class="start-item" data-open-window="paint"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Paint.png" alt=""><span>Paint</span></button>
+              <button type="button" class="start-item" data-open-window="calculator"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Calculator.png" alt=""><span>Calculadora</span></button>
+              <button type="button" class="start-item" data-open-window="media-player"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Windows Media Player 10.png" alt=""><span>Windows Media Player</span></button>
+              <button type="button" class="start-item" data-open-window="messenger"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Windows Messenger.png" alt=""><span>Windows Messenger</span></button>
+              <button type="button" class="start-all-programs" data-open-window="programs">
+                <span>Todos los programas</span>
+                <span aria-hidden="true">▸</span>
+              </button>
+            </div>
+            <div class="start-menu__right">
+              <button type="button" class="start-link" data-open-window="documents"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/My Documents.png" alt=""><span>Mis documentos</span></button>
+              <button type="button" class="start-link" data-open-window="documents"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Recent Documents.png" alt=""><span>Mis documentos recientes</span></button>
+              <button type="button" class="start-link" data-open-window="pictures"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/My Pictures.png" alt=""><span>Mis imágenes</span></button>
+              <button type="button" class="start-link" data-open-window="music"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/My Music.png" alt=""><span>Mi música</span></button>
+              <button type="button" class="start-link" data-open-window="my-computer"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/My Computer.png" alt=""><span>Mi PC</span></button>
+              <button type="button" class="start-link" data-open-window="network"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/My Network Places.png" alt=""><span>Mis sitios de red</span></button>
+              <div class="start-separator"></div>
+              <button type="button" class="start-link" data-open-window="control-panel"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Control Panel.png" alt=""><span>Panel de control</span></button>
+              <button type="button" class="start-link" data-open-window="printers"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Printers and Faxes.png" alt=""><span>Impresoras y faxes</span></button>
+              <button type="button" class="start-link" data-open-window="help-support"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Help and Support.png" alt=""><span>Ayuda y soporte técnico</span></button>
+              <button type="button" class="start-link" data-open-window="search"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Search.png" alt=""><span>Buscar</span></button>
+              <button type="button" class="start-link" data-open-window="run"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Run.png" alt=""><span>Ejecutar...</span></button>
+            </div>
+          </div>
+          <div class="start-menu__footer">
+            <button type="button" class="session-action" id="logoff-button">
+              <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Logout.png" alt="">
+              <span>Cerrar sesión</span>
+            </button>
+            <button type="button" class="session-action session-action--danger" id="shutdown-button">
+              <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Stop.png" alt="">
+              <span>Apagar equipo</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ===========================================
+             Barra de tareas
+        ============================================ -->
+        <footer class="taskbar">
+          <button class="start-button" id="start-button" type="button" aria-expanded="false">
+            <span class="windows-flag windows-flag--small" aria-hidden="true">
+              <span class="windows-flag__red"></span>
+              <span class="windows-flag__green"></span>
+              <span class="windows-flag__blue"></span>
+              <span class="windows-flag__yellow"></span>
+            </span>
+            <span class="start-button__label" id="start-button-label">inicio</span>
+          </button>
+
+          <div class="quick-launch" id="quick-launch">
+            <button class="quick-launch-button" type="button" data-taskbar-action="show-desktop" aria-label="Mostrar escritorio">
+              <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Desktop.png" alt="">
+            </button>
+            <button class="quick-launch-button" type="button" data-taskbar-action="open-window" data-window-id="internet" aria-label="Internet Explorer">
+              <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Internet Explorer 6.png" alt="">
+            </button>
+            <button class="quick-launch-button" type="button" data-taskbar-action="open-window" data-window-id="media-player" aria-label="Windows Media Player">
+              <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Windows Media Player 10.png" alt="">
+            </button>
+          </div>
+
+          <div class="taskbar-windows" id="taskbar-windows"></div>
+
+          <div class="taskbar-tray">
+            <button class="tray-button tray-button--toggle" type="button" data-taskbar-action="toggle-tray" aria-label="Mostrar iconos ocultos">«</button>
+            <button class="tray-button tray-button--lang" type="button" data-open-window="control-panel" data-open-tab="general" aria-label="Idioma">ES</button>
+            <button class="tray-button" type="button" data-open-window="network" aria-label="Conexión de red"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Network Connection.png" alt=""></button>
+            <button class="tray-button" type="button" data-open-window="control-panel" data-open-tab="sound" aria-label="Volumen"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Volume.png" alt=""></button>
+            <button class="tray-button" type="button" data-open-window="help-support" aria-label="Centro de seguridad"><img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Security Center.png" alt=""></button>
+            <button class="tray-clock" type="button" data-open-window="control-panel" data-open-tab="general" aria-label="Fecha y hora">
+              <time id="taskbar-clock">12:00</time>
+            </button>
+          </div>
+        </footer>
+      </div>
+    </section>
+
+    <!-- ===================================================
+         PANTALLA DE APAGADO
+    ==================================================== -->
+    <section class="screen power-screen" id="power-screen" aria-label="Apagado" hidden>
+      <div class="power-screen__content">
+        <div class="windows-flag windows-flag--large windows-flag--muted" aria-hidden="true">
+          <span class="windows-flag__red"></span>
+          <span class="windows-flag__green"></span>
+          <span class="windows-flag__blue"></span>
+          <span class="windows-flag__yellow"></span>
+        </div>
+        <h2 id="power-message">Windows se está apagando...</h2>
+        <p id="power-hint">Espera un momento.</p>
+      </div>
+    </section>
+
+    <!-- ===================================================
+         CUADRO DE DIÁLOGO DE APAGADO
+    ==================================================== -->
+    <div class="dialog-overlay" id="shutdown-dialog" hidden>
+      <div class="power-dialog" role="dialog" aria-modal="true" aria-labelledby="shutdown-title">
+        <h2 id="shutdown-title">Apagar el equipo</h2>
+        <p>¿Qué deseas que haga el equipo?</p>
+        <div class="power-dialog__options">
+          <button class="power-option" type="button" data-dialog-action="standby">
+            <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Standby.png" alt="">
+            <span>En espera</span>
+          </button>
+          <button class="power-option" type="button" data-dialog-action="shutdown">
+            <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Stop.png" alt="">
+            <span>Apagar</span>
+          </button>
+          <button class="power-option" type="button" data-dialog-action="restart">
+            <img src="./Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Restart.png" alt="">
+            <span>Reiniciar</span>
+          </button>
+        </div>
+        <button class="xp-button power-dialog__cancel" type="button" data-dialog-action="cancel">Cancelar</button>
+      </div>
+    </div>
+
+    <!-- ===================================================
+         MENU CONTEXTUAL (click derecho)
+    ==================================================== -->
+    <div class="context-menu" id="context-menu" hidden></div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

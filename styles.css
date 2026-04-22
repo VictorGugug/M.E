@@ -1,0 +1,1919 @@
+/* ============================================================
+   Windows XP Personal - Hoja de estilos Luna
+   Replica visual del escritorio, barra de tareas, menu Inicio,
+   ventanas, cuadros de dialogo y pantalla de bienvenida XP.
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+:root {
+  --xp-font: "Tahoma", "Microsoft Sans Serif", "Segoe UI", Arial, sans-serif;
+  --xp-font-ui: "Tahoma", "Segoe UI", Arial, sans-serif;
+  --xp-blue: #0058e6;
+  --xp-blue-dark: #0A246A;
+  --xp-blue-mid: #245EDC;
+  --xp-title-left: #0058e6;
+  --xp-title-right: #2A8EF3;
+  --xp-taskbar-blue1: #245EDC;
+  --xp-taskbar-blue2: #3590F0;
+  --xp-taskbar-blue3: #1941A5;
+  --xp-start-green1: #3C8F37;
+  --xp-start-green2: #64A634;
+  --xp-start-green3: #7BBB56;
+  --xp-start-green4: #3C8F37;
+  --xp-button-face: #ECE9D8;
+  --xp-button-face-hover: #FFF;
+  --xp-window-bg: #ECE9D8;
+  --xp-window-border: #0831D9;
+  --xp-text: #000;
+  --xp-selection: #3169C6;
+  --xp-selection-text: #FFF;
+  --xp-taskbar-height: 30px;
+  --desktop-icon-size: 32px;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--xp-font);
+  font-size: 11px;
+  color: var(--xp-text);
+  background: #3a6ea5;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: default;
+}
+
+.screen {
+  position: fixed;
+  inset: 0;
+  display: none;
+}
+
+.screen--active {
+  display: block;
+}
+
+/* ============================================================
+   LOGIN / Pantalla de bienvenida (Welcome Screen)
+   ============================================================ */
+
+.login-screen {
+  background: linear-gradient(180deg, #5A7EDC 0%, #4472C4 50%, #3561AE 100%);
+  color: #FFF;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.login-screen.screen--active {
+  display: flex;
+}
+
+.login-top-bar {
+  height: 86px;
+  background:
+    linear-gradient(180deg, #3C69BF 0%, #2A56AC 50%, #1F4693 100%);
+  border-bottom: 2px solid #FFF;
+  box-shadow: 0 2px 0 #001A66, 0 3px 6px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  padding-left: 34px;
+  gap: 16px;
+}
+
+.login-brand-icon {
+  width: 50px;
+  height: 50px;
+  background: #FFF;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 2px #0B2D80 inset;
+}
+
+.login-brand-icon img {
+  width: 40px;
+  height: 40px;
+}
+
+.login-brand-text p {
+  margin: 0;
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+.login-brand-text h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 400;
+  font-family: "Franklin Gothic Medium", "Arial", sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.login-brand-text h1 span {
+  color: #FFD04F;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.login-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 40px;
+  gap: 40px;
+}
+
+.login-divider-v {
+  width: 2px;
+  align-self: stretch;
+  background: linear-gradient(180deg, transparent 0%, #FFF 20%, #FFF 80%, transparent 100%);
+  opacity: 0.55;
+}
+
+.login-left {
+  flex: 0 0 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  padding-right: 8px;
+}
+
+.login-left h2 {
+  font-family: "Franklin Gothic Medium", "Arial", sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+  margin: 0 0 12px;
+  line-height: 1.1;
+}
+
+.login-left p {
+  margin: 4px 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.login-right {
+  flex: 0 0 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.user-tile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 10px 6px 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  color: #FFF;
+  text-align: left;
+  font-family: var(--xp-font);
+  min-width: 360px;
+  transition: background-color 0.1s;
+}
+
+.user-tile:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.25);
+}
+
+.user-tile__avatar {
+  width: 58px;
+  height: 58px;
+  background: #FFF;
+  border: 2px solid #FFF;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.2);
+}
+
+.user-tile__avatar img {
+  width: 48px;
+  height: 48px;
+}
+
+.user-tile__info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.user-tile__info strong {
+  font-size: 16px;
+  font-weight: 700;
+  font-family: "Franklin Gothic Medium", Arial, sans-serif;
+  color: #FFF;
+}
+
+.user-tile__info small {
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+.login-password-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 76px;
+  background: rgba(0,0,0,0.15);
+  padding: 8px 10px;
+  border-radius: 3px;
+  width: fit-content;
+  max-width: 360px;
+}
+
+.login-password-row label {
+  color: #FFF;
+  font-size: 11px;
+}
+
+.login-password-row input {
+  flex: 1;
+  min-width: 160px;
+  padding: 2px 4px;
+  border: 1px solid #7F9DB9;
+  background: #FFF;
+  color: #000;
+  font-family: var(--xp-font);
+  font-size: 11px;
+  height: 20px;
+}
+
+.login-arrow-btn,
+.login-help-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid #FFF;
+  background: linear-gradient(180deg, #7BC04F 0%, #3D8B28 100%);
+  color: #FFF;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.login-help-btn {
+  background: linear-gradient(180deg, #58ABE0 0%, #2668AC 100%);
+}
+
+.login-arrow-btn::before {
+  content: "\25B6";
+  font-size: 9px;
+}
+
+.login-hint {
+  margin: 2px 0 0 76px;
+  font-size: 11px;
+  opacity: 0.9;
+  max-width: 360px;
+}
+
+.login-bottom-bar {
+  height: 60px;
+  background:
+    linear-gradient(180deg, #3561AE 0%, #2C56A1 100%);
+  border-top: 2px solid #FFF;
+  box-shadow: 0 -2px 0 #001A66;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.login-power-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #FFF;
+  font-size: 12px;
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 3px;
+  font-family: var(--xp-font);
+}
+
+.login-power-btn:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.3);
+}
+
+.login-power-btn__icon {
+  width: 22px;
+  height: 22px;
+  background: radial-gradient(circle at 35% 35%, #FF8B8B, #C82828 60%, #7A1010);
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 0 0 4px rgba(0,0,0,0.4);
+}
+
+.login-power-btn__icon::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 50%;
+  width: 2px;
+  height: 8px;
+  background: #FFF;
+  transform: translateX(-50%);
+  border-radius: 1px;
+}
+
+.login-bottom-info {
+  color: #FFF;
+  font-size: 11px;
+  text-align: right;
+  opacity: 0.9;
+  line-height: 1.4;
+}
+
+.protocol-notice {
+  position: absolute;
+  top: 100px;
+  right: 30px;
+  background: #FFFFDD;
+  color: #333;
+  border: 1px solid #B8AF7A;
+  padding: 8px 12px;
+  font-size: 11px;
+  max-width: 260px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+.protocol-notice strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* ============================================================
+   ESCRITORIO (Desktop)
+   ============================================================ */
+
+.desktop-shell {
+  position: absolute;
+  inset: 0;
+  background-image: url("./XP.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+}
+
+.desktop-icons {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: var(--xp-taskbar-height);
+  pointer-events: none;
+}
+
+.desktop-icon {
+  position: absolute;
+  width: 76px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 2px;
+  background: transparent;
+  border: 1px dotted transparent;
+  cursor: default;
+  pointer-events: auto;
+  color: #FFF;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.9), 0 0 2px rgba(0,0,0,0.7);
+  font-family: var(--xp-font);
+  font-size: 11px;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.desktop-icon img {
+  width: var(--desktop-icon-size);
+  height: var(--desktop-icon-size);
+  pointer-events: none;
+  filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.5));
+}
+
+.desktop-icon span {
+  padding: 1px 3px;
+  word-break: break-word;
+  max-width: 72px;
+  border: 1px dotted transparent;
+}
+
+.desktop-icon.is-selected span {
+  background: rgba(49, 106, 197, 0.75);
+  border: 1px dotted #FFF;
+  color: #FFF;
+}
+
+.desktop-icon:focus-visible {
+  outline: none;
+}
+
+.desktop-icon:focus-visible span {
+  border: 1px dotted #FFF;
+}
+
+/* ============================================================
+   VENTANAS (XP Luna Window Chrome)
+   ============================================================ */
+
+.window-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: var(--xp-taskbar-height);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.xp-window {
+  position: absolute;
+  min-width: 240px;
+  min-height: 120px;
+  background: var(--xp-window-bg);
+  border: 1px solid #0831D9;
+  border-top: none;
+  border-radius: 8px 8px 0 0;
+  box-shadow:
+    0 0 0 1px #003EBA,
+    2px 2px 10px rgba(0,0,0,0.5),
+    6px 6px 20px rgba(0,0,0,0.35);
+  display: flex;
+  flex-direction: column;
+  pointer-events: auto;
+  color: var(--xp-text);
+  font-family: var(--xp-font);
+  font-size: 11px;
+  overflow: hidden;
+}
+
+.xp-window.is-maximized {
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+}
+
+.window-titlebar {
+  height: 28px;
+  display: flex;
+  align-items: center;
+  padding: 0 4px 0 6px;
+  background:
+    linear-gradient(180deg,
+      #0A246A 0%,
+      #0F3CB8 8%,
+      #1A4BD3 25%,
+      #2F6AE8 50%,
+      #1A4BD3 75%,
+      #0F3CB8 92%,
+      #0A246A 100%);
+  color: #FFF;
+  font-weight: 700;
+  font-size: 11px;
+  cursor: move;
+  border-radius: 8px 8px 0 0;
+  position: relative;
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.xp-window:not(.is-active) .window-titlebar {
+  background:
+    linear-gradient(180deg,
+      #7A96DF 0%,
+      #6287D9 50%,
+      #4274D0 100%);
+  text-shadow: none;
+}
+
+.window-title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  padding-left: 2px;
+}
+
+.window-title img {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.window-title span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.window-controls {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+
+.window-control {
+  width: 22px;
+  height: 22px;
+  border: 1px solid rgba(255,255,255,0.35);
+  background:
+    linear-gradient(180deg, #3379E8 0%, #1841B4 100%);
+  color: #FFF;
+  font-family: "Marlett", "Arial", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 3px;
+  box-shadow: inset 1px 1px 0 rgba(255,255,255,0.4);
+  line-height: 1;
+}
+
+.window-control:hover {
+  background: linear-gradient(180deg, #4A8EEE 0%, #1E52CC 100%);
+}
+
+.window-control:active {
+  background: linear-gradient(180deg, #164BBB 0%, #2A6FE0 100%);
+}
+
+.window-control--close {
+  background: linear-gradient(180deg, #E85638 0%, #B72E1B 100%);
+}
+
+.window-control--close:hover {
+  background: linear-gradient(180deg, #F36A4C 0%, #C73A26 100%);
+}
+
+.window-control--close:active {
+  background: linear-gradient(180deg, #A81F10 0%, #C73A26 100%);
+}
+
+.window-menubar {
+  display: flex;
+  gap: 0;
+  background: var(--xp-window-bg);
+  padding: 2px 2px 0;
+  border-bottom: 1px solid #919B9C;
+  font-size: 11px;
+}
+
+.window-menubar > span {
+  padding: 3px 8px 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  color: #000;
+}
+
+.window-menubar > span:hover {
+  background: #316AC5;
+  color: #FFF;
+  border-color: #316AC5;
+}
+
+.window-menubar > span u {
+  text-decoration: underline;
+}
+
+.window-toolbar {
+  display: flex;
+  gap: 2px;
+  padding: 3px 4px;
+  background: linear-gradient(180deg, #F0EEDC 0%, #E2DFCB 100%);
+  border-bottom: 1px solid #ACA899;
+  align-items: center;
+}
+
+.xp-button {
+  background: linear-gradient(180deg, #FDFDFD 0%, #ECE9D8 45%, #D8D2B4 100%);
+  border: 1px solid #003C74;
+  border-radius: 3px;
+  padding: 4px 14px;
+  font-family: var(--xp-font);
+  font-size: 11px;
+  color: #000;
+  cursor: pointer;
+  min-width: 72px;
+  box-shadow: inset 1px 1px 0 #FFF;
+}
+
+.xp-button:hover {
+  background: linear-gradient(180deg, #FFF 0%, #F0EBD3 45%, #D7D0AC 100%);
+}
+
+.xp-button:active {
+  background: linear-gradient(180deg, #CEC7A7 0%, #DFD8BA 100%);
+  box-shadow: inset 1px 1px 1px rgba(0,0,0,0.15);
+}
+
+.xp-button--primary {
+  border-width: 2px;
+}
+
+.xp-button--small {
+  min-width: 0;
+  padding: 2px 8px;
+}
+
+.xp-button:focus-visible {
+  outline: 1px dotted #000;
+  outline-offset: -3px;
+}
+
+.window-body {
+  flex: 1;
+  overflow: auto;
+  background: var(--xp-window-bg);
+  padding: 10px 12px;
+}
+
+.window-body--explorer {
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
+
+.explorer-sidebar {
+  width: 180px;
+  flex-shrink: 0;
+  background: linear-gradient(180deg, #7BA4E1 0%, #6287D9 100%);
+  padding: 8px 6px;
+  color: #FFF;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.window-body--explorer.is-sidebar-hidden .explorer-sidebar {
+  display: none;
+}
+
+.explorer-pane {
+  background: linear-gradient(180deg, #EFEFEF 0%, #D8E4FE 100%);
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: #000;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+}
+
+.explorer-pane--blue {
+  background: linear-gradient(180deg, #F6F6FD 0%, #D0DEFE 100%);
+}
+
+.explorer-pane h3 {
+  margin: 0 0 6px;
+  padding-bottom: 4px;
+  color: #06286D;
+  font-size: 11px;
+  border-bottom: 1px solid #C2D0E8;
+}
+
+.sidebar-action {
+  display: block;
+  background: transparent;
+  border: 0;
+  padding: 2px 0;
+  width: 100%;
+  text-align: left;
+  color: #06286D;
+  font-family: var(--xp-font);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.sidebar-action:hover {
+  color: #0058E6;
+  text-decoration: underline;
+}
+
+.explorer-main {
+  flex: 1;
+  overflow: auto;
+  padding: 12px;
+  background: #FFF;
+}
+
+.folder-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.folder-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: 1px dotted transparent;
+  padding: 6px;
+  cursor: default;
+  text-align: center;
+  font-family: var(--xp-font);
+  font-size: 11px;
+  color: #000;
+}
+
+.folder-item img {
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+}
+
+.folder-item strong {
+  font-weight: 400;
+  padding: 1px 3px;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.folder-item span {
+  font-size: 10px;
+  color: #555;
+  padding: 0 4px;
+}
+
+.folder-item.is-selected strong {
+  background: #316AC5;
+  color: #FFF;
+}
+
+.folder-item:hover strong {
+  text-decoration: underline;
+}
+
+/* perfil / info cards */
+
+.profile-banner {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 14px;
+  padding: 8px;
+  background: linear-gradient(180deg, #F6F6FD 0%, #D0DEFE 100%);
+  border: 1px solid #B5C4E3;
+  border-radius: 4px;
+}
+
+.profile-banner__avatar {
+  width: 64px;
+  height: 64px;
+  border: 2px solid #FFF;
+  box-shadow: 0 0 0 1px #7097D6;
+  background: #FFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-banner__avatar img {
+  width: 52px;
+  height: 52px;
+}
+
+.profile-label {
+  margin: 0;
+  font-size: 10px;
+  color: #2A56A1;
+}
+
+.profile-banner h2 {
+  margin: 2px 0;
+  font-size: 16px;
+  color: #06286D;
+}
+
+.profile-banner p {
+  margin: 2px 0;
+  font-size: 11px;
+}
+
+.info-grid,
+.system-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.info-card,
+.system-card {
+  background: #FFF;
+  border: 1px solid #ACA899;
+  padding: 8px 10px;
+}
+
+.info-card h3,
+.system-card h3 {
+  margin: 0 0 4px;
+  color: #06286D;
+  font-size: 11px;
+}
+
+.info-card p,
+.system-card p {
+  margin: 0;
+  font-size: 11px;
+  color: #333;
+}
+
+.detail-list > div {
+  padding: 6px 2px;
+  border-bottom: 1px dotted #ACA899;
+}
+
+.detail-list strong {
+  display: block;
+  color: #06286D;
+  margin-bottom: 2px;
+}
+
+.detail-list p {
+  margin: 0;
+  font-size: 11px;
+}
+
+.traits-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.trait {
+  background: linear-gradient(180deg, #FFF 0%, #F0EEDC 100%);
+  border: 1px solid #ACA899;
+  padding: 10px;
+  text-align: center;
+  font-size: 11px;
+}
+
+.window-note {
+  margin: 8px 0 0;
+  font-size: 11px;
+  color: #444;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.gallery-card {
+  aspect-ratio: 4/3;
+  background: linear-gradient(135deg, #CFD8E8, #8DA4C8);
+  border: 1px solid #7F99C0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #06286D;
+  font-size: 11px;
+}
+
+.programs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+/* Address bar */
+
+.browser-toolbar {
+  display: flex;
+  gap: 4px;
+  padding: 4px 6px;
+  background: linear-gradient(180deg, #F0EEDC 0%, #E2DFCB 100%);
+  border-bottom: 1px solid #ACA899;
+  align-items: center;
+}
+
+.browser-address {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.browser-address > span {
+  color: #333;
+  padding: 0 4px;
+}
+
+.browser-address input {
+  flex: 1;
+  padding: 2px 4px;
+  border: 1px solid #7F9DB9;
+  background: #FFF;
+  font-family: var(--xp-font);
+  font-size: 11px;
+  height: 20px;
+}
+
+.browser-address--stack {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+}
+
+.browser-address--stack input {
+  width: 100%;
+}
+
+.browser-page {
+  padding: 14px;
+}
+
+.browser-page h3 {
+  margin: 0 0 6px;
+  color: #06286D;
+}
+
+/* Settings / control panel */
+
+.window-body--settings {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  background: #FFF;
+}
+
+.settings-shell {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.settings-tabs {
+  width: 160px;
+  flex-shrink: 0;
+  background: linear-gradient(180deg, #7BA4E1, #5E83D1);
+  padding: 6px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.settings-tab {
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 5px 8px;
+  text-align: left;
+  color: #FFF;
+  font-family: var(--xp-font);
+  font-size: 11px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.settings-tab:hover {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.3);
+}
+
+.settings-tab.is-active {
+  background: #FFF;
+  color: #06286D;
+  border-color: #B5C4E3;
+}
+
+.settings-panels {
+  flex: 1;
+  overflow: auto;
+  padding: 14px;
+  background: #FFF;
+}
+
+.settings-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.settings-field > span {
+  color: #06286D;
+  font-weight: 700;
+}
+
+.settings-field input[type="text"],
+.settings-field select {
+  padding: 3px 5px;
+  border: 1px solid #7F9DB9;
+  background: #FFF;
+  font-family: var(--xp-font);
+  font-size: 11px;
+}
+
+.settings-field--inline {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.settings-field--inline > span {
+  flex: 1;
+  font-weight: 400;
+}
+
+.settings-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--xp-window-bg);
+  border-top: 1px solid #ACA899;
+}
+
+.settings-note {
+  font-size: 11px;
+  color: #555;
+  background: #FFFBDD;
+  border: 1px solid #E0D8A8;
+  padding: 6px 8px;
+  margin: 0;
+}
+
+.settings-actions {
+  margin-top: 6px;
+}
+
+/* Run dialog */
+
+.run-body {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.run-body__header {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.run-body__header img {
+  width: 32px;
+  height: 32px;
+}
+
+.run-body__header p {
+  margin: 0;
+  font-size: 11px;
+}
+
+.dialog-box__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.window-resizer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 16px;
+  height: 16px;
+  background: transparent;
+  border: 0;
+  cursor: se-resize;
+  padding: 0;
+}
+
+.window-resizer::after {
+  content: "";
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 10px;
+  height: 10px;
+  background:
+    linear-gradient(135deg,
+      transparent 40%, #7F9DB9 40%, #7F9DB9 48%, transparent 48%,
+      transparent 56%, #7F9DB9 56%, #7F9DB9 64%, transparent 64%,
+      transparent 72%, #7F9DB9 72%, #7F9DB9 80%, transparent 80%);
+}
+
+.xp-window.is-maximized .window-resizer {
+  display: none;
+}
+
+/* ============================================================
+   BARRA DE TAREAS (Taskbar)
+   ============================================================ */
+
+.taskbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--xp-taskbar-height);
+  display: flex;
+  align-items: stretch;
+  background:
+    linear-gradient(180deg,
+      #2C56A1 0%,
+      #245EDC 3%,
+      #3A87F0 9%,
+      #2563CF 50%,
+      #1C5EDB 80%,
+      #2568CC 88%,
+      #1944A5 97%,
+      #102C77 100%);
+  border-top: 1px solid #0000A0;
+  font-family: var(--xp-font);
+  font-size: 11px;
+  color: #FFF;
+  z-index: 200;
+  user-select: none;
+}
+
+.start-button {
+  height: 100%;
+  padding: 0 28px 0 10px;
+  background:
+    radial-gradient(ellipse 140% 80% at 50% 0%,
+      #6FAA3B 0%,
+      #5A9B2F 25%,
+      #3B8222 60%,
+      #276618 100%);
+  color: #FFF;
+  font-family: "Franklin Gothic Medium", "Arial", sans-serif;
+  font-style: italic;
+  font-size: 15px;
+  font-weight: 700;
+  border: 0;
+  border-radius: 0 10px 10px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.4),
+    inset -2px -4px 6px rgba(0,0,0,0.3);
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.55);
+  min-width: 100px;
+  position: relative;
+}
+
+.start-button:hover {
+  background:
+    radial-gradient(ellipse 140% 80% at 50% 0%,
+      #7FBB46 0%,
+      #6BAC38 25%,
+      #4A9128 60%,
+      #337021 100%);
+}
+
+.start-button:active,
+.start-button[aria-expanded="true"] {
+  background:
+    radial-gradient(ellipse 140% 80% at 50% 100%,
+      #3B8222 0%,
+      #2A6B19 40%,
+      #1F5412 100%);
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,0.4),
+    inset -1px -1px 0 rgba(255,255,255,0.2);
+}
+
+.windows-flag {
+  display: inline-block;
+  position: relative;
+  width: 18px;
+  height: 18px;
+  transform: perspective(40px) rotateY(-18deg);
+  flex-shrink: 0;
+}
+
+.windows-flag__red,
+.windows-flag__green,
+.windows-flag__blue,
+.windows-flag__yellow {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 1.5px 1.5px 1px 1px;
+  box-shadow: inset -1px -1px 0 rgba(0,0,0,0.15);
+}
+
+.windows-flag__red    { top: 0; left: 0; background: #E42828; }
+.windows-flag__green  { top: 0; right: 0; background: #6BBE44; }
+.windows-flag__blue   { bottom: 0; left: 0; background: #2277D9; }
+.windows-flag__yellow { bottom: 0; right: 0; background: #F7B817; }
+
+.windows-flag--small {
+  width: 16px;
+  height: 16px;
+}
+
+.windows-flag--small .windows-flag__red,
+.windows-flag--small .windows-flag__green,
+.windows-flag--small .windows-flag__blue,
+.windows-flag--small .windows-flag__yellow {
+  width: 6px;
+  height: 6px;
+}
+
+.windows-flag--large {
+  width: 36px;
+  height: 36px;
+}
+
+.windows-flag--large .windows-flag__red,
+.windows-flag--large .windows-flag__green,
+.windows-flag--large .windows-flag__blue,
+.windows-flag--large .windows-flag__yellow {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+}
+
+.quick-launch {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background:
+    linear-gradient(180deg, #1E4FC8 0%, #1941A5 100%);
+  padding: 0 4px;
+  border-right: 1px groove rgba(0,0,0,0.4);
+  box-shadow: inset 1px 0 0 rgba(0,0,0,0.35), inset -1px 0 0 rgba(255,255,255,0.15);
+}
+
+.quick-launch-button {
+  width: 22px;
+  height: 22px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 1px;
+}
+
+.quick-launch-button img {
+  width: 16px;
+  height: 16px;
+}
+
+.quick-launch-button:hover {
+  background: rgba(255,255,255,0.2);
+  border-color: rgba(255,255,255,0.4);
+}
+
+.taskbar-windows {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0 6px;
+  overflow: hidden;
+}
+
+.taskbar-window {
+  height: 22px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(180deg, #3A87F0 0%, #1E52CC 100%);
+  color: #FFF;
+  border: 1px solid rgba(0,0,0,0.25);
+  border-radius: 3px;
+  font-family: var(--xp-font);
+  font-size: 11px;
+  cursor: pointer;
+  max-width: 180px;
+  min-width: 120px;
+  overflow: hidden;
+  box-shadow: inset 1px 1px 0 rgba(255,255,255,0.3);
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.4);
+}
+
+.taskbar-window img {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.taskbar-window span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.taskbar-window:hover {
+  background: linear-gradient(180deg, #4D98FB 0%, #2661E0 100%);
+}
+
+.taskbar-window.is-active {
+  background: linear-gradient(180deg, #163FA8 0%, #2262D4 100%);
+  box-shadow:
+    inset 1px 1px 2px rgba(0,0,0,0.4),
+    inset -1px -1px 0 rgba(255,255,255,0.15);
+}
+
+.taskbar-tray {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 8px 0 6px;
+  background:
+    linear-gradient(180deg, #1070B4 0%, #0F84C8 50%, #1070B4 100%);
+  border-left: 1px solid rgba(0,0,0,0.4);
+  box-shadow:
+    inset 1px 0 0 rgba(0,0,0,0.35),
+    inset 2px 0 0 rgba(255,255,255,0.18);
+  min-width: 120px;
+}
+
+.tray-button {
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFF;
+}
+
+.tray-button img {
+  width: 16px;
+  height: 16px;
+}
+
+.tray-button:hover {
+  background: rgba(255,255,255,0.18);
+  border-color: rgba(255,255,255,0.3);
+}
+
+.tray-button--lang {
+  width: 24px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #FFF;
+  background: linear-gradient(180deg, #F1F0E8 0%, #D3CFB8 100%);
+  color: #000;
+  border: 1px solid #000;
+  text-shadow: none;
+  border-radius: 2px;
+}
+
+.tray-button--toggle {
+  color: #FFF;
+  font-weight: 700;
+}
+
+.tray-clock {
+  background: transparent;
+  border: 0;
+  color: #FFF;
+  font-family: var(--xp-font);
+  font-size: 11px;
+  padding: 0 6px;
+  cursor: pointer;
+  min-width: 60px;
+  text-align: right;
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.4);
+}
+
+.tray-clock:hover {
+  text-decoration: underline;
+}
+
+/* ============================================================
+   MENU INICIO (Start Menu - XP green/blue two-column)
+   ============================================================ */
+
+.start-menu {
+  position: absolute;
+  left: 0;
+  bottom: var(--xp-taskbar-height);
+  width: 380px;
+  background: #FFF;
+  border: 1px solid #0A246A;
+  border-bottom: 0;
+  border-radius: 6px 6px 0 0;
+  box-shadow: 4px 0 15px rgba(0,0,0,0.35);
+  display: flex;
+  flex-direction: column;
+  z-index: 250;
+  overflow: hidden;
+  font-family: var(--xp-font);
+  color: #000;
+}
+
+.start-menu__header {
+  height: 54px;
+  background:
+    linear-gradient(180deg,
+      #1D5CB8 0%,
+      #1E6DDF 30%,
+      #247EF5 70%,
+      #1D5CB8 100%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  color: #FFF;
+  border-bottom: 2px solid #F29C32;
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.4);
+}
+
+.start-menu__avatar {
+  width: 42px;
+  height: 42px;
+  background: #FFF;
+  border: 2px solid #FFF;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+}
+
+.start-menu__avatar img {
+  width: 34px;
+  height: 34px;
+}
+
+.start-menu__header strong {
+  font-size: 15px;
+  font-family: "Franklin Gothic Medium", Arial, sans-serif;
+  font-weight: 400;
+}
+
+.start-menu__header p {
+  margin: 1px 0 0;
+  font-size: 10px;
+  opacity: 0.9;
+}
+
+.start-menu__body {
+  display: flex;
+  flex-direction: row;
+  min-height: 340px;
+}
+
+.start-menu__left {
+  flex: 1;
+  background: #FFF;
+  padding: 8px 6px 8px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border-right: 1px solid #B5C4E3;
+}
+
+.start-menu__right {
+  width: 170px;
+  background: #D3E5FA;
+  padding: 8px 4px 8px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border-left: 1px solid #B5C4E3;
+}
+
+.start-pinned,
+.start-item,
+.start-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 6px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--xp-font);
+  font-size: 11px;
+  color: #000;
+  text-align: left;
+  border-radius: 2px;
+  width: 100%;
+}
+
+.start-pinned img,
+.start-item img,
+.start-link img {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.start-pinned span {
+  display: flex;
+  flex-direction: column;
+}
+
+.start-pinned strong {
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.start-pinned small {
+  font-size: 10px;
+  color: #444;
+}
+
+.start-pinned:hover,
+.start-item:hover,
+.start-link:hover,
+.start-all-programs:hover,
+.session-action:hover {
+  background: #316AC5;
+  color: #FFF;
+}
+
+.start-pinned:hover strong,
+.start-pinned:hover small {
+  color: #FFF;
+}
+
+.start-separator {
+  height: 1px;
+  background: #B5C4E3;
+  margin: 4px 4px;
+}
+
+.start-all-programs {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px;
+  margin-top: auto;
+  background: transparent;
+  border: 0;
+  font-family: var(--xp-font);
+  font-size: 11px;
+  font-weight: 700;
+  color: #000;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.start-menu__footer {
+  height: 42px;
+  background:
+    linear-gradient(180deg,
+      #B1D3FC 0%,
+      #D3E5FA 30%,
+      #B1D3FC 100%);
+  border-top: 1px solid #B5C4E3;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  padding: 0 14px;
+}
+
+.session-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  color: #06286D;
+  font-family: var(--xp-font);
+  font-size: 11px;
+  padding: 4px 6px;
+  border-radius: 2px;
+}
+
+.session-action img {
+  width: 22px;
+  height: 22px;
+}
+
+.session-action:hover {
+  background: #316AC5;
+  color: #FFF;
+}
+
+.session-action--danger {
+  color: #7A1010;
+}
+
+.session-action--danger:hover {
+  background: #C04040;
+  color: #FFF;
+}
+
+/* ============================================================
+   DIALOGOS (Apagar, alertas)
+   ============================================================ */
+
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+}
+
+.power-dialog {
+  width: 420px;
+  background:
+    linear-gradient(180deg, #E0E8F6 0%, #B8C9E8 100%);
+  border: 2px solid #0058E6;
+  border-radius: 10px;
+  box-shadow: 4px 4px 14px rgba(0,0,0,0.4);
+  padding: 22px 28px 18px;
+  color: #000;
+  font-family: var(--xp-font);
+}
+
+.power-dialog h2 {
+  margin: 0 0 6px;
+  color: #06286D;
+  font-size: 16px;
+  font-family: "Franklin Gothic Medium", Arial, sans-serif;
+  font-weight: 400;
+}
+
+.power-dialog > p {
+  margin: 0 0 16px;
+  font-size: 11px;
+}
+
+.power-dialog__options {
+  display: flex;
+  justify-content: space-around;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+
+.power-option {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-family: var(--xp-font);
+  font-size: 11px;
+  color: #06286D;
+  font-weight: 700;
+}
+
+.power-option img {
+  width: 40px;
+  height: 40px;
+  filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.25));
+}
+
+.power-option:hover {
+  background: rgba(255,255,255,0.5);
+  border-color: #0058E6;
+}
+
+.power-dialog__cancel {
+  display: block;
+  margin-left: auto;
+}
+
+/* Balloon notification (info bar) */
+
+.xp-balloon {
+  position: absolute;
+  bottom: calc(var(--xp-taskbar-height) + 10px);
+  right: 20px;
+  background: #FFFFDD;
+  border: 1px solid #B8AF7A;
+  border-radius: 6px;
+  padding: 8px 12px 10px;
+  max-width: 280px;
+  font-size: 11px;
+  color: #333;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+  z-index: 180;
+  font-family: var(--xp-font);
+}
+
+.xp-balloon::after {
+  content: "";
+  position: absolute;
+  bottom: -9px;
+  right: 28px;
+  width: 0;
+  height: 0;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-top: 9px solid #FFFFDD;
+  filter: drop-shadow(0 1px 0 #B8AF7A);
+}
+
+.xp-balloon strong {
+  display: block;
+  color: #06286D;
+  margin-bottom: 2px;
+}
+
+.xp-balloon__close {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-weight: 700;
+  color: #555;
+}
+
+/* Context menu */
+
+.context-menu {
+  position: absolute;
+  min-width: 180px;
+  background: #FFF;
+  border: 1px solid #919B9C;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.35);
+  z-index: 400;
+  font-size: 11px;
+  padding: 2px;
+  font-family: var(--xp-font);
+}
+
+.context-menu-item {
+  display: block;
+  padding: 3px 22px 3px 22px;
+  background: transparent;
+  border: 0;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--xp-font);
+  font-size: 11px;
+  color: #000;
+}
+
+.context-menu-item:hover {
+  background: #316AC5;
+  color: #FFF;
+}
+
+.context-menu-item:disabled {
+  color: #888;
+  cursor: default;
+}
+
+.context-menu-item:disabled:hover {
+  background: transparent;
+  color: #888;
+}
+
+.context-menu-separator {
+  height: 1px;
+  background: #C5C5C5;
+  margin: 3px 2px;
+}
+
+/* Power state screen */
+
+.power-screen {
+  background: linear-gradient(180deg, #0058E6 0%, #0020A3 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFF;
+}
+
+.power-screen.screen--active {
+  display: flex;
+}
+
+.power-screen__content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.power-screen h2 {
+  font-family: "Franklin Gothic Medium", Arial, sans-serif;
+  font-weight: 400;
+  font-size: 24px;
+  margin: 0;
+}
+
+.power-screen p {
+  margin: 0;
+  font-size: 12px;
+}
+
+.windows-flag--muted {
+  transform: perspective(80px) rotateY(-18deg);
+  width: 80px;
+  height: 80px;
+  opacity: 0.9;
+}
+
+.windows-flag--muted .windows-flag__red,
+.windows-flag--muted .windows-flag__green,
+.windows-flag--muted .windows-flag__blue,
+.windows-flag--muted .windows-flag__yellow {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+}
+
+/* Scrollbars (XP style, webkit) */
+
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background:
+    repeating-linear-gradient(-45deg,
+      #EFECDE 0, #EFECDE 2px,
+      #D6D3BE 2px, #D6D3BE 4px);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #FEFEFD 0%, #D6D2B6 100%);
+  border: 1px solid #93886C;
+  box-shadow: inset 1px 1px 0 #FFF;
+}
+
+::-webkit-scrollbar-button {
+  background: linear-gradient(180deg, #FDFDFD, #D7D1B2);
+  border: 1px solid #93886C;
+  display: block;
+  height: 16px;
+  width: 16px;
+}
+
+::-webkit-scrollbar-corner {
+  background: #D6D3BE;
+}
