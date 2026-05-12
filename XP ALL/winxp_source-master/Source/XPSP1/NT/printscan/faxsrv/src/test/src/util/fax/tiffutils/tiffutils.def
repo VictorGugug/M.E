@@ -1,7 +1,0 @@
-LIBRARY TiffUtils
-
-EXPORTS
-   ConvertBmpToTiff
-   ConvertTiffToBmp
-   TiffCompare
-   DirToDirTiffCompare

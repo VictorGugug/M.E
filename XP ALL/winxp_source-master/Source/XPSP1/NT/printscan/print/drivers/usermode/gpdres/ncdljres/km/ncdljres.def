@@ -1,9 +1,0 @@
-LIBRARY NCDLJRES
-
-EXPORTS     OEMGetInfo
-            OEMDevMode
-            OEMCommandCallback
-            OEMSendFontCmd
-            OEMOutputCharStr
-            OEMFilterGraphics
-            OEMDisablePDEV

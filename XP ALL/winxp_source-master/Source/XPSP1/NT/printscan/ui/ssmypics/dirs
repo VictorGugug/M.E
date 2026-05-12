@@ -1,3 +1,0 @@
-DIRS = sscommon ssmypics
-OPTIONAL_DIRS = sstest
-

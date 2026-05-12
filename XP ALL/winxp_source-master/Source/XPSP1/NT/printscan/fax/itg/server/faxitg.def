@@ -1,7 +1,0 @@
-EXPORTS
-    FaxRouteConfigure
-    FaxRouteDeviceEnable
-    FaxRouteGetRoutingInfo
-    FaxRouteInitialize
-    FaxRouteItg
-    FaxRouteSetRoutingInfo

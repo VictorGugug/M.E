@@ -1,7 +1,0 @@
-DIRS = inc      \
-       isapi    \
-       server   \
-       web
-
-
-

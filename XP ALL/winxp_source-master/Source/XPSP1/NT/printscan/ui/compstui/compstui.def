@@ -1,9 +1,0 @@
-LIBRARY COMPSTUI
-
-
-EXPORTS
-
-    CommonPropertySheetUIA
-    CommonPropertySheetUIW
-    GetCPSUIUserData
-    SetCPSUIUserData

@@ -1,8 +1,0 @@
-LIBRARY qlaserb2
-
-PROTMODE
-
-EXPORTS
-   bInitProc
-   bInitFEProc
-   MiniDrvEnableDriver

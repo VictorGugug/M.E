@@ -1,7 +1,0 @@
-LIBRARY PCL4MSJ
-
-PROTMODE
-
-EXPORTS
-    bInitProc
-    bInitFEProc

@@ -1,6 +1,0 @@
-LIBRARY      FXSCFGWZ
-
-EXPORTS
-             FaxConfigWizard
-			 FaxCfgWzrdDllW
-

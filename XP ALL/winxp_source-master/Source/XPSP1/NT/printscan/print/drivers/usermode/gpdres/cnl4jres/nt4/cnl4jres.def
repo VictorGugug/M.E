@@ -1,6 +1,0 @@
-LIBRARY    CNL4JRES
-	
-EXPORTS    DllGetClassObject   PRIVATE
-           DllCanUnloadNow     PRIVATE
-           DllInitialize       PRIVATE
-

@@ -1,5 +1,0 @@
-LIBRARY CAPPLRES
-
-EXPORTS
-    DllGetClassObject   PRIVATE
-    DllCanUnloadNow     PRIVATE

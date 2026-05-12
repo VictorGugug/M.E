@@ -1,5 +1,0 @@
-DIRS = \
-    drivers  \
-    spooler  \
-    embedded \
-

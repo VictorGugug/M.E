@@ -1,4 +1,0 @@
-all:
-
-clean:
-   del faxevent\messages.mc >nul 2>&1

@@ -1,5 +1,0 @@
-LIBRARY FAXISAPI
-
-EXPORTS
-    GetExtensionVersion
-    HttpExtensionProc

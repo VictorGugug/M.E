@@ -1,5 +1,0 @@
-DIRS =
-
-OPTIONAL_DIRS = dbgtest  \
-                prevtest \
-                testacqd

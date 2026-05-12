@@ -1,6 +1,0 @@
-LIBRARY LGGS6RES
-
-EXPORTS		OEMGetInfo
-		OEMDevMode
-		OEMCommandCallback
-		OEMCompression

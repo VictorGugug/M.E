@@ -1,5 +1,0 @@
-LIBRARY faxmon
-
-EXPORTS
-    DllEntryPoint
-    InitializePrintMonitor

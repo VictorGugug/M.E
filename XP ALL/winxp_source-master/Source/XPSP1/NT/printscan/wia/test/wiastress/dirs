@@ -1,5 +1,0 @@
-!if $(386)
-DIRS = winnt win98
-!else
-DIRS = winnt
-!endif

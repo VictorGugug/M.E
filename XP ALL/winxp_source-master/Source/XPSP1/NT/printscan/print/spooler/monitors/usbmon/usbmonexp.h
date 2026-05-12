@@ -1,2 +1,0 @@
-LPMONITOREX WINAPI InitializePrintMonitor(LPWSTR pRegistryRoot);
-LPMONITOREX WINAPI JobyInitializePrintMonitor(LPWSTR pRegistryRoot);

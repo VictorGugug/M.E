@@ -1,7 +1,0 @@
-LIBRARY NC62JRES
-
-EXPORTS     OEMGetInfo
-            OEMDevMode
-            OEMCommandCallback
-            OEMSendFontCmd
-            OEMOutputCharStr

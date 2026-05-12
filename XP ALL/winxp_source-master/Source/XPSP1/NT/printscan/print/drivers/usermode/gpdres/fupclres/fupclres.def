@@ -1,4 +1,0 @@
-LIBRARY         FUPCLRES
-EXPORTS
-                DllGetClassObject   PRIVATE
-                DllCanUnloadNow     PRIVATE

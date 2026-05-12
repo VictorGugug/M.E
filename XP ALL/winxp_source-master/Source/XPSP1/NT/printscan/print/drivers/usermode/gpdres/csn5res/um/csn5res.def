@@ -1,5 +1,0 @@
-LIBRARY CSN5RES
-
-EXPORTS
-    DllGetClassObject   PRIVATE
-    DllCanUnloadNow     PRIVATE

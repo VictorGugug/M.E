@@ -1,7 +1,0 @@
-LIBRARY PCL5MSC
-
-PROTMODE
-
-EXPORTS
-    bInitProc
-    bInitFEProc

@@ -1,4 +1,0 @@
-LIBRARY         fxsext32
-EXPORTS
-    ExchEntryPoint  @1
-

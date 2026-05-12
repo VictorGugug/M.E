@@ -1,7 +1,0 @@
-LIBRARY PCL4CH
-
-PROTMODE
-
-EXPORTS
-    bInitProc
-    bInitFEProc

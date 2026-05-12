@@ -1,5 +1,0 @@
-LIBRARY LGGS6RES
-
-EXPORTS
-    DllGetClassObject   PRIVATE
-    DllCanUnloadNow     PRIVATE

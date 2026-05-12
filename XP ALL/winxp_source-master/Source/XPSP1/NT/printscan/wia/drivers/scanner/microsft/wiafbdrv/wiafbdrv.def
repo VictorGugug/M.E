@@ -1,8 +1,0 @@
-LIBRARY WIAFBDRV
-
-EXPORTS
-        DllGetClassObject   PRIVATE
-        DllCanUnloadNow     PRIVATE
-        DliHook
-
-

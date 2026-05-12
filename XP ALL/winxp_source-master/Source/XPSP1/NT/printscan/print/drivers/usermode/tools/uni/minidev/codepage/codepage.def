@@ -1,5 +1,0 @@
-; CodePage.def : Declares the module parameters for the DLL.
-
-LIBRARY      "CodePage"
-EXPORTS
-    ; Explicit exports can go here

@@ -1,8 +1,0 @@
-
-LIBRARY TARGET_NAME
-
-EXPORTS
-	GetRpcErrorStringId
-	GetResInstance
-
-	

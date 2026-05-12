@@ -1,5 +1,0 @@
-LIBRARY RPDLCFG2
-
-EXPORTS
-    DllGetClassObject   PRIVATE
-    DllCanUnloadNow     PRIVATE

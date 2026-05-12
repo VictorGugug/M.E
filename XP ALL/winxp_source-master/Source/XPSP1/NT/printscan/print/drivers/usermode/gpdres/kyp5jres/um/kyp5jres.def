@@ -1,5 +1,0 @@
-LIBRARY KYP5JRES
-
-EXPORTS
-    DllGetClassObject   PRIVATE
-    DllCanUnloadNow     PRIVATE

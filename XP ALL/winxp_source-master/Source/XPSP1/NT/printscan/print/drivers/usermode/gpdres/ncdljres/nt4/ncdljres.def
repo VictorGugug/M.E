@@ -1,7 +1,0 @@
-
-LIBRARY NCDLJRES
-
-EXPORTS
-    DllGetClassObject   PRIVATE
-    DllCanUnloadNow     PRIVATE
-    DllInitialize       PRIVATE

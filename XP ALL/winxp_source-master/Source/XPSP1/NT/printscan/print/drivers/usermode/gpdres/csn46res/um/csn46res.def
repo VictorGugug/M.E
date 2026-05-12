@@ -1,6 +1,0 @@
-LIBRARY CSN46RES
-
-EXPORTS
-    DllGetClassObject   PRIVATE
-    DllCanUnloadNow     PRIVATE
-

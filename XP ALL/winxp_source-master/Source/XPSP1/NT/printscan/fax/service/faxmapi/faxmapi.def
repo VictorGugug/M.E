@@ -1,7 +1,0 @@
-EXPORTS
-    FaxMapiInitialize
-    AddNewMapiProfile
-    StoreMapiMessage
-    MailMapiMessage
-    GetMapiProfiles
-    GetProfileName

@@ -1,7 +1,0 @@
-LIBRARY TCPMonUI
-
-EXPORTS
-	InitializePrintMonitorUI
-
-    LocalAddPortUI
-	LocalConfigurePortUI
