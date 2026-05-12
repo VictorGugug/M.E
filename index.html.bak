@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light only">
+    <title>Windows 98 Personal</title>
+    <link rel="stylesheet" href="./styles-w98.css" id="theme-stylesheet">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+  </head>
+  <body>
+    <!-- ===================================================
+         PANTALLA DE BIENVENIDA (Welcome Screen de Windows 98)
+    ==================================================== -->
+    <section class="screen screen--active login-screen" id="login-screen" aria-label="Pantalla de bienvenida">
+      <div class="login-main">
+        <div class="login-left">
+          <h2>Bienvenido</h2>
+          <p>Inicia sesión en tu equipo</p>
+          <p>para ver tu autobiografía personal</p>
+        </div>
+
+        <div class="login-right">
+          <button class="user-tile" type="button" id="user-tile">
+            <span class="user-tile__avatar">
+              <img src="./95%20all/windows98-icons/png/user_calendar-0.png" alt="">
+            </span>
+            <span class="user-tile__info">
+              <strong id="login-user-caption">Victor Manuel</strong>
+              <small>Autobiografía personal</small>
+            </span>
+          </button>
+
+          <form class="login-password-row" id="login-form" autocomplete="on">
+            <label for="username">Nombre</label>
+            <input id="username" name="username" type="text" value="Victor" spellcheck="false" required>
+            <label for="password">Clave</label>
+            <input id="password" name="password" type="password" placeholder="(cualquiera)">
+            <div class="login-button-row">
+              <button class="w98-button" type="submit" aria-label="Iniciar sesión">Aceptar</button>
+              <button class="w98-button" type="button" id="login-help-button" aria-label="Ayuda">Ayuda</button>
+            </div>
+          </form>
+
+          <p class="login-hint" id="login-status">
+            Bienvenido, Víctor. Escribe cualquier contraseña para entrar.
+          </p>
+
+          <div class="login-theme-selector">
+            <label style="margin-right: 8px; font-weight: bold;">Tema:</label>
+            <button class="theme-icon-button active" type="button" id="theme-w98" title="Windows 98">98</button>
+            <button class="theme-icon-button" type="button" id="theme-xp" title="Windows XP">XP</button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="protocol-notice" id="protocol-notice" hidden>
+        <strong>Modo local detectado</strong>
+        <p>Si abres el archivo con <code>file://</code>, algunos sonidos y funciones pueden fallar. Clona desde <strong>GitHub</strong> y ejecuta <code>node server.js</code> en <code>http://127.0.0.1:3000</code>.</p>
+      </aside>
+
+n... (archivo completo guardado como copia de seguridad)
