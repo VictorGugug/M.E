@@ -1,7 +1,0 @@
-DIRS =  scsiscan \
-        usbscan  \
-        serscan  \
-        qv2kux
-        
-OPTIONAL_DIRS =
-

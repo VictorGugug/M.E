@@ -1,8 +1,0 @@
-LIBRARY PAGESRES
-
-EXPORTS OEMGetInfo
-        OEMDevMode
-        OEMCommandCallback
-        OEMFilterGraphics
-        OEMOutputCharStr
-        OEMSendFontCmd

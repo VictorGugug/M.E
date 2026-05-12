@@ -1,5 +1,0 @@
-LIBRARY faxcfg
-
-EXPORTS
-    DllEntryPoint
-    CPlApplet

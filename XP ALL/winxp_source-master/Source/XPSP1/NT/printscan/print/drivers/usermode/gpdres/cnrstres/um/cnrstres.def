@@ -1,5 +1,0 @@
-LIBRARY CNRSTRES
-
-EXPORTS
-    DllGetClassObject   PRIVATE
-    DllCanUnloadNow     PRIVATE

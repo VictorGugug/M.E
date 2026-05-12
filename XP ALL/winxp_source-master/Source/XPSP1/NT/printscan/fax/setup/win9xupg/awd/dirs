@@ -1,6 +1,0 @@
-DIRS=   viewrend \
-        dcxcodec \
-        faxcodec \
-        resexec  \
-        awdlib   \
-        awdvstub \

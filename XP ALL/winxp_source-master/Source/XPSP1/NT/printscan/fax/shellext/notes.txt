@@ -1,3 +1,0 @@
-dependencies:
-
-\nt\private\shell\inc

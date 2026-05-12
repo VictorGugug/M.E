@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TA1</title>
+<link rel="icon" href="mus/favicon1.png" type="image/png">
+
+<style>
+  /* ═══════════════════════════════════════════════════════════════
+     TEMA BASE (CRT / DDM)
+  ═══════════════════════════════════════════════════════════════ */
+  :root{
+    --crt-bg:#050505;
+    --crt-fg:#f8e88a;
+    --crt-dim:#9c9056;
+    --crt-warn:#ff4545;
+    --crt-purple:#8A2BE2;
+    --accent:#ffd54a;
+    --box:#141414;
+    --border:#d5b653;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     TEMA AGARTHA
+     Se activa añadiendo la clase .theme-agartha al <body>
+  ═══════════════════════════════════════════════════════════════ */
+  body.theme-agartha {
+    --crt-bg:#0a0f1a;
+    --crt-fg:#c8e6ff;
+    --crt-dim:#5a8ab0;
+    --crt-warn:#ff6b35;
+    --crt-purple:#00cfff;
+    --accent:#00e5ff;
+    --box:#060d18;
+    --border:#1a6fa8;
+  }
+
+  /* Fondo animado tipo tierra hueca / océano subterráneo */
+  body.theme-agartha::after {
+    content: "";
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 110%, rgba(0,100,180,0.35) 0%, transparent 60%),
+      radial-gradient(ellipse at 20% 80%, rgba(0,200,255,0.12) 0%, transparent 40%),
+      radial-gradient(ellipse at 80% 70%, rgba(0,80,160,0.18) 0%, transparent 40%);
+    animation: agartha-pulse 6s ease-in-out infinite alternate;
+    z-index: 0;
+  }
+  @keyframes agartha-pulse {
+    0%   { opacity: 0.6; }
+    100% { opacity: 1; }
+  }
+
+  /* Partículas flotantes (burbujas) */
+  body.theme-agartha .app::before {
+    content: "";
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle, rgba(0,220,255,0.18) 1px, transparent 1px),
+      radial-gradient(circle, rgba(0,150,255,0.12) 1px, transparent 1px);
+    background-size: 60px 60px, 90px 90px;
+    background-position: 0 0, 30px 30px;
+    animation: bubble-drift 12s linear infinite;
+    z-index: 0;
+  }
+  @keyframes bubble-drift {
+    0%   { background-position: 0 0, 30px 30px; }
+    100% { background-position: 0 -120px, 30px -90px; }
+  }
+
+  /* Scanlines de color azul en tema Agartha */
+  body.theme-agartha .scanlines::after {
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0,200,255,.04), rgba(0,200,255,.04) 1px,
+      transparent 2px, transparent 3px
+    );
+  }
+
+  /* Vignette azulada */
+  body.theme-agartha .vignette::before {
+    box-shadow: inset 0 0 140px 50px #000d1a;
+  }
+
+  /* Bezel con brillo azul */
+  body.theme-agartha .bezel {
+    border-color: var(--border);
+    box-shadow: 0 0 22px rgba(0,200,255,.25), inset 0 0 12px rgba(0,200,255,.08);
+  }
+
+  /* Player con fondo marino */
+  body.theme-agartha .player {
+    background: #060d18;
+    border-color: var(--border);
+    box-shadow: 0 0 30px rgba(0,200,255,.18), inset 0 0 14px rgba(0,200,255,.06);
+  }
+
+  /* Barra de progreso en cian */
+  body.theme-agartha .bar > div {
+    background: linear-gradient(90deg, var(--accent), #0080c0);
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  /* Canción activa en playlist */
+  body.theme-agartha .song.active {
+    background: #071420;
+    border: 1px dashed var(--border);
+  }
+
+  /* Hover en canciones */
+  body.theme-agartha .song:hover { background: #0b1e30; }
+
+  /* Scrollbar azul */
+  body.theme-agartha ::-webkit-scrollbar-thumb { background: var(--border); }
+  body.theme-agartha ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  /* Texto sombra azul */
+  body.theme-agartha {
+    text-shadow: 0 0 7px rgba(0,200,255,.3);
+  }
+
+  /* Gear icon azul */
+  body.theme-agartha .gear-icon { fill: var(--accent); }
+
+  /* Ventana de letras con estilo Agartha */
+  body.theme-agartha #lyricsWindow {
+    background: #060d18;
+    border-color: var(--border);
+    box-shadow: 0 0 28px rgba(0,200,255,.35);
+  }
+  body.theme-agartha #lyricsHeader {
+    background: #030810;
+    border-bottom-color: var(--border);
+    text-shadow: 0 0 10px var(--accent);
+  }
+
+  /* Línea activa en letras con color cian */
+  body.theme-agartha .lyric-active {
+    background: linear-gradient(90deg, rgba(0,200,255,0.35), rgba(0,100,200,0.2)) !important;
+    color: #fff !important;
+    box-shadow: 0 0 14px rgba(0,200,255,0.45) !important;
+  }
+
+  /* Título con efecto de profundidad */
+  body.theme-agartha .title {
+    text-shadow: 0 0 16px rgba(0,200,255,.6), 0 0 4px rgba(0,200,255,.9);
+  }
+
+  /* Transición suave al cambiar de tema */
+  body, body * {
+    transition: background-color 0.6s ease, color 0.4s ease,
+                border-color 0.5s ease, box-shadow 0.5s ease,
+                text-shadow 0.4s ease;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     ESTILOS GENERALES
+  ═══════════════════════════════════════════════════════════════ */
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--crt-bg); color:var(--crt-fg);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Courier New", monospace;
+    letter-spacing: .2px; text-shadow:0 0 6px rgba(255,214,74,.25);
+    overflow:hidden;
+    cursor: default;
+  }
+
+  .purple-text {
+    color: var(--crt-purple);
+    font-weight: bold;
+    text-shadow: 0 0 12px rgba(255, 255, 0, 0.6);
+  }
+
+  .scanlines::after{content:""; pointer-events:none; position:fixed; inset:0; background:repeating-linear-gradient( to bottom, rgba(255,255,255,.03), rgba(255,255,255,.03) 1px, transparent 2px, transparent 3px); }
+  .vignette::before{content:""; position:fixed; inset:0; pointer-events:none; box-shadow: inset 0 0 120px 40px #000;}
+  .bezel{border:2px solid var(--border); border-radius:10px; box-shadow:0 0 18px rgba(255,214,74,.15), inset 0 0 10px rgba(255,214,74,.08);}
+  .blink{animation:blink 1s steps(1) infinite;} @keyframes blink{50%{opacity:0}}
+  .flicker{animation:flicker 2s infinite;} @keyframes flicker{0%,100%{opacity:1} 10%{opacity:.8} 20%{opacity:.6} 30%{opacity:.9} 40%{opacity:.7} 50%{opacity:1} 70%{opacity:.85} 90%{opacity:.95}}
+  .glitch{position:relative;}
+  .glitch::before,.glitch::after{content:attr(data-text); position:absolute; left:0; top:0; clip-path:inset(0 0 0 0);}
+  .glitch::before{transform:translate(1px,0); color:var(--crt-warn); opacity:.8; animation:gl1 800ms infinite;}
+  .glitch::after{transform:translate(-1px,0); color:#fff; opacity:.3; animation:gl2 800ms infinite;}
+  @keyframes gl1{0%{clip-path:inset(0 0 85% 0)} 20%{clip-path:inset(10% 0 60% 0)} 40%{clip-path:inset(80% 0 5% 0)} 60%{clip-path:inset(50% 0 20% 0)} 80%{clip-path:inset(30% 0 50% 0)} 100%{clip-path:inset(15% 0 70% 0)}}
+  @keyframes gl2{0%{clip-path:inset(85% 0 0 0)} 20%{clip-path:inset(60% 0 10% 0)} 40%{clip-path:inset(5% 0 80% 0)} 60%{clip-path:inset(20% 0 50% 0)} 80%{clip-path:inset(50% 0 30% 0)} 100%{clip-path:inset(70% 0 15% 0)}}
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--box); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; border: 1px solid var(--box); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+  .player, button, a, .song-item, input, textarea, .toggleClock, .gear-toggle-container, .btn { cursor: pointer; }
+  
+  .app{display:none; height:100%;}
+  .grid{display:grid; grid-template-columns: 1fr; grid-template-rows: 1fr; height:100%; gap:12px; padding:12px; box-sizing:border-box;}
+  .playerWrap{display:flex; flex-direction: column; align-items:center; justify-content:center; height:100%;}
+  
+  .toggleClock{ display: none; }
+  .clockPanel{ display: none; }
+  .clockPanel.active{ display: none; }
+  .full-time-box{ display: none; }
+  .full-date-box{ display: none; }
+  .mini-12h{ display: none; }
+  
+  .player{max-width:720px; width:100%; background:#0c0c0c; padding:18px; border-radius:14px; border:2px solid var(--border); box-shadow:0 0 22px rgba(255,214,74,.12),inset 0 0 10px rgba(255,214,74,.05);}
+  .player .header{display:flex; gap:16px; align-items:center;}
+  .cover{width:180px; height:180px; object-fit:cover; border-radius:10px; border:2px solid var(--border); background:#111;}
+  .meta{flex:1;}
+  .title{font-size:26px; margin:0 0 6px;}
+  .artist{margin:0; color:var(--crt-dim); font-size:13px;}
+  .album-info{font-size:11px; color:var(--crt-dim); margin:3px 0; display:block;}
+  .year-info{font-size:10px; color:var(--accent); display:block;}
+  .controls{display:flex; align-items:center; gap:12px; margin-top:12px; justify-content: flex-start;}
+  button, .btn{background:transparent; color:var(--crt-fg); border:2px solid var(--border); padding:6px 10px; border-radius:8px; font-weight:700; font-size:14px; opacity: 1; transition: opacity 0.2s;}
+  button:hover, .btn:hover{opacity: 0.8; text-shadow: 0 0 8px var(--accent);}
+  .btn-remove{background:var(--crt-warn); color:#fff; border-color:#ff0000; padding:4px 8px; font-size:12px;}
+  .progress{margin-top:12px;}
+  .bar{height:10px; background:#1a1a1a; border:2px solid var(--border); border-radius:8px; overflow:hidden; cursor:pointer;}
+  .bar > div{height:100%; width:0%; background:linear-gradient(90deg,var(--accent),#bca24b); transition:width .1s linear; box-shadow: 0 0 8px var(--accent);}
+  .time{display:flex; justify-content:space-between; color:var(--crt-dim); font-size:14px; margin-top:6px;}
+  .playlist{margin-top:16px; border-top:2px dashed var(--border); padding-top:10px; max-height:36vh; overflow:auto;}
+  .song{display:flex; align-items:center; gap:10px; padding:8px; border-radius:8px; cursor:pointer; transition:background 0.3s;}
+  .song:hover{background:#1a1a1a;}
+  .song.active{background:#13110b; border:1px dashed var(--border);}
+  .song .thumb{width:40px; height:40px; border:1px solid var(--border); object-fit:cover; border-radius:6px; background:#111;}
+  .song-info{flex:1; min-width:0;}
+  .song-title{font-weight:bold; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .song-artist{font-size:12px; color:var(--crt-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .song-remove{opacity:0; transition:opacity 0.3s; background:transparent; border:none; color:var(--crt-warn); cursor:pointer; font-size:16px; padding:0 5px;}
+  .song:hover .song-remove{opacity:1;}
+  .bottom-text { text-align: center; margin-top: 10px; }
+  .bottom-text a { text-decoration: none; color: inherit; }
+  #boot{position:absolute; inset:12px; padding:16px; background:var(--box); z-index:1000;}
+  #boot pre{margin:0; white-space:pre-wrap;}
+  .enter{color:var(--accent);}
+  .errorlog{color:var(--crt-warn); text-shadow:0 0 8px rgba(255,0,0,.35);}
+  .redBlink{animation:redblink .35s steps(1) 10;} @keyframes redblink{50%{opacity:0}}
+  .gear-toggle-container { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; z-index: 10; display: flex; align-items: center; justify-content: center; background: none; border: none; }
+  .gear-icon { width: 50px; height: 50px; fill: var(--accent); animation: rotate-gear 4s linear infinite; text-shadow: 0 0 8px var(--accent); }
+  @keyframes rotate-gear { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  #configToast { position: fixed; top: 20px; right: 20px; background: var(--box); border: 1px solid var(--border); color: var(--crt-fg); padding: 8px 16px; border-radius: 6px; font-weight: bold; opacity: 0; transition: opacity 0.3s; z-index: 200; pointer-events: none; font-size: 12px; }
+  .synth-menu { position: fixed; bottom: 80px; right: 20px; width: 200px; padding: 20px; background: var(--box); border: 2px solid var(--border); border-radius: 8px; z-index: 100; text-align: center; }
+  .synth-menu h3 { margin: 0 0 20px 0; font-size: 14px; color: var(--crt-fg); }
+  .knob-container { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .knob { width: 80px; height: 80px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #333, #111); border: 3px solid var(--border); position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .knob-indicator { width: 6px; height: 30px; background: var(--accent); border-radius: 3px; position: absolute; top: 5px; transform: rotate(var(--rotation)); }
+  #volumeValue { font-size: 12px; color: var(--crt-dim); margin: 5px 0; }
+  .control-icon { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: rgba(255,255,0,0.1); padding: 4px 8px; border-radius: 4px; border: 1px solid var(--accent); cursor: pointer; font-size: 13px; transition: all 0.2s; }
+  .control-icon:hover { background: rgba(255,255,0,0.2); box-shadow: 0 0 8px var(--accent); }
+
+  /* ── Letras: línea clickeable ── */
+  .lyric-line {
+    padding: 4px 0;
+    color: var(--crt-dim);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .lyric-line:hover {
+    background: rgba(255,255,255,0.06);
+    color: var(--crt-fg);
+  }
+  .lyric-active {
+    background: linear-gradient(90deg, var(--crt-purple), rgba(138,43,226,0.3));
+    color: #fff;
+    font-weight: bold;
+    padding-left: 8px;
+    box-shadow: 0 0 12px rgba(138,43,226,0.5);
+  }
+</style>
+</head>
+<body class="scanlines vignette">
+<div id="configToast" class="bezel"></div>
+<div id="boot" class="bezel">
+  <pre id="bootText" aria-live="polite"></pre>
+  <div id="pressEnter" class="enter blink" style="margin-top:10px">[PRESS ENTER TO START] - [S PARA SKIPEAR]</div>
+</div>
+
+<div class="app" id="app">
+  <div class="grid" id="mainGrid">
+    <div class="playerWrap">
+      <div class="player bezel" id="playerUI">
+        <div class="header">
+          <img id="cover" class="cover" alt="cover">
+          <div class="meta">
+            <h2 class="title" id="title">—</h2>
+            <p class="artist" id="artist">—</p>
+            <div class="album-info" id="album">—</div>
+            <div class="year-info" id="year">—</div>
+            <div class="controls">
+              <button id="prev">⏮</button>
+              <button id="play">▶</button>
+              <button id="pause" style="display:none">⏸</button>
+              <button id="next">⏭</button>
+              <button id="loop" title="Loop">↻</button>
+              <button id="shuffle" title="Shuffle">🔀</button>
+              <button id="showLyricsBtn" title="Letras">🎤</button>
+              <label class="btn" for="filePick" title="Añadir canciones">+</label>
+              <input id="filePick" type="file" accept="audio/*" multiple style="display:none">
+            </div>
+            <div class="progress">
+              <div class="bar" id="progressBar"><div id="bar"></div></div>
+              <div class="time"><span id="tCur">0:00</span><span id="tDur">0:00</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="playlist" id="playlist"></div>
+        <audio id="audio" preload="auto"></audio>
+      </div>
+    </div>
+    <div class="bottom-text"><a href="minicoso.html">I LOV YU N-IGGA</a></div>
+
+    <!-- Ventana flotante de letras — oculta al inicio -->
+    <div id="lyricsWindow" class="bezel" style="display:none; position:fixed; top:80px; left:80px; min-width:320px; min-height:180px; max-width:500px; max-height:60vh; background:var(--box); color:var(--crt-fg); z-index:9999; box-shadow:0 0 24px rgba(138,43,226,0.4); overflow:auto; resize:both;">
+      <div id="lyricsHeader" style="cursor:move; background:var(--crt-bg); padding:6px 12px; font-weight:bold; border-bottom:2px solid var(--border); user-select:none; text-shadow:0 0 8px var(--accent);">🎤 LETRAS <button id="closeLyrics" style="float:right; background:var(--crt-warn); color:#fff; border:none; border-radius:4px; padding:2px 8px; cursor:pointer; font-weight:bold;">✕</button></div>
+      <div id="lyricsContent" style="padding:12px; font-size:1.1em; line-height:1.6; max-height:40vh; overflow-y:auto;"></div>
+    </div>
+  </div>
+
+  <div id="synth-menu" class="synth-menu bezel" style="display:none;">
+    <h3>VOLUMEN</h3>
+    <div class="knob-container">
+      <div class="knob" id="volumeKnob" style="--rotation: 0deg;">
+        <div class="knob-indicator"></div>
+      </div>
+      <p id="volumeValue">20%</p>
+    </div>
+  </div>
+
+  <button class="gear-toggle-container" id="gearToggle">
+    <svg class="gear-icon" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="20" fill="var(--box)" stroke="var(--border)" stroke-width="2"/>
+      <g id="teeth">
+        <rect x="45" y="5" width="10" height="15" rx="2"/><rect x="45" y="80" width="10" height="15" rx="2"/>
+        <rect x="5" y="45" width="15" height="10" rx="2"/><rect x="80" y="45" width="15" height="10" rx="2"/>
+        <rect x="18" y="18" width="11" height="11" rx="2" transform="rotate(45 23.5 23.5)"/>
+        <rect x="71" y="71" width="11" height="11" rx="2" transform="rotate(45 76.5 76.5)"/>
+        <rect x="71" y="18" width="11" height="11" rx="2" transform="rotate(-45 76.5 23.5)"/>
+        <rect x="18" y="71" width="11" height="11" rx="2" transform="rotate(-45 23.5 76.5)"/>
+      </g>
+    </svg>
+    <input type="checkbox" id="disableBootToggle" style="display:none">
+  </button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// LRC / Lyrics helpers
+// ═══════════════════════════════════════════════════════════════
+function parseLRC(text) {
+  const lines = text.split(/\r?\n/);
+  const result = [];
+  for (const line of lines) {
+    const timeExp = /\[(\d{1,2}):(\d{2})(?:\.(\d{1,3}))?\]/g;
+    const times = [];
+    let match;
+    while ((match = timeExp.exec(line)) !== null) {
+      const min = parseInt(match[1], 10);
+      const sec = parseInt(match[2], 10);
+      const ms  = match[3] ? parseInt(match[3].padEnd(3,'0'), 10) : 0;
+      times.push(min * 60 + sec + ms / 1000);
+    }
+    if (times.length > 0) {
+      const textPart = line.replace(/\[\d{1,2}:\d{2}(?:\.\d{1,3})?\]/g, '').trim();
+      for (const t of times) result.push({ time: t, text: textPart });
+    }
+  }
+  return result.filter(x => x.time !== null).sort((a, b) => a.time - b.time);
+}
+
+let lyricsData = [];
+
+function showLyricsWindow() {
+  document.getElementById('lyricsWindow').style.display = 'block';
+}
+function hideLyricsWindow() {
+  document.getElementById('lyricsWindow').style.display = 'none';
+}
+document.getElementById('showLyricsBtn').onclick = showLyricsWindow;
+document.getElementById('closeLyrics').onclick   = hideLyricsWindow;
+
+// Drag para la ventana de letras
+(function() {
+  const win    = document.getElementById('lyricsWindow');
+  const header = document.getElementById('lyricsHeader');
+  let offsetX, offsetY, dragging = false;
+  header.onmousedown = function(e) {
+    if (e.target.id === 'closeLyrics') return;
+    dragging = true;
+    offsetX = e.clientX - win.offsetLeft;
+    offsetY = e.clientY - win.offsetTop;
+    document.body.style.userSelect = 'none';
+  };
+  document.onmousemove = function(e) {
+    if (dragging) {
+      win.style.left = (e.clientX - offsetX) + 'px';
+      win.style.top  = (e.clientY - offsetY) + 'px';
+    }
+  };
+  document.onmouseup = function() {
+    dragging = false;
+    document.body.style.userSelect = '';
+  };
+})();
+
+function loadLyricsForSong(song) {
+  const base     = song.src.replace(/\.[^.]+$/, '');
+  const fileName = song.src.split('/').pop().replace(/\.[^.]+$/, '');
+  const tryFiles = [
+    base + '.lrc',
+    base + '.lcr',
+    'mus/' + fileName + '.lrc',
+    'mus/' + fileName + '.lcr'
+  ];
+  const lyricsContent = document.getElementById('lyricsContent');
+  lyricsData = [];
+  // NO mostramos la ventana aquí — el usuario la abre con el botón 🎤
+
+  (async function tryNext(i) {
+    if (i >= tryFiles.length) {
+      lyricsContent.innerHTML = '<span style="color:var(--crt-dim); text-align:center; display:block; margin-top:20px;">📝 Sin letras disponibles para esta canción</span>';
+      return;
+    }
+    try {
+      const resp = await fetch(tryFiles[i]);
+      if (!resp.ok) throw new Error('not found');
+      const text = await resp.text();
+      lyricsData = parseLRC(text);
+      if (!lyricsData.length) throw new Error('empty');
+      renderLyrics(0);
+    } catch (e) {
+      tryNext(i + 1);
+    }
+  })(0);
+}
+
+function renderLyrics(currentTime) {
+  const lyricsContent = document.getElementById('lyricsContent');
+  if (!lyricsData.length) {
+    lyricsContent.innerHTML = '<span style="color:var(--crt-warn); text-align:center;">No hay letra sincronizada.</span>';
+    return;
+  }
+
+  let activeIdx = -1;
+  for (let i = 0; i < lyricsData.length; i++) {
+    if (lyricsData[i].time <= currentTime) activeIdx = i;
+    else break;
+  }
+
+  // Reconstruir solo si cambió la línea activa (optimización)
+  const prev = lyricsContent.dataset.activeIdx;
+  if (String(activeIdx) === prev && lyricsContent.children.length === lyricsData.length) {
+    // Solo actualizar clases
+    Array.from(lyricsContent.children).forEach((el, idx) => {
+      el.classList.toggle('lyric-active', idx === activeIdx);
+    });
+  } else {
+    lyricsContent.dataset.activeIdx = activeIdx;
+    lyricsContent.innerHTML = lyricsData.map((line, idx) =>
+      `<div class="lyric-line${idx === activeIdx ? ' lyric-active' : ''}" data-time="${line.time}">${line.text || '&nbsp;'}</div>`
+    ).join('');
+
+    // Clic en línea → saltar al tiempo
+    Array.from(lyricsContent.querySelectorAll('.lyric-line')).forEach(el => {
+      el.addEventListener('click', () => {
+        const t = parseFloat(el.dataset.time);
+        if (!isNaN(t)) {
+          audio.currentTime = t;
+          if (audio.paused) {
+            audio.play().then(() => {
+              btnPlay.style.display  = 'none';
+              btnPause.style.display = 'inline-block';
+            }).catch(() => {});
+          }
+        }
+      });
+    });
+  }
+
+  // Scroll automático a la línea activa
+  if (activeIdx >= 0) {
+    const children = lyricsContent.children;
+    if (children[activeIdx]) children[activeIdx].scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Tema visual
+// ═══════════════════════════════════════════════════════════════
+const THEMES = {
+  agartha: {
+    bodyClass: 'theme-agartha',
+    favicon: 'mus/agartha.png',
+    title: 'AGARTHA'
+  }
+};
+let currentTheme = null;
+
+function applyTheme(themeName) {
+  if (currentTheme === themeName) return;
+  // Quitar temas anteriores
+  Object.values(THEMES).forEach(t => document.body.classList.remove(t.bodyClass));
+  currentTheme = themeName;
+  if (themeName && THEMES[themeName]) {
+    document.body.classList.add(THEMES[themeName].bodyClass);
+    // Cambiar favicon temporalmente
+    const link = document.querySelector('link[rel="icon"]');
+    if (link) link.href = THEMES[themeName].favicon;
+  } else {
+    // Restaurar favicon original
+    const link = document.querySelector('link[rel="icon"]');
+    if (link) link.href = 'mus/favicon1.png';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Boot
+// ═══════════════════════════════════════════════════════════════
+const bootText        = document.getElementById('bootText');
+const pressEnter      = document.getElementById('pressEnter');
+const bootScreen      = document.getElementById('boot');
+const appScreen       = document.getElementById('app');
+const disableBootToggle = document.getElementById('disableBootToggle');
+const gearToggle      = document.getElementById('gearToggle');
+const toast           = document.getElementById('configToast');
+const BOOT_DISABLED_KEY = 'boot_disabled_v3';
+let bootStarted = false;
+
+function playSound(file) {
+  if (!document.getElementById('audio').paused) return;
+  const sound = new Audio(file);
+  sound.volume = 0.2;
+  sound.play().catch(() => {});
+}
+
+function showToast(msg) {
+  toast.textContent = msg;
+  toast.style.opacity = 1;
+  setTimeout(() => { toast.style.opacity = 0; }, 2000);
+}
+
+function skipBoot() {
+  bootStarted = true;
+  bootScreen.style.display = 'none';
+  appScreen.style.display  = 'grid';
+}
+
+if (localStorage.getItem(BOOT_DISABLED_KEY) === 'true') {
+  skipBoot();
+  disableBootToggle.checked = true;
+}
+
+gearToggle.addEventListener('click', (e) => {
+  e.preventDefault();
+  const newState = !disableBootToggle.checked;
+  disableBootToggle.checked = newState;
+  playSound(newState ? 'mus/onof/off.mp3' : 'mus/onof/on.mp3');
+  localStorage.setItem(BOOT_DISABLED_KEY, newState ? 'true' : 'false');
+  showToast(newState ? "INICIO DESACTIVADO" : "INICIO ACTIVADO");
+});
+
+const bootLines = [
+  '>>> INITIALIZING [DISASSEMBLY DRONE UNIT: DDM-04]',
+  '>>> Core Systems: ONLINE',
+  '>>> Neural Combat Subroutines: ACTIVE',
+  '>>> Memory Integrity: [ERROR - PARTIAL CORRUPTION]',
+  '>>> Weapon Systems: ONLINE [Scythe Arm / Plasma Projector]',
+  '>>> Stealth Mode: ENGAGED',
+  '>>> Directive Override: [HUNTING - COPPER BLOOD DETECTED]'
+];
+const timings = [0, 1000, 1700, 2400, 3100, 3700, 4000];
+
+function addLine(t, text) {
+  setTimeout(() => {
+    bootText.innerHTML += (bootText.innerHTML ? "\n" : "") + text;
+  }, t);
+}
+
+function startBoot() {
+  if (bootStarted) return;
+  bootStarted = true;
+  pressEnter.style.display = 'none';
+  bootText.innerHTML = '';
+  bootLines.forEach((ln, i) => addLine(timings[i], ln));
+  setTimeout(() => {
+    bootText.innerHTML += '\n\n<span class="glitch errorlog redBlink" data-text="--- ERROR LOG ---">--- ERROR LOG ---</span>' +
+      '\n· Core Fragmentation Detected' +
+      '\n· Memory Sectors 7A-9F Unstable' +
+      '\n· Unverified Updates from JCJenson Database';
+  }, 4300);
+  setTimeout(() => {
+    bootText.innerHTML += '\n\n[EXECUTION PRIORITY: TERMINATE WORKER DRONES]' +
+      '\n[SECONDARY DIRECTIVE: ELIMINATE SENTINELS]' +
+      '\n[FAILSAFE: NONE]';
+  }, 5600);
+  setTimeout(() => {
+    bootText.innerHTML += '\n\n>>> SYSTEM BOOT COMPLETE\n>>> Unit DDM-04 Awaiting Targets...';
+  }, 6500);
+  setTimeout(() => {
+    bootText.innerHTML += '\n\n<span class="purple-text">[LOL]</span>\n<span class="purple-text">>>> ¡BITE ME! >:(</span>';
+    setTimeout(() => {
+      bootScreen.style.display = 'none';
+      appScreen.style.display  = 'grid';
+    }, 1000);
+  }, 7200);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Reproductor
+// ═══════════════════════════════════════════════════════════════
+const audio     = document.getElementById('audio');
+const cover     = document.getElementById('cover');
+const titleEl   = document.getElementById('title');
+const artistEl  = document.getElementById('artist');
+const albumEl   = document.getElementById('album');
+const yearEl    = document.getElementById('year');
+const bar       = document.getElementById('bar');
+const tCur      = document.getElementById('tCur');
+const tDur      = document.getElementById('tDur');
+const btnPlay   = document.getElementById('play');
+const btnPause  = document.getElementById('pause');
+const playlistEl = document.getElementById('playlist');
+
+let songs = [];
+let currentIdx = 0;
+let eeState    = {};
+let isLooping  = false;
+let isShuffled = false;
+let originalSongsOrder = [];
+
+// ── Carga songs.json ─────────────────────────────────────────
+async function loadSongsFromJSON() {
+  try {
+    const response = await fetch('songs.json');
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    songs = await response.json();
+    originalSongsOrder = [...songs];
+  } catch (e) {
+    console.error('Error cargando songs.json:', e);
+  }
+}
+
+// ── Easter eggs ───────────────────────────────────────────────
+function initEE() {
+  const rolls = {};
+  songs.forEach(s => {
+    if (s.easterEgg && !(s.artist in rolls)) rolls[s.artist] = Math.random() < 0.05;
+    if (s.easterEgg) eeState[s.title] = rolls[s.artist];
+  });
+}
+
+// ── Fallback de metadatos ─────────────────────────────────────
+function fallbackMetadata(file) {
+  const name  = file.name.replace(/\.[^/.]+$/, "");
+  let title = name, artist = "Artista desconocido", album = "Álbum desconocido", year = "Año desconocido";
+  const parts = name.split(/[-–—]/).map(p => p.trim());
+  if (parts.length >= 2) { artist = parts[0]; title = parts.slice(1).join(" - "); }
+  return { title, artist, album, year, picture: null };
+}
+
+// ── Extrae metadatos de un File local ─────────────────────────
+function extractMetadata(file) {
+  return new Promise((resolve) => {
+    if (typeof window.jsmediatags === 'undefined') { resolve(fallbackMetadata(file)); return; }
+    window.jsmediatags.read(file, {
+      onSuccess: function(tag) {
+        const t = tag.tags;
+        let picture = null;
+        if (t.picture) {
+          const pic = t.picture;
+          const b64 = pic.data.reduce((acc, byte) => acc + String.fromCharCode(byte), '');
+          picture = `data:${pic.format};base64,${btoa(b64)}`;
+        }
+        resolve({
+          title:   t.title  || file.name.replace(/\.[^/.]+$/, ""),
+          artist:  t.artist || "Artista desconocido",
+          album:   t.album  || "Álbum desconocido",
+          year:    t.year   || "Año desconocido",
+          picture
+        });
+      },
+      onError: () => resolve(fallbackMetadata(file))
+    });
+  });
+}
+
+// ── Lee metadatos de las canciones del servidor ───────────────
+async function loadMetadataForSongs() {
+  if (typeof window.jsmediatags === 'undefined') return;
+  for (let i = 0; i < songs.length; i++) {
+    const song = songs[i];
+    if (!song.src) continue;
+    try {
+      const response = await fetch(song.src);
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const blob = await response.blob();
+      const file = new File([blob], song.src.split('/').pop(), { type: blob.type });
+      await new Promise((resolve) => {
+        window.jsmediatags.read(file, {
+          tags: ["v1", "v2"],
+          onSuccess: function(tag) {
+            const t = tag.tags;
+            if (t.title)  song.title  = String(t.title).trim();
+            if (t.artist) song.artist = String(t.artist).trim();
+            if (t.album)  song.album  = String(t.album).trim();
+            if (t.year)   song.year   = String(t.year).trim();
+            if (t.picture) {
+              try {
+                const pic = t.picture;
+                const uint8 = new Uint8Array(pic.data);
+                const bin   = String.fromCharCode.apply(null, uint8);
+                song.image  = `data:${pic.format};base64,${btoa(bin)}`;
+              } catch (e) { /* silencioso */ }
+            }
+            resolve();
+          },
+          onError: () => resolve()
+        });
+      });
+    } catch (e) {
+      console.error('Error con', song.src, ':', e);
+    }
+  }
+  songs.sort((a, b) => {
+    const aA = a.artist || '', bA = b.artist || '';
+    if (aA !== bA) return aA.localeCompare(bA);
+    return (a.title || '').localeCompare(b.title || '');
+  });
+}
+
+// ── Añadir canciones locales ──────────────────────────────────
+async function addLocalSongs(files) {
+  showToast(`Procesando ${files.length} archivo(s)...`);
+  for (let file of files) {
+    const meta = await extractMetadata(file);
+    songs.push({ ...meta, src: URL.createObjectURL(file), image: meta.picture || 'mus/favicon1.png', isLocal: true });
+  }
+  render();
+}
+
+// ── Cargar canción ────────────────────────────────────────────
+async function load(i, autoPlay = true) {
+  if (songs.length === 0) return;
+  if (i < 0) i = songs.length - 1;
+  if (i >= songs.length) i = 0;
+  currentIdx = i;
+  const s = songs[currentIdx];
+
+  titleEl.textContent  = s.title;
+  artistEl.textContent = s.artist;
+  albumEl.textContent  = s.album ? `Álbum: ${s.album}` : "—";
+  yearEl.textContent   = s.year  ? `Año: ${s.year}`    : "—";
+  cover.src = (s.easterEgg && eeState[s.title]) ? s.easterEgg : (s.image || 'mus/favicon1.png');
+
+  audio.src = s.src;
+  audio.load();
+  render();
+
+  // Aplicar o quitar tema visual
+  applyTheme(s.theme || null);
+
+  // Cargar letras (sin mostrar la ventana)
+  loadLyricsForSong(s);
+
+  if (autoPlay) {
+    audio.play().then(() => {
+      btnPlay.style.display  = 'none';
+      btnPause.style.display = 'inline-block';
+    }).catch(() => {});
+  }
+}
+
+// ── Renderizar playlist ───────────────────────────────────────
+function render() {
+  playlistEl.innerHTML = '';
+  songs.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = `song ${i === currentIdx ? 'active' : ''}`;
+    const imgSrc = (s.easterEgg && eeState[s.title]) ? s.easterEgg : (s.image || 'mus/favicon1.png');
+    d.innerHTML = `
+      <img class="thumb" src="${imgSrc}" onerror="this.src='mus/favicon1.png'">
+      <div class="song-info">
+        <div class="song-title">${s.title}</div>
+        <div class="song-artist">${s.artist}</div>
+      </div>
+      ${s.isLocal ? '<button class="song-remove">✕</button>' : ''}
+    `;
+    d.onclick = (e) => { if (!e.target.classList.contains('song-remove')) load(i, true); };
+    if (s.isLocal) d.querySelector('.song-remove').onclick = (e) => { e.stopPropagation(); removeSong(i); };
+    playlistEl.appendChild(d);
+  });
+}
+
+function removeSong(i) {
+  if (songs[i].isLocal) URL.revokeObjectURL(songs[i].src);
+  songs.splice(i, 1);
+  if (currentIdx >= i && currentIdx > 0) currentIdx--;
+  load(currentIdx, false);
+}
+
+function shuffleSongs() {
+  if (!isShuffled) {
+    originalSongsOrder = [...songs];
+    songs.sort(() => Math.random() - 0.5);
+    isShuffled = true;
+    document.getElementById('shuffle').style.color = 'var(--accent)';
+  } else {
+    songs = [...originalSongsOrder];
+    isShuffled = false;
+    document.getElementById('shuffle').style.color = 'inherit';
+  }
+  render();
+}
+
+// ── Controles ─────────────────────────────────────────────────
+btnPlay.onclick  = () => { audio.play();  btnPlay.style.display='none';  btnPause.style.display='inline-block'; };
+btnPause.onclick = () => { audio.pause(); btnPause.style.display='none'; btnPlay.style.display='inline-block'; };
+document.getElementById('prev').onclick    = () => load(currentIdx - 1);
+document.getElementById('next').onclick    = () => load(currentIdx + 1);
+document.getElementById('loop').onclick    = () => { isLooping = !isLooping; audio.loop = isLooping; document.getElementById('loop').style.color = isLooping ? 'var(--accent)' : 'inherit'; };
+document.getElementById('shuffle').onclick = shuffleSongs;
+document.getElementById('filePick').onchange = (e) => addLocalSongs(Array.from(e.target.files));
+
+// ── Listeners de audio ────────────────────────────────────────
+audio.ontimeupdate = function() {
+  const p = (audio.currentTime / audio.duration) * 100 || 0;
+  bar.style.width = p + '%';
+  const fmt = t => Math.floor(t/60) + ':' + ('0' + Math.floor(t%60)).slice(-2);
+  tCur.textContent = fmt(audio.currentTime);
+  tDur.textContent = isNaN(audio.duration) ? "0:00" : fmt(audio.duration);
+  if (document.getElementById('lyricsWindow').style.display !== 'none') {
+    renderLyrics(audio.currentTime);
+  }
+};
+audio.onended = () => { if (!isLooping) load(currentIdx + 1); };
+
+document.getElementById('progressBar').onclick = (e) => {
+  const rect = document.getElementById('progressBar').getBoundingClientRect();
+  audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
+};
+
+// ── Teclado ───────────────────────────────────────────────────
+document.addEventListener('keydown', (e) => {
+  const key = e.key.toLowerCase();
+  if (key === 's') { e.preventDefault(); skipBoot(); }
+  else if (!bootStarted) {
+    if (key === 'enter') startBoot();
+  } else {
+    if (key === ' ')          { e.preventDefault(); audio.paused ? btnPlay.click() : btnPause.click(); }
+    if (key === 'arrowright') load(currentIdx + 1);
+    if (key === 'arrowleft')  load(currentIdx - 1);
+  }
+});
+
+document.addEventListener('click', (e) => {
+  if (!bootStarted && !e.target.closest('#gearToggle')) startBoot();
+});
+
+// ── Inicio ────────────────────────────────────────────────────
+loadSongsFromJSON().then(() => {
+  initEE();
+  loadMetadataForSongs().then(() => {
+    initEE();
+    currentIdx = 0;
+    load(0, false);
+    render();
+  });
+});
+</script>
+</body>
+</html>

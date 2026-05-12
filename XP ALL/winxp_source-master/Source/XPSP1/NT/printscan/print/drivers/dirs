@@ -1,5 +1,0 @@
-DIRS = \
-    kernelmode \
-    usermode \
-    binaries
-

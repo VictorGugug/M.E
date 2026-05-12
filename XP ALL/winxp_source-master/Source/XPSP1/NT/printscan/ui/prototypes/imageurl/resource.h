@@ -1,2 +1,0 @@
-#define IDR_IMGPROTOCOL 1000
-

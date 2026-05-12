@@ -1,5 +1,0 @@
-LIBRARY OKI9RES
-
-EXPORTS
-                DllGetClassObject   PRIVATE
-                DllCanUnloadNow     PRIVATE

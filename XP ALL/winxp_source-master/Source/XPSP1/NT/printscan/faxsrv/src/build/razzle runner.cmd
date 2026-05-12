@@ -1,1 +1,0 @@
-start e:\nt\tools\razzle.cmd %1

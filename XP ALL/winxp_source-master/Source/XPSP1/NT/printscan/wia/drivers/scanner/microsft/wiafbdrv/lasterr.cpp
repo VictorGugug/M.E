@@ -1,9 +1,0 @@
-// lasterr.cpp : Implementation of CLastError
-#include "pch.h"
-#include "wiafb.h"
-#include "lasterr.h"
-
-/////////////////////////////////////////////////////////////////////////////
-// CLastError
-
-

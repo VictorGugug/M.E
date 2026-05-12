@@ -1,5 +1,0 @@
-LIBRARY RIAFUI
-
-EXPORTS
-    DllGetClassObject   PRIVATE
-    DllCanUnloadNow     PRIVATE

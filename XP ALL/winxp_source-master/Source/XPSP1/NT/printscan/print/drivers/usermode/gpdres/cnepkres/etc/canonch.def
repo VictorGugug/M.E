@@ -1,7 +1,0 @@
-LIBRARY CANONCH
-
-PROTMODE
-
-EXPORTS
-    bInitProc
-    bInitFEProc

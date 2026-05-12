@@ -1,9 +1,0 @@
-; MsFxsSnp.def : Declares the module parameters.
-
-LIBRARY      "FxsAdmin.DLL"
-
-EXPORTS
-	DllCanUnloadNow     PRIVATE
-	DllGetClassObject   PRIVATE
-	DllRegisterServer   PRIVATE
-	DllUnregisterServer PRIVATE

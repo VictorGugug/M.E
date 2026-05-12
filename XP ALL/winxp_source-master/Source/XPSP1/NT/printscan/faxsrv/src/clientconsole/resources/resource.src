@@ -1,5 +1,0 @@
-LIBRARY TARGET_NAME
-
-EXPORTS
-    GetResourceHandle
-

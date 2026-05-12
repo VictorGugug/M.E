@@ -1,4 +1,0 @@
-LIBRARY INETPPUI
-
-EXPORTS
-    InitializePrintMonitorUI

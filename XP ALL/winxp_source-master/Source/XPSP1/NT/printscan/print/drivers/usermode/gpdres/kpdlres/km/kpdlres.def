@@ -1,9 +1,0 @@
-LIBRARY KPDLRES
-
-EXPORTS
-	OEMGetInfo
-	OEMDevMode
-	OEMFilterGraphics
-	OEMSendFontCmd
-	OEMCommandCallback
-	OEMOutputCharStr

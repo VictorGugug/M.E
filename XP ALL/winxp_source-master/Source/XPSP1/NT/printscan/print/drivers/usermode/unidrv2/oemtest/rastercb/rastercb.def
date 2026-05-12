@@ -1,7 +1,0 @@
-LIBRARY         RASTERCB
-EXPORTS     OEMGetInfo
-            OEMDevMode
-            OEMEnablePDEV
-            OEMDisablePDEV
-            OEMResetPDEV
-            OEMImageProcessing

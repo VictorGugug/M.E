@@ -1,9 +1,0 @@
-
-DIRS=   \
-        wiatest2   \
-        wialogcfg  \
-        wiavideotest
-
-OPTIONAL_DIRS =
-
-

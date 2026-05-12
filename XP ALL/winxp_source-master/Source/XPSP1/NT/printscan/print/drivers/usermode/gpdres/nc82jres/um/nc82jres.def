@@ -1,5 +1,0 @@
-LIBRARY NC82JRES
-
-EXPORTS
-                DllGetClassObject   PRIVATE
-                DllCanUnloadNow     PRIVATE

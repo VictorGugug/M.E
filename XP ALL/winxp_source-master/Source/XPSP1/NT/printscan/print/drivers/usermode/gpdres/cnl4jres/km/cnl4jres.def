@@ -1,7 +1,0 @@
-LIBRARY CNL4JRES
-
-EXPORTS		OEMGetInfo
-		OEMDevMode
-		OEMCommandCallback
-		OEMSendFontCmd
-		OEMOutputCharStr

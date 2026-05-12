@@ -1,5 +1,0 @@
-LIBRARY fax
-
-EXPORTS
-    DllEntryPoint
-    CPlApplet

@@ -1,7 +1,0 @@
-LIBRARY QBJ
-
-PROTMODE
-
-EXPORTS
-    bInitProc
-    bInitFEProc

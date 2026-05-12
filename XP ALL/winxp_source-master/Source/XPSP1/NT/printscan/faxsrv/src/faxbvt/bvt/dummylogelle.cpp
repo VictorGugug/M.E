@@ -1,1 +1,0 @@
-#include "..\Include\LogElle.c"

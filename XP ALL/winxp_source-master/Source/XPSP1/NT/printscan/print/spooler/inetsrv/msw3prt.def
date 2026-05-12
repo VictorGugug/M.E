@@ -1,7 +1,0 @@
-LIBRARY MSW3PRT
-
-EXPORTS
-    HttpExtensionProc
-    GetExtensionVersion
-
-

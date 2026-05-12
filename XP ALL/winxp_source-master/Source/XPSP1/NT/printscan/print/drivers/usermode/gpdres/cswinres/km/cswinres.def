@@ -1,7 +1,0 @@
-LIBRARY CSWINRES
-
-EXPORTS OEMGetInfo
-        OEMDevMode
-        OEMCommandCallback
-		OEMSendFontCmd
-		OEMOutputCharStr
