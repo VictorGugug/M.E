@@ -1,4 +1,4 @@
-const http = require("node:http");
+﻿const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
 
@@ -19,6 +19,7 @@ const MIME_TYPES = {
   ".ogg": "audio/ogg",
   ".png": "image/png",
   ".svg": "image/svg+xml",
+  ".flac": "audio/flac",
   ".wav": "audio/wav",
   ".webp": "image/webp",
 };
@@ -42,10 +43,24 @@ function resolveRequestPath(urlPathname) {
   return absolutePath;
 }
 
+function resolveExistingPath(urlPathname) {
+  const directPath = resolveRequestPath(urlPathname);
+  if (directPath && fs.existsSync(directPath)) return directPath;
+
+  const xpAllPath = resolveRequestPath(path.join("/XP ALL", urlPathname));
+  if (xpAllPath && fs.existsSync(xpAllPath)) return xpAllPath;
+
+  return directPath;
+}
+
 const server = http.createServer((request, response) => {
   const requestUrl = new URL(request.url, `http://${request.headers.host}`);
-  const pathname = decodeURIComponent(requestUrl.pathname === "/" ? "/index.html" : requestUrl.pathname);
-  const absolutePath = resolveRequestPath(pathname);
+  const pathname = decodeURIComponent(
+    requestUrl.pathname === "/" || requestUrl.pathname === "/callback"
+      ? "/index.html"
+      : requestUrl.pathname
+  );
+  const absolutePath = resolveExistingPath(pathname);
 
   if (!absolutePath) {
     sendError(response, 403, "Ruta no permitida.");
@@ -60,18 +75,44 @@ const server = http.createServer((request, response) => {
 
     const finalPath = stats.isDirectory() ? path.join(absolutePath, "index.html") : absolutePath;
 
-    fs.readFile(finalPath, (readError, buffer) => {
-      if (readError) {
+    fs.stat(finalPath, (finalStatError, finalStats) => {
+      if (finalStatError) {
         sendError(response, 404, "Archivo no encontrado.");
         return;
       }
 
       const extension = path.extname(finalPath).toLowerCase();
-      response.writeHead(200, {
+      const isStaticAsset = ![".html", ".js", ".css"].includes(extension);
+      const headers = {
         "Content-Type": MIME_TYPES[extension] || "application/octet-stream",
-        "Cache-Control": "no-store",
-      });
-      response.end(buffer);
+        "Cache-Control": isStaticAsset ? "public, max-age=604800, immutable" : "no-cache",
+        "Accept-Ranges": "bytes",
+      };
+      const range = request.headers.range;
+      if (range) {
+        const match = /^bytes=(\d*)-(\d*)$/.exec(range);
+        if (!match) {
+          sendError(response, 416, "Rango no válido.");
+          return;
+        }
+        const start = match[1] ? Number(match[1]) : 0;
+        const end = match[2] ? Number(match[2]) : finalStats.size - 1;
+        if (start >= finalStats.size || end >= finalStats.size || start > end) {
+          response.writeHead(416, { ...headers, "Content-Range": `bytes */${finalStats.size}` });
+          response.end();
+          return;
+        }
+        response.writeHead(206, {
+          ...headers,
+          "Content-Length": end - start + 1,
+          "Content-Range": `bytes ${start}-${end}/${finalStats.size}`,
+        });
+        fs.createReadStream(finalPath, { start, end }).pipe(response);
+        return;
+      }
+
+      response.writeHead(200, { ...headers, "Content-Length": finalStats.size });
+      fs.createReadStream(finalPath).pipe(response);
     });
   });
 });

@@ -38,6 +38,12 @@
   --xp-selection-text: #FFF;
   --xp-taskbar-height: 30px;
   --desktop-icon-size: 32px;
+  --xp-cursor-arrow: url("./XP ALL/CURSORES/default_arrow.cur");
+  --xp-cursor-ibeam: url("./XP ALL/CURSORES/default_ibeam.cur");
+  --xp-cursor-wait: url("./XP ALL/CURSORES/default_wait.cur");
+  --xp-cursor-link: url("./XP ALL/CURSORES/default_link.cur");
+  --xp-cursor-move: url("./XP ALL/CURSORES/default_move.cur");
+  --xp-cursor-no: url("./XP ALL/CURSORES/default_no.cur");
 }
 
 html,
@@ -55,8 +61,30 @@ body {
   overflow: hidden;
   user-select: none;
   -webkit-user-select: none;
-  cursor: default;
+  cursor: var(--xp-cursor-arrow), default;
 }
+
+button,
+[role="button"],
+.desktop-icon,
+.start-button,
+.taskbar-button,
+.menu-item,
+.settings-field input[type="checkbox"],
+.settings-field input[type="range"],
+.settings-field select {
+  cursor: var(--xp-cursor-arrow), pointer;
+}
+
+input[type="text"],
+input[type="password"],
+textarea,
+.cmd-input {
+  cursor: var(--xp-cursor-ibeam), text;
+}
+
+a, .taskbar-tray button, .login-power-btn, .sidebar-action { cursor: var(--xp-cursor-link), pointer; }
+.is-dragging, .window--dragging { cursor: var(--xp-cursor-move), move; }
 
 .screen {
   position: fixed;
@@ -66,6 +94,325 @@ body {
 
 .screen--active {
   display: block;
+}
+
+/* ============================================================
+   BOOT / BIOS + Windows XP loader
+   ============================================================ */
+
+.boot-screen {
+  background: #000;
+  color: #D8D8D8;
+  overflow: hidden;
+  font-family: "Lucida Console", "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.42;
+}
+
+.boot-screen.screen--active {
+  display: block;
+}
+
+.boot-bios {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  padding: 22px 26px;
+  overflow-y: auto;
+}
+
+.boot-bios__content {
+  max-width: 860px;
+  padding-bottom: 24px;
+}
+
+.boot-bios p {
+  margin: 0;
+}
+
+.boot-line--strong {
+  color: #FFF;
+}
+
+.boot-spacer,
+.boot-block {
+  margin-top: 14px;
+}
+
+.boot-delayed {
+  opacity: 0;
+  animation: bootTextIn 0.01s linear forwards;
+}
+
+.boot-delayed--drives {
+  animation-delay: 1.55s;
+}
+
+.boot-delayed--dmi {
+  animation-delay: 2.65s;
+}
+
+.boot-menu {
+  display: inline-block;
+  min-width: 370px;
+  margin-top: 26px;
+  border: 1px solid #777;
+  background: #000;
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  animation: bootTextIn 0.01s linear 3.25s forwards;
+}
+
+.boot-menu__title {
+  background: #6B6B6B;
+  color: #FFF;
+  padding: 2px 10px;
+}
+
+.boot-menu__option {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: #D8D8D8;
+  font: inherit;
+  text-align: left;
+  padding: 2px 10px;
+}
+
+.boot-menu__option.is-selected {
+  background: #D8D8D8;
+  color: #000;
+}
+
+.boot-menu__option--disabled {
+  color: #737373;
+}
+
+.boot-menu__hint {
+  border-top: 1px solid #555;
+  color: #A9A9A9;
+  padding: 2px 10px;
+  font-size: 12px;
+}
+
+.boot-screen--awaiting-input .boot-menu {
+  box-shadow: 0 0 0 1px #D8D8D8;
+}
+
+.boot-screen--typing .boot-bios p:not([hidden]) {
+  max-width: max-content;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 0;
+  animation: bootTypeLine calc(0.34s / var(--boot-type-speed, 1)) steps(48, end) forwards;
+  animation-delay: var(--boot-type-delay, 0s);
+}
+
+.boot-screen--typing .boot-menu {
+  opacity: 1;
+  clip-path: inset(0 100% 0 0);
+  animation: bootMenuType 0.35s steps(24, end) forwards;
+  animation-delay: 2.85s;
+}
+
+.boot-screen--must-select .boot-menu__hint {
+  box-shadow: 0 0 0 1px #D8D8D8;
+  animation: bootTextIn 0.01s linear forwards;
+}
+
+.bios-peripherals-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.bios-modal-content {
+  background: linear-gradient(180deg, #0058BF 0%, #2580D5 50%, #004494 100%);
+  border: 2px solid #001D5B;
+  border-radius: 8px;
+  padding: 20px;
+  min-width: 400px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.bios-modal-content h3 {
+  color: #FFF;
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  text-align: center;
+}
+
+.bios-peripheral-setting {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.bios-peripheral-setting label {
+  color: #BBDFFF;
+  width: 100px;
+  font-size: 13px;
+}
+
+.bios-peripheral-setting select {
+  flex: 1;
+  padding: 4px;
+  border: 1px solid #001D5B;
+  font-size: 12px;
+}
+
+.bios-modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.boot-screen--skip .boot-xp::after {
+  content: "BOOTLOG_RECOVERY: XP loader skipped one frame";
+  position: absolute;
+  left: 18px;
+  top: 16px;
+  color: #7EF38A;
+  font-family: "Lucida Console", "Courier New", monospace;
+  font-size: 12px;
+  opacity: 0;
+  animation: bootBugFlash 0.85s steps(2, end) 0.1s 2;
+}
+
+.boot-xp {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  color: #F4F4F4;
+  font-family: Arial, Helvetica, sans-serif;
+  opacity: 0;
+  animation: bootFadeIn 0.24s ease-out forwards;
+}
+
+.boot-xp--fadeout {
+  animation: bootFadeOut 0.35s ease-in forwards !important;
+}
+
+.boot-xp__center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(420px, 78vw);
+  text-align: center;
+}
+
+.boot-xp__logo {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  image-rendering: auto;
+}
+
+.xp-loader {
+  width: 150px;
+  height: 20px;
+  border: 2px solid #B2B2B2;
+  border-radius: 7px;
+  margin: 112px auto 0;
+  padding: 2px 1px;
+  overflow: hidden;
+  font-size: 0;
+  background: #060606;
+}
+
+.xp-loader div {
+  width: 9px;
+  height: 100%;
+  background: linear-gradient(to bottom, #2838C7 0%, #5979EF 17%, #869EF3 32%, #869EF3 45%, #5979EF 59%, #2838C7 100%);
+  display: inline-block;
+  margin-right: 2px;
+  animation: xpLoader 2s linear infinite;
+}
+
+.boot-xp__footer {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 22px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.boot-xp__footer p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.boot-xp__footer img {
+  width: 120px;
+  height: auto;
+}
+
+@keyframes bootTextIn {
+  to { opacity: 1; }
+}
+
+@keyframes bootFadeIn {
+  to { opacity: 1; }
+}
+
+@keyframes bootFadeOut {
+  to { opacity: 0; visibility: hidden; }
+}
+
+@keyframes bootTypeLine {
+  to { width: 100%; }
+}
+
+@keyframes bootMenuType {
+  to { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes bootBugFlash {
+  0%, 100% { opacity: 0; transform: translateX(0); }
+  35%, 70% { opacity: 1; transform: translateX(2px); }
+}
+
+@keyframes xpLoader {
+  from { transform: translateX(-30px); }
+  to { transform: translateX(150px); }
+}
+
+@media (max-width: 760px) {
+  .boot-bios {
+    padding: 14px 12px;
+    font-size: 11px;
+  }
+
+  .boot-menu {
+    min-width: min(340px, calc(100vw - 24px));
+  }
+
+  .boot-xp__footer {
+    left: 14px;
+    right: 14px;
+  }
+
+  .boot-xp__footer p {
+    font-size: 11px;
+  }
+
+  .boot-xp__footer img {
+    width: 96px;
+  }
 }
 
 /* ============================================================
@@ -375,6 +722,319 @@ body {
   margin-bottom: 4px;
 }
 
+/* XP login refinements to match screenshots */
+.xp-logo {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.xp-logo-text .windows-word {
+  font-size: 14px;
+  opacity: 0.95;
+}
+.xp-logo-text .xp-word {
+  font-size: 44px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #FFF;
+  text-shadow: 0 2px 0 rgba(0,0,0,0.35);
+}
+.xp-logo-text .xp-small { font-size: 18px; vertical-align: super; font-weight: 700; color:#FFD04F }
+
+.xp-login-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255,255,255,0.06);
+  padding: 12px 14px;
+  border-radius: 6px;
+  min-width: 360px;
+}
+.xp-avatar { width: 78px; height: 78px; background: #FFF; border-radius: 4px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.xp-avatar img { width: 64px; height:64px; }
+.xp-credentials { display:flex; flex-direction:column; gap:8px; color:#FFF }
+.xp-username { font-size:18px; font-weight:700 }
+.xp-password-row { display:flex; align-items:center; gap:8px }
+.xp-password-row input { padding:6px 8px; border-radius:4px; border:1px solid #7F9DB9; min-width:200px; height:28px }
+.xp-controls { display:flex; align-items:center; gap:8px }
+.xp-lang { background: rgba(255,255,255,0.12); padding:3px 6px; border-radius:3px; font-size:12px }
+.login-arrow-btn { width:34px; height:28px; border-radius:4px; border:0; background:linear-gradient(180deg,#4FB64F,#2F8A2F); color:#FFF; cursor:pointer }
+
+.login-bottom-row { display:flex; align-items:center; justify-content:space-between; margin-top:18px; gap:12px }
+.login-bottom-info { color:#FFF; opacity:0.9; font-size:12px; max-width:520px; text-align:right }
+
+/* XP Welcome Screen exact layout */
+.login-screen {
+  background: #5A7EDC;
+  color: #FFF;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-top-bar {
+  height: 70px;
+  background: #00309C;
+  border-bottom: 2px solid transparent;
+  box-shadow: 0 2px 0 #C7DDFF, 0 4px 0 rgba(0,0,0,0.08);
+  flex-shrink: 0;
+}
+
+.login-main {
+  min-height: 0;
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(280px, 46%) minmax(320px, 460px);
+  align-items: center;
+  justify-content: center;
+  column-gap: 34px;
+  padding: 22px 52px;
+  background:
+    radial-gradient(circle at 7% 5%, #91B1EF 0, #7698E6 6%, #5A7EDC 13%, transparent 14%),
+    linear-gradient(180deg, #5A7EDC 0%, #5B7EDB 100%);
+}
+
+.login-left {
+  min-width: 0;
+  align-items: flex-end;
+  justify-content: center;
+  padding-right: 36px;
+  border-right: 1px solid rgba(255,255,255,0.72);
+}
+
+.xp-login-logo {
+  width: min(430px, 100%);
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.26));
+}
+
+.login-left__copy {
+  margin: 14px 10px 0 0;
+  font-size: 12px;
+  color: rgba(255,255,255,0.9);
+}
+
+.login-right {
+  width: min(460px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.login-empty-panel {
+  color: #FFF;
+  padding-left: 4px;
+}
+
+.login-empty-panel__title {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 700;
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.25);
+}
+
+.account-create-form {
+  display: grid;
+  grid-template-columns: 88px minmax(180px, 1fr);
+  align-items: center;
+  gap: 8px;
+  max-width: 360px;
+  font-size: 11px;
+}
+
+.account-create-form input {
+  width: 100%;
+  height: 22px;
+  border: 1px solid #7F9DB9;
+  background: #FFF;
+  color: #000;
+  font-family: var(--xp-font);
+  font-size: 11px;
+  padding: 2px 4px;
+}
+
+.account-create-form__button {
+  grid-column: 2;
+  justify-self: start;
+  margin-top: 2px;
+}
+
+.xp-account-tile {
+  min-width: 340px;
+  max-width: 420px;
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 5px 10px 5px 5px;
+  border-radius: 4px;
+  color: #FFF;
+}
+
+.xp-account-tile:hover,
+.xp-account-tile:focus-visible {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.28);
+  outline: none;
+}
+
+.xp-avatar {
+  width: 64px;
+  height: 64px;
+  border: 2px solid #FFF;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.25);
+  flex-shrink: 0;
+}
+
+.xp-avatar img {
+  width: 54px;
+  height: 54px;
+}
+
+.xp-credentials {
+  gap: 3px;
+}
+
+.xp-username {
+  font-family: "Franklin Gothic Medium", Arial, sans-serif;
+  font-size: 19px;
+  font-weight: 400;
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.32);
+}
+
+.xp-credentials small {
+  font-size: 11px;
+  color: rgba(255,255,255,0.92);
+}
+
+.xp-login-form {
+  margin-left: 82px;
+}
+
+.xp-password-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.xp-password-row input {
+  min-width: 190px;
+  height: 22px;
+  padding: 2px 4px;
+  border-radius: 0;
+  font-size: 11px;
+}
+
+.xp-lang {
+  height: 20px;
+  min-width: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #E7E7E7;
+  color: #000;
+  border: 1px solid #7F9DB9;
+  border-radius: 0;
+  padding: 0 4px;
+  font-size: 10px;
+}
+
+.login-arrow-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid #FFF;
+  background: linear-gradient(180deg, #7BC04F 0%, #3D8B28 100%);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.35);
+}
+
+.login-hint {
+  margin: 0 0 0 82px;
+  min-height: 15px;
+  max-width: 330px;
+}
+
+.login-bottom-bar {
+  height: 70px;
+  flex-shrink: 0;
+  background: linear-gradient(90deg, #3833AC 0%, #00309C 100%);
+  border-top: 2px solid #F99736;
+  box-shadow: 0 -2px 0 #003399;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+}
+
+.login-bottom-info {
+  margin: 0;
+  max-width: 560px;
+  text-align: right;
+  line-height: 1.35;
+}
+
+@media (max-width: 780px) {
+  .login-top-bar,
+  .login-bottom-bar {
+    height: 58px;
+  }
+
+  .login-main {
+    grid-template-columns: 1fr;
+    align-content: center;
+    justify-items: center;
+    row-gap: 22px;
+    padding: 18px 20px;
+  }
+
+  .login-left {
+    border-right: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.65);
+    align-items: center;
+    text-align: center;
+    padding: 0 0 18px;
+  }
+
+  .login-left__copy {
+    margin-right: 0;
+  }
+
+  .login-right {
+    width: min(420px, 100%);
+  }
+
+  .account-create-form {
+    grid-template-columns: 1fr;
+  }
+
+  .account-create-form__button {
+    grid-column: 1;
+  }
+
+  .xp-account-tile {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .xp-login-form,
+  .login-hint {
+    margin-left: 0;
+  }
+
+  .login-bottom-bar {
+    padding: 0 14px;
+    gap: 14px;
+  }
+
+  .login-bottom-info {
+    font-size: 10px;
+  }
+}
+
+/* ensure taskbar looks like XP orb + blue bar */
+.start-button { padding-left:12px; padding-right:18px }
+.start-button .windows-flag { display:none }
+.start-button__orb { width:26px; height:26px; background-image: url('./XP ALL/Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/Start Menu Programs.png'); background-size: contain; background-repeat:no-repeat; margin-right:8px }
+
+
 /* ============================================================
    ESCRITORIO (Desktop)
    ============================================================ */
@@ -445,6 +1105,87 @@ body {
 
 .desktop-icon:focus-visible span {
   border: 1px dotted #FFF;
+}
+
+.now-playing-widget {
+  position: fixed;
+  top: 12px;
+  right: 14px;
+  width: min(405px, calc(100vw - 28px));
+  min-height: 74px;
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding: 8px;
+  background: rgba(8, 32, 80, 0.54);
+  border: 1px solid rgba(255,255,255,0.38);
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.35);
+  color: #FFF;
+  z-index: 230;
+  backdrop-filter: blur(2px);
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.65);
+}
+
+body.has-open-window .now-playing-widget {
+  display: none;
+}
+
+.now-playing-widget.is-empty {
+  opacity: 0.82;
+}
+
+.now-playing-widget img {
+  width: 54px;
+  height: 54px;
+  object-fit: cover;
+  background: #ECE9D8;
+  border: 1px solid rgba(255,255,255,0.8);
+}
+
+.now-playing-widget__main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.now-playing-widget__main strong,
+.now-playing-widget__main span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.now-playing-widget__main strong {
+  animation: none;
+}
+
+.now-playing-widget input[type="range"] {
+  width: 100%;
+}
+
+.now-playing-widget__controls {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.now-playing-widget__controls button {
+  width: 24px;
+  height: 18px;
+  border: 1px solid #7F9DB9;
+  background: linear-gradient(180deg, #FFF, #D6D2B6);
+  color: #000;
+  font-size: 9px;
+  line-height: 1;
+  padding: 0;
+}
+
+@keyframes marqueeSoft {
+  0%, 18% { transform: translateX(0); }
+  52% { transform: translateX(-8%); }
+  76%, 100% { transform: translateX(0); }
 }
 
 /* ============================================================
@@ -560,8 +1301,8 @@ body {
   background:
     linear-gradient(180deg, #3379E8 0%, #1841B4 100%);
   color: #FFF;
-  font-family: "Marlett", "Arial", sans-serif;
-  font-size: 10px;
+  font-family: Arial, sans-serif;
+  font-size: 0;
   font-weight: 700;
   cursor: pointer;
   display: flex;
@@ -571,6 +1312,26 @@ body {
   border-radius: 3px;
   box-shadow: inset 1px 1px 0 rgba(255,255,255,0.4);
   line-height: 1;
+}
+
+.window-control::before {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.window-control[data-window-action="minimize"]::before {
+  content: "_";
+  transform: translateY(-3px);
+}
+
+.window-control[data-window-action="maximize"]::before {
+  content: "[]";
+  font-size: 9px;
+}
+
+.window-control[data-window-action="close"]::before {
+  content: "x";
+  font-size: 12px;
 }
 
 .window-control:hover {
@@ -916,6 +1677,33 @@ body {
   font-size: 11px;
 }
 
+.favorites-grid,
+.music-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px;
+}
+
+.favorite-card,
+.music-summary section {
+  background: linear-gradient(180deg, #FFF 0%, #F4F4EA 100%);
+  border: 1px solid #ACA899;
+  padding: 10px;
+}
+
+.favorite-card h3,
+.music-summary h3 {
+  margin: 0 0 5px;
+  color: #06286D;
+  font-size: 12px;
+}
+
+.favorite-card p,
+.music-summary p {
+  margin: 0 0 8px;
+  line-height: 1.35;
+}
+
 .programs-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -973,6 +1761,30 @@ body {
 .browser-page h3 {
   margin: 0 0 6px;
   color: #06286D;
+}
+
+.window-body--browser {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.window-body--browser .browser-page {
+  border-bottom: 1px solid #ACA899;
+}
+
+.browser-shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.browser-frame {
+  flex: 1;
+  width: 100%;
+  border: 0;
+  background: #FFF;
 }
 
 /* Settings / control panel */
@@ -1089,6 +1901,414 @@ body {
 
 .settings-actions {
   margin-top: 6px;
+}
+
+.bios-component-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 6px 10px;
+  padding: 8px;
+  background: #F8F8F2;
+  border: 1px solid #ACA899;
+}
+
+.bios-component-grid label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sound-map {
+  border: 1px solid #D0CCB8;
+  padding: 4px 8px;
+  background: #F8F8F2;
+}
+
+/* Windows Media Player */
+
+.window-body--wmp {
+  padding: 0;
+  display: grid;
+  grid-template-columns: 128px 1fr;
+  min-height: 0;
+  background: #111B2B;
+}
+
+.wmp-sidebar {
+  background: linear-gradient(180deg, #182E55 0%, #0D1A33 100%);
+  border-right: 1px solid #000;
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wmp-nav {
+  border: 1px solid transparent;
+  background: transparent;
+  color: #DDEBFF;
+  font-family: var(--xp-font);
+  font-size: 11px;
+  text-align: left;
+  padding: 5px 7px;
+  cursor: pointer;
+}
+
+.wmp-nav:hover,
+.wmp-nav.is-active {
+  background: #316AC5;
+  border-color: #8FB5FF;
+  color: #FFF;
+}
+
+.wmp-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  background: linear-gradient(180deg, #101722 0%, #0B1018 100%);
+  overflow: auto;
+}
+
+.wmp-now-card {
+  display: grid;
+  grid-template-columns: 84px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  background: linear-gradient(180deg, #1F2D40 0%, #111A28 100%);
+  border: 1px solid #425A78;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+.wmp-now-card img {
+  width: 84px;
+  height: 84px;
+  object-fit: cover;
+  background: #ECE9D8;
+  border: 1px solid #ACA899;
+}
+
+.wmp-now-card h3 {
+  margin: 2px 0 4px;
+  color: #EAF2FF;
+  font-size: 14px;
+}
+
+.wmp-now-card p {
+  margin: 0 0 6px;
+  color: #B9C7D8;
+}
+
+.wmp-now-card__controls,
+.wmp-connect-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.wmp-now-card__controls {
+  max-width: 124px;
+  justify-content: flex-end;
+}
+
+.wmp-connect-row {
+  padding: 6px 8px;
+  background: #151D29;
+  border: 1px solid #425A78;
+}
+
+.wmp-connect-row span {
+  color: #DDE7F5;
+}
+
+.wmp-layout {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  gap: 10px;
+}
+
+.wmp-artists-panel,
+.wmp-library-panel {
+  min-width: 0;
+  background: #151D29;
+  border: 1px solid #425A78;
+  padding: 8px;
+}
+
+.wmp-artists-panel h3,
+.wmp-library-panel h3 {
+  margin: 0 0 8px;
+  color: #9BC6FF;
+  font-size: 12px;
+}
+
+.wmp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 230px;
+  overflow: auto;
+}
+
+.wmp-list button {
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: #9BC6FF;
+  font-family: var(--xp-font);
+  font-size: 11px;
+  padding: 3px;
+  cursor: pointer;
+}
+
+.wmp-list button:hover {
+  background: #316AC5;
+  color: #FFF;
+}
+
+.wmp-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 5px;
+}
+
+.wmp-card {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  padding: 6px;
+  border: 1px solid #425A78;
+  background: linear-gradient(180deg, #222B38, #171E29);
+  color: #F4F8FF;
+  text-align: left;
+  font-family: var(--xp-font);
+  cursor: pointer;
+}
+
+.wmp-card:hover {
+  border-color: #6FA6F3;
+  background: linear-gradient(180deg, #294567, #1C304A);
+}
+
+.wmp-card img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  background: #D6D3BE;
+}
+
+.wmp-card.is-active,
+.wmp-card.is-active:hover {
+  border-color: #316AC5;
+  background: linear-gradient(180deg, #315E9E, #17365D);
+  color: #FFFFFF;
+}
+
+.wmp-card strong,
+.wmp-card small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wmp-card small {
+  color: #C6D1DE;
+}
+
+.wmp-card.is-active small {
+  color: #E8F2FF;
+}
+
+.wmp-empty,
+.wmp-now-detail {
+  padding: 10px;
+  border: 1px dashed #61738E;
+  background: #121923;
+  color: #EAF2FF;
+}
+
+/* Extra XP apps */
+
+.wordpad-toolbar {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 4px 6px;
+  background: linear-gradient(180deg, #F0EEDC, #E2DFCB);
+  border-bottom: 1px solid #ACA899;
+}
+
+.wordpad-toolbar select {
+  height: 21px;
+  font-family: var(--xp-font);
+  font-size: 11px;
+}
+
+.wordpad-area {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  resize: none;
+  font-family: "Times New Roman", serif;
+  font-size: 15px;
+  padding: 12px;
+  outline: none;
+  background: #FFF;
+}
+
+.notepad-textarea {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  resize: none;
+  font-family: "Lucida Console", monospace;
+  font-size: 12px;
+  padding: 4px 6px;
+  outline: none;
+  background: #FFF;
+  color: #000;
+}
+
+.calc-display {
+  width: 100%;
+  text-align: right;
+  padding: 4px 6px;
+  border: 1px solid #7F9DB9;
+  font-family: "Lucida Console", monospace;
+  font-size: 14px;
+  background: #000;
+  color: #FFF;
+}
+
+.cmd-screen {
+  flex: 1;
+  padding: 8px;
+  background: #000;
+  color: #D8D8D8;
+  font-family: "Lucida Console", "Courier New", monospace;
+  font-size: 12px;
+  line-height: 1.45;
+  overflow: auto;
+}
+
+.cmd-screen p {
+  margin: 0;
+}
+
+.pinball-body {
+  padding: 10px;
+  background: #101728;
+}
+
+.pinball-table {
+  position: relative;
+  height: 100%;
+  min-height: 260px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #263B72, #11182D 70%, #090C14);
+  border: 3px ridge #B6A26D;
+}
+
+.pinball-score {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 3px 7px;
+  background: #000;
+  color: #F0D35A;
+  font-family: "Lucida Console", monospace;
+}
+
+.pinball-lane {
+  position: absolute;
+  right: 24px;
+  top: 18px;
+  width: 28px;
+  bottom: 46px;
+  border: 2px solid #6FA9F7;
+  border-radius: 18px;
+}
+
+.pinball-bumper {
+  position: absolute;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #FFF, #F0D35A 35%, #B55227 70%);
+  border: 2px solid #FFF;
+}
+
+.pinball-bumper--one { top: 72px; left: 115px; }
+.pinball-bumper--two { top: 118px; left: 230px; }
+.pinball-bumper--three { top: 178px; left: 145px; }
+
+.pinball-flipper {
+  position: absolute;
+  bottom: 28px;
+  width: 92px;
+  height: 15px;
+  background: #EDEAD8;
+  border: 2px solid #7F9DB9;
+}
+
+.pinball-flipper--left {
+  left: 120px;
+  transform: rotate(18deg);
+}
+
+.pinball-flipper--right {
+  right: 120px;
+  transform: rotate(-18deg);
+}
+
+.movie-maker-body {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  gap: 10px;
+  background: #EDEAD8;
+}
+
+.movie-maker-body aside {
+  background: #D3E5FA;
+  border: 1px solid #B5C4E3;
+  padding: 8px;
+}
+
+.movie-maker-body h3 {
+  margin: 0 0 8px;
+  color: #06286D;
+  font-size: 12px;
+}
+
+.movie-preview {
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  color: #FFF;
+  border: 1px solid #333;
+}
+
+.movie-timeline {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.movie-timeline span {
+  display: block;
+  padding: 8px;
+  background: #FFF;
+  border: 1px solid #ACA899;
+  text-align: center;
 }
 
 /* Run dialog */
@@ -1229,6 +2449,33 @@ body {
   box-shadow:
     inset 0 2px 4px rgba(0,0,0,0.4),
     inset -1px -1px 0 rgba(255,255,255,0.2);
+}
+
+.start-button {
+  width: 100px;
+  min-width: 100px;
+  padding: 0;
+  border-radius: 0;
+  background: url("./XP ALL/assets/xp/start_btn_normal.png") 0 0 / 100% 100% no-repeat;
+  box-shadow: none;
+  text-shadow: none;
+  overflow: hidden;
+}
+
+.start-button:hover {
+  background: url("./XP ALL/assets/xp/start_btn_normal.png") 0 0 / 100% 100% no-repeat;
+  filter: brightness(1.08);
+}
+
+.start-button:active,
+.start-button[aria-expanded="true"] {
+  background: url("./XP ALL/assets/xp/start_btn_normal.png") 0 0 / 100% 100% no-repeat;
+  filter: brightness(0.9);
+}
+
+.start-button .windows-flag,
+.start-button__label {
+  opacity: 0;
 }
 
 .windows-flag {
@@ -1916,4 +3163,555 @@ body {
 
 ::-webkit-scrollbar-corner {
   background: #D6D3BE;
+}
+
+/* ============================================================
+   PERFIL / Información personal restringida
+   ============================================================ */
+
+.profile-restricted {
+  display: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.profile-restricted.visible {
+  display: block;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.profile-window.unlocked .profile-restricted {
+  display: block;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ============================================================
+   Tema oscuro opcional
+   ============================================================ */
+
+:root[data-theme="dark"] {
+  --xp-window-bg: #1A1D24;
+  --xp-text: #FFFFFF;
+  --xp-button-face: #2D3139;
+  --xp-button-face-hover: #3D4452;
+  --xp-title-left: #0A1F4A;
+  --xp-title-right: #1A5FBF;
+  --xp-selection: #1E5AA2;
+  --xp-selection-text: #FFFFFF;
+}
+
+:root[data-theme="dark"] body {
+  background: #050607;
+  color: #F2F2F2;
+}
+
+:root[data-theme="dark"] .desktop-shell {
+  background-image: linear-gradient(rgba(0,0,0,0.42), rgba(0,0,0,0.55)), url("./XP.jpg");
+  background-blend-mode: multiply;
+}
+
+:root[data-theme="dark"] .xp-window {
+  background: #1A1D24;
+  color: #FFFFFF;
+  border-color: #0D3A7A;
+  box-shadow: 0 0 0 1px #0A2555, 2px 2px 12px rgba(0,0,0,0.85);
+}
+
+:root[data-theme="dark"] .window-titlebar {
+  background: linear-gradient(180deg, #0D1B35 0%, #1A3A7F 35%, #2563C0 62%, #0F1F3E 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+:root[data-theme="dark"] .window-body,
+:root[data-theme="dark"] .explorer-main,
+:root[data-theme="dark"] .settings-panels,
+:root[data-theme="dark"] .window-body--settings,
+:root[data-theme="dark"] .browser-page,
+:root[data-theme="dark"] .wmp-main {
+  background: #16191F;
+  color: #FFFFFF;
+}
+
+:root[data-theme="dark"] .window-menubar,
+:root[data-theme="dark"] .window-toolbar,
+:root[data-theme="dark"] .browser-toolbar,
+:root[data-theme="dark"] .wordpad-toolbar,
+:root[data-theme="dark"] .settings-footer {
+  background: linear-gradient(180deg, #2A2D35, #1D2026);
+  border-color: #5A6070;
+  color: #FFFFFF;
+}
+
+:root[data-theme="dark"] .info-card,
+:root[data-theme="dark"] .system-card,
+:root[data-theme="dark"] .favorite-card,
+:root[data-theme="dark"] .music-summary section,
+:root[data-theme="dark"] .wmp-artists-panel,
+:root[data-theme="dark"] .wmp-library-panel,
+:root[data-theme="dark"] .wmp-card,
+:root[data-theme="dark"] .wmp-connect-row,
+:root[data-theme="dark"] .profile-banner,
+:root[data-theme="dark"] .trait,
+:root[data-theme="dark"] .bios-component-grid,
+:root[data-theme="dark"] .sound-map,
+:root[data-theme="dark"] .movie-maker-body aside,
+:root[data-theme="dark"] .movie-timeline span {
+  background: #24272E;
+  border-color: #555B66;
+  color: #F2F2F2;
+}
+
+:root[data-theme="dark"] .explorer-pane,
+:root[data-theme="dark"] .settings-note,
+:root[data-theme="dark"] .wmp-empty,
+:root[data-theme="dark"] .wmp-now-detail {
+  background: #2A261A;
+  border-color: #71623A;
+  color: #F2F2F2;
+}
+
+:root[data-theme="dark"] .explorer-pane h3,
+:root[data-theme="dark"] .info-card h3,
+:root[data-theme="dark"] .system-card h3,
+:root[data-theme="dark"] .favorite-card h3,
+:root[data-theme="dark"] .music-summary h3,
+:root[data-theme="dark"] .detail-list strong,
+:root[data-theme="dark"] .settings-field > span,
+:root[data-theme="dark"] .profile-banner h2,
+:root[data-theme="dark"] .browser-page h3,
+:root[data-theme="dark"] .wmp-artists-panel h3,
+:root[data-theme="dark"] .wmp-library-panel h3,
+:root[data-theme="dark"] .movie-maker-body h3 {
+  color: #9BC6FF;
+}
+
+:root[data-theme="dark"] .info-card p,
+:root[data-theme="dark"] .system-card p,
+:root[data-theme="dark"] .wmp-card small,
+:root[data-theme="dark"] .window-note,
+:root[data-theme="dark"] .wmp-connect-row span,
+:root[data-theme="dark"] .browser-address > span {
+  color: #D8D8D8;
+}
+
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] textarea,
+:root[data-theme="dark"] select,
+:root[data-theme="dark"] .browser-frame {
+  background: #0C0F15;
+  color: #FFFFFF;
+  border-color: #6B7A8F;
+}
+
+:root[data-theme="dark"] .xp-button,
+:root[data-theme="dark"] .now-playing-widget__controls button {
+  background: linear-gradient(180deg, #3E4450, #232A33);
+  border-color: #7A8396;
+  color: #FFFFFF;
+}
+
+:root[data-theme="dark"] .start-menu,
+:root[data-theme="dark"] .start-menu__left,
+:root[data-theme="dark"] .start-menu__right {
+  background: #20232A;
+  color: #F2F2F2;
+}
+
+:root[data-theme="dark"] .start-pinned,
+:root[data-theme="dark"] .start-item,
+:root[data-theme="dark"] .start-link,
+:root[data-theme="dark"] .start-all-programs {
+  color: #F2F2F2;
+}
+
+:root[data-theme="dark"] .start-pinned small {
+  color: #D0D5E0;
+}
+
+:root[data-theme="dark"] .notepad-textarea,
+:root[data-theme="dark"] .wordpad-area {
+  background: #0C0F15 !important;
+  color: #FFFFFF !important;
+  border-color: #6B7A8F !important;
+}
+
+:root[data-theme="dark"] .calc-display,
+:root[data-theme="dark"] #calc-display {
+  background: #000000 !important;
+  color: #FFFFFF !important;
+  border-color: #8A9AB8 !important;
+  text-align: right;
+  padding: 8px 12px;
+  font-weight: bold;
+}
+
+:root[data-theme="dark"] .paint-frame {
+  background: #1A1D24 !important;
+}
+
+:root[data-theme="dark"] .cmd-screen {
+  background: #000000 !important;
+  color: #00FF00 !important;
+}
+
+:root[data-theme="dark"] .cmd-output {
+  background: #000000 !important;
+  color: #00FF00 !important;
+}
+
+:root[data-theme="dark"] .cmd-input-line input {
+  background: #000000 !important;
+  color: #00FF00 !important;
+}
+
+:root[data-theme="dark"] .pong-body {
+  background: #0A0D12 !important;
+}
+
+:root[data-theme="dark"] #pong-canvas {
+  background: #000000 !important;
+  border-color: #5A6070 !important;
+}
+
+@media (max-width: 780px) {
+  .window-body--wmp,
+  .wmp-layout,
+  .movie-maker-body {
+    grid-template-columns: 1fr;
+  }
+
+  .wmp-sidebar {
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  .wmp-now-card {
+    grid-template-columns: 64px 1fr;
+  }
+
+  .wmp-now-card img {
+    width: 64px;
+    height: 64px;
+  }
+
+  .wmp-now-card__controls {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    max-width: none;
+  }
+
+  .now-playing-widget {
+    grid-template-columns: 42px 1fr auto;
+    top: 8px;
+    right: 8px;
+  }
+
+  .now-playing-widget img {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+/* ============================================================
+   Ajustes funcionales v3
+   ============================================================ */
+
+.boot-screen--typing .boot-menu {
+  opacity: 1;
+}
+
+.has-unsaved-settings .window-title span::after {
+  content: " *";
+}
+
+.bios-edit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 10px;
+}
+
+.bios-edit-grid label {
+  display: grid;
+  gap: 3px;
+}
+
+.settings-actions--wrap {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.paint-frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #C0C0C0;
+}
+
+.cmd-input-line {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.cmd-input-line input {
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #FFF;
+  font: inherit;
+}
+
+.cmd-line {
+  min-height: 15px;
+}
+
+.pong-body {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 8px;
+  padding: 8px;
+  background: #101318;
+}
+
+.pong-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #F4F4F4;
+}
+
+.site-card {
+  display: block;
+  color: #003399;
+  text-decoration: none;
+}
+
+.site-card:hover,
+.site-card:focus-visible {
+  outline: 1px dotted #003399;
+  background: #EEF4FF;
+}
+
+.site-card span {
+  display: block;
+  margin-top: 8px;
+  color: #005A9E;
+  font-weight: bold;
+  word-break: break-word;
+}
+
+.local-lyrics {
+  margin-top: 10px;
+  max-height: 170px;
+  overflow: auto;
+  border: 1px solid #7F9DB9;
+  background: #0C0F15;
+  color: #F4F6F9;
+  padding: 6px;
+}
+
+.lyric-line {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  padding: 3px 4px;
+  text-align: left;
+  font: inherit;
+}
+
+.lyric-line:hover,
+.lyric-line.is-active {
+  background: #316AC5;
+  color: #FFFFFF;
+}
+
+#pong-canvas {
+  width: 100%;
+  height: 100%;
+  min-height: 250px;
+  border: 2px inset #7A7A7A;
+  background: #05070B;
+}
+
+.desktop-icon,
+.xp-window {
+  transition: left 120ms ease-out, top 120ms ease-out, transform 120ms ease-out;
+}
+
+.desktop-icon.is-dragging,
+.xp-window.is-dragging {
+  transition: none;
+}
+
+.desktop-icon:active span,
+.folder-item:active strong,
+.start-item:active span,
+.start-link:active span {
+  background: #316AC5;
+  color: #FFF;
+}
+
+.start-button {
+  width: 95px;
+  min-width: 95px;
+  padding: 0;
+  border-radius: 0;
+  background: url("./XP ALL/assets/xp/start_btn_normal.png") 0 0 / 100% 100% no-repeat !important;
+  box-shadow: none !important;
+}
+
+.start-button .windows-flag {
+  display: none;
+  opacity: 0;
+}
+
+.start-button__label {
+  opacity: 0;
+}
+
+:root[data-theme="dark"] {
+  --xp-taskbar-blue1: #081425;
+  --xp-taskbar-blue2: #0F274B;
+  --xp-taskbar-blue3: #050A14;
+  --xp-button-face: #202329;
+  --xp-window-bg: #15171C;
+  --xp-text: #F4F6F9;
+}
+
+:root[data-theme="dark"] .boot-bios,
+:root[data-theme="dark"] .boot-menu {
+  background: #000;
+  color: #E8E8E8;
+}
+
+:root[data-theme="dark"] .taskbar,
+:root[data-theme="dark"] .start-menu__footer {
+  background: linear-gradient(180deg, #142A51 0%, #0B1831 45%, #050A16 100%);
+}
+
+:root[data-theme="dark"] .taskbar-tray {
+  background: linear-gradient(180deg, #183760, #07101E);
+  border-left-color: #2C5E9B;
+}
+
+:root[data-theme="dark"] .window-menubar span,
+:root[data-theme="dark"] .window-toolbar,
+:root[data-theme="dark"] .browser-toolbar,
+:root[data-theme="dark"] .folder-item strong,
+:root[data-theme="dark"] .folder-item span,
+:root[data-theme="dark"] .settings-tab,
+:root[data-theme="dark"] .settings-field,
+:root[data-theme="dark"] .sound-map p,
+:root[data-theme="dark"] .detail-list p {
+  color: #F4F6F9;
+}
+
+:root[data-theme="dark"] .settings-tab.is-active {
+  background: #F4F6F9;
+  color: #051022;
+}
+
+:root[data-theme="dark"] .folder-grid,
+:root[data-theme="dark"] .programs-grid,
+:root[data-theme="dark"] .window-body--explorer {
+  background: #15171C;
+}
+
+:root[data-theme="dark"] .site-card {
+  color: #EAF2FF;
+}
+
+:root[data-theme="dark"] .site-card:hover,
+:root[data-theme="dark"] .site-card:focus-visible {
+  outline-color: #9BC6FF;
+  background: #1E2E4A;
+}
+
+:root[data-theme="dark"] .site-card span {
+  color: #9BC6FF;
+}
+
+:root[data-theme="dark"] .local-lyrics {
+  background: #0C0F15;
+  color: #F4F6F9;
+  border-color: #6B7A8F;
+}
+
+:root[data-theme="dark"] .window-body p,
+:root[data-theme="dark"] .window-body label,
+:root[data-theme="dark"] .window-body span,
+:root[data-theme="dark"] .window-body strong,
+:root[data-theme="dark"] .window-body h2,
+:root[data-theme="dark"] .window-body h3,
+:root[data-theme="dark"] .window-body h4 {
+  text-shadow: none;
+}
+
+:root[data-theme="normal"] input,
+:root[data-theme="normal"] textarea,
+:root[data-theme="normal"] select,
+:root:not([data-theme="dark"]) input,
+:root:not([data-theme="dark"]) textarea,
+:root:not([data-theme="dark"]) select {
+  background: #FFFFFF;
+  color: #000000;
+}
+
+:root[data-theme="dark"] #calc-buttons {
+  background: transparent;
+}
+
+:root[data-theme="dark"] #calc-buttons .xp-button {
+  background: linear-gradient(180deg, #2A2F38 0%, #1A1F28 100%);
+  color: #FFFFFF;
+  border-color: #5A6070;
+  font-weight: bold;
+}
+
+:root[data-theme="dark"] .browser-page {
+  background: #111419;
+}
+
+:root[data-theme="dark"] .browser-frame {
+  background: #0A0D12;
+}
+
+:root[data-theme="dark"] .now-playing-widget {
+  background: rgba(8, 12, 18, 0.76);
+  border-color: rgba(130, 164, 215, 0.6);
+  color: #FFF;
+}
+
+:root[data-theme="dark"] .wmp-sidebar {
+  background: #07101E;
+}
+
+:root[data-theme="dark"] .wmp-nav {
+  color: #EAF2FF;
+}
+
+:root[data-theme="dark"] .wmp-nav.is-active,
+:root[data-theme="dark"] .wmp-nav:hover {
+  background: #1E5AA2;
+}
+
+:root[data-theme="dark"] .context-menu {
+  background: #202329;
+  border-color: #808898;
+  color: #F4F6F9;
+}
+
+:root[data-theme="dark"] .context-menu-item {
+  color: #F4F6F9;
+}
+
+:root[data-theme="dark"] .context-menu-item:hover {
+  background: #316AC5;
+  color: #FFF;
 }
