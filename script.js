@@ -9,7 +9,7 @@
   // ===== Configuracion persistida =========================================
 
   const STORAGE_KEY = "xp-personal-config-v3";
-  const DEFAULT_AVATAR = "./XP ALL/Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/User Accounts.png";
+  const DEFAULT_AVATAR = "./XP ALL/fotoperfil.JPEG";
   const defaults = {
     displayName: "Zar",
     accountCreated: true,
@@ -17,7 +17,7 @@
     accountPassword: "",
     profileSubtitle: "Administrador del equipo",
     profileBio: "Perfil personal de Zar en Windows XP.",
-    profileAvatar: DEFAULT_AVATAR,
+    profileAvatar: "./XP ALL/fotoperfil.JPEG",
     mouseVolume: 25,
     keyboardVolume: 10,
     keyboardEnabled: true,
@@ -87,7 +87,7 @@
   config.hiddenDesktopIcons = { ...defaults.hiddenDesktopIcons, ...(config.hiddenDesktopIcons || {}) };
   if (!config.accountName || config.accountName === "Vick" || config.accountName === "Invitado") config.accountName = "Zar";
   if (!config.displayName || config.displayName === "Vick" || config.displayName === "Invitado") config.displayName = "Zar";
-  if (!config.profileAvatar) config.profileAvatar = DEFAULT_AVATAR;
+  if (!config.profileAvatar || config.profileAvatar === "./XP ALL/Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/User Accounts.png") config.profileAvatar = DEFAULT_AVATAR;
   if (config.startLabel === "inicio") config.startLabel = "start";
   if (!config.themeMode || config.themeMode === "normal") config.themeMode = "dark";
 
@@ -1118,6 +1118,45 @@
     }
   }
 
+  function showXpProfileLoadingScreen(userName, onDone) {
+    // Pantalla autentica XP de "cargando perfil"
+    const overlay = document.createElement("div");
+    overlay.id = "xp-profile-loading";
+    overlay.style.cssText = [
+      "position:fixed","inset:0","z-index:9999",
+      "background:#000","display:flex","flex-direction:column",
+      "align-items:center","justify-content:center",
+      "color:#fff","font-family:Tahoma,Arial,sans-serif",
+      "animation:bootFadeIn 0.18s ease-out forwards"
+    ].join(";");
+
+    const avatarSrc = config.profileAvatar || DEFAULT_AVATAR;
+    overlay.innerHTML = [
+      "<div style='text-align:center;max-width:360px;'>",
+      "  <img src='" + avatarSrc + "' alt='' style='width:96px;height:96px;object-fit:cover;border:3px solid #fff;box-shadow:0 0 18px rgba(70,120,220,0.7);border-radius:4px;margin-bottom:18px;display:block;margin-left:auto;margin-right:auto;'>",
+      "  <p style='font-size:20px;font-weight:700;margin:0 0 6px;text-shadow:1px 1px 2px rgba(0,0,0,0.7);'>" + escapeHtml(userName) + "</p>",
+      "  <p style='font-size:12px;margin:0 0 28px;opacity:0.85;'>Cargando tu configuración personal...</p>",
+      "  <div style='width:180px;height:18px;border:2px solid #aaa;border-radius:7px;overflow:hidden;background:#060606;margin:0 auto;padding:2px 1px;font-size:0;'>",
+      "    <div id='xp-profile-loader-bar' style='height:100%;display:inline-block;background:linear-gradient(to bottom,#2838C7 0%,#5979EF 35%,#869EF3 55%,#5979EF 75%,#2838C7 100%);width:9px;margin-right:2px;animation:xpLoader 1.8s linear infinite;'></div>",
+      "    <div style='height:100%;display:inline-block;background:linear-gradient(to bottom,#2838C7 0%,#5979EF 35%,#869EF3 55%,#5979EF 75%,#2838C7 100%);width:9px;margin-right:2px;animation:xpLoader 1.8s linear 0.18s infinite;'></div>",
+      "    <div style='height:100%;display:inline-block;background:linear-gradient(to bottom,#2838C7 0%,#5979EF 35%,#869EF3 55%,#5979EF 75%,#2838C7 100%);width:9px;animation:xpLoader 1.8s linear 0.36s infinite;'></div>",
+      "  </div>",
+      "</div>"
+    ].join("");
+
+    document.body.appendChild(overlay);
+    // Duración auténtica Windows XP: ~2.8 segundos
+    const duration = 2800;
+    setTimeout(() => {
+      overlay.style.transition = "opacity 0.35s ease-in";
+      overlay.style.opacity = "0";
+      setTimeout(() => {
+        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+        onDone();
+      }, 360);
+    }, duration);
+  }
+
   function doLogin() {
     const password = dom.password ? dom.password.value.trim() : "";
 
@@ -1136,12 +1175,16 @@
       return;
     }
 
-    toggleProfileVisibility(true);
-    updateDisplayName(config.accountName || "Zar");
+    // Pantalla de carga tipo Windows XP al seleccionar perfil
+    const userName = config.accountName || "Zar";
     playSystemSound("logon");
-    showScreen("desktop-screen");
-    if (config.desktopGridLock) snapAllDesktopIcons();
-    playSystemSound("startup");
+    showXpProfileLoadingScreen(userName, () => {
+      toggleProfileVisibility(true);
+      updateDisplayName(userName);
+      showScreen("desktop-screen");
+      if (config.desktopGridLock) snapAllDesktopIcons();
+      playSystemSound("startup");
+    });
   }
 
   function doLogoff() {
