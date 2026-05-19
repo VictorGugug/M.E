@@ -38,12 +38,13 @@
   --xp-selection-text: #FFF;
   --xp-taskbar-height: 30px;
   --desktop-icon-size: 32px;
-  --xp-cursor-arrow: url("./XP ALL/CURSORES/default_arrow.cur");
-  --xp-cursor-ibeam: url("./XP ALL/CURSORES/default_ibeam.cur");
-  --xp-cursor-wait: url("./XP ALL/CURSORES/default_wait.cur");
-  --xp-cursor-link: url("./XP ALL/CURSORES/default_link.cur");
-  --xp-cursor-move: url("./XP ALL/CURSORES/default_move.cur");
-  --xp-cursor-no: url("./XP ALL/CURSORES/default_no.cur");
+  --xp-cursor-arrow: url("./XP ALL/CURSORES/default_arrow.cur"), default;
+  --xp-cursor-ibeam: url("./XP ALL/CURSORES/default_ibeam.cur"), text;
+  --xp-cursor-wait: url("./XP ALL/CURSORES/default_wait.cur"), wait;
+  --xp-cursor-link: url("./XP ALL/CURSORES/default_link.cur"), pointer;
+  --xp-cursor-move: url("./XP ALL/CURSORES/default_move.cur"), move;
+  --xp-cursor-no: url("./XP ALL/CURSORES/default_no.cur"), not-allowed;
+  --xp-cursor-resize-se: url("./XP ALL/CURSORES/default_size2.cur"), se-resize;
 }
 
 html,
@@ -2350,7 +2351,7 @@ body.has-open-window .now-playing-widget {
   height: 16px;
   background: transparent;
   border: 0;
-  cursor: se-resize;
+  cursor: var(--xp-cursor-resize-se), se-resize;
   padding: 0;
 }
 
