@@ -92,10 +92,13 @@ a,.taskbar-tray button,.login-power-btn,.sidebar-action{cursor:var(--xp-cursor-l
 .account-create-form{display:grid;grid-template-columns:88px minmax(180px,1fr);align-items:center;gap:8px;max-width:360px;font-size:11px}
 .account-create-form input{width:100%;height:22px;border:1px solid #7F9DB9;background:#FFF;color:#000;font-family:var(--xp-font);font-size:11px;padding:2px 4px}
 .account-create-form__button{grid-column:2;justify-self:start;margin-top:2px}
-.xp-account-tile{min-width:340px;max-width:420px;border:1px solid transparent;background:transparent;padding:5px 10px 5px 5px;border-radius:4px;color:#FFF}
+.xp-account-tile{min-width:340px;max-width:420px;border:1px solid transparent;background:transparent;padding:5px 10px 5px 5px;border-radius:4px;color:#FFF;display:flex;align-items:center;gap:12px}
 .xp-account-tile:hover,.xp-account-tile:focus-visible{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.28);outline:none}
-.xp-avatar{width:64px;height:64px;border:2px solid #FFF;box-shadow:0 0 0 1px rgba(0,0,0,0.25);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#FFF}
-.xp-avatar img{width:54px;height:54px;object-fit:cover}
+.xp-account-tile:hover .xp-avatar{filter:brightness(1) saturate(1);border-color:rgba(255,255,255,0.9);box-shadow:0 0 0 1px rgba(0,0,0,0.25),0 0 8px rgba(255,255,255,0.4)}
+.xp-account-tile:hover .xp-username{color:#FFF;text-shadow:1px 1px 0 rgba(0,0,0,0.5)}
+.xp-avatar{width:64px;height:64px;border:2px solid rgba(255,255,255,0.25);box-shadow:0 0 0 1px rgba(0,0,0,0.25);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#2a3a4a;filter:brightness(0.4) saturate(0.2);transition:filter 0.25s ease,border-color 0.25s ease,box-shadow 0.25s ease}
+.xp-avatar img{width:64px;height:64px;object-fit:cover}
+.xp-username{color:rgba(255,255,255,0.4);transition:color 0.25s ease}
 .xp-credentials{display:flex;flex-direction:column;gap:3px}
 .xp-username{font-family:"Franklin Gothic Medium",Arial,sans-serif;font-size:19px;font-weight:400;text-shadow:1px 1px 0 rgba(0,0,0,0.32)}
 .xp-credentials small{font-size:11px;color:rgba(255,255,255,0.92)}
@@ -329,31 +332,42 @@ select{appearance:none;-webkit-appearance:none;background-image:url("data:image/
 .tray-clock{background:transparent;border:0;color:#FFF;font-family:var(--xp-font);font-size:11px;padding:0 6px;cursor:var(--xp-cursor-arrow),pointer;min-width:60px;text-align:right;text-shadow:1px 1px 0 rgba(0,0,0,0.4)}
 .tray-clock:hover{text-decoration:underline}
 
-.start-menu{position:absolute;left:0;bottom:var(--xp-taskbar-height);width:388px;background:#F7FAFF;border:1px solid #0A246A;border-bottom:0;border-radius:12px 12px 0 0;box-shadow:5px 6px 24px rgba(0,0,0,0.35),inset 1px 1px 0 rgba(255,255,255,0.45);display:flex;flex-direction:column;z-index:250;overflow:hidden;font-family:var(--xp-font);color:#000}
-.start-menu__header{height:66px;background:linear-gradient(180deg,#005FCC 0%,#1268DD 25%,#1C78F1 55%,#0F5EE6 100%);display:flex;align-items:center;gap:12px;padding:10px 12px;color:#FFF;border-bottom:1px solid rgba(255,255,255,0.32);text-shadow:1px 1px 0 rgba(0,0,0,0.35);box-shadow:inset 0 1px 0 rgba(255,255,255,0.25)}
-.start-menu__avatar{width:48px;height:48px;background:#FFF;border:2px solid #FFF;box-shadow:0 0 0 1px rgba(0,0,0,0.18);display:flex;align-items:center;justify-content:center;border-radius:8px;overflow:hidden}
+/* ── START MENU ── estilo imagen XP clásico ─────────────────────── */
+.start-menu{position:absolute;left:0;bottom:var(--xp-taskbar-height);width:380px;background:#fff;border:1px solid #0A246A;border-bottom:0;border-radius:8px 8px 0 0;box-shadow:4px 0 12px rgba(0,0,0,0.5);display:flex;flex-direction:column;z-index:250;overflow:hidden;font-family:var(--xp-font);color:#000}
+.start-menu__header{height:62px;background:linear-gradient(180deg,#1252b8 0%,#1568d8 40%,#1e7df5 100%);display:flex;align-items:center;gap:10px;padding:8px 10px;color:#FFF;border-bottom:1px solid rgba(0,0,0,0.3);text-shadow:1px 1px 1px rgba(0,0,0,0.5)}
+.start-menu__avatar{width:46px;height:46px;background:#fff;border:2px solid rgba(255,255,255,0.6);box-shadow:0 0 0 1px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
 .start-menu__avatar img{width:100%;height:100%;object-fit:cover}
-.start-menu__header strong{font-size:16px;font-family:"Franklin Gothic Medium",Arial,sans-serif;font-weight:400}
-.start-menu__header p{margin:2px 0 0;font-size:11px;opacity:0.95}
-.start-menu__body{display:flex;flex-direction:row;min-height:340px;gap:6px}
-.start-menu__left{flex:1;background:#F9FBFF;padding:10px;display:flex;flex-direction:column;gap:6px;border-right:1px solid #CAD5EA}
-.start-menu__right{width:176px;background:linear-gradient(180deg,#E9F1FF 0%,#D8E6FF 100%);padding:10px;display:flex;flex-direction:column;gap:6px;border-left:1px solid #CAD5EA}
-.start-pinned,.start-item,.start-link{display:flex;align-items:center;gap:10px;padding:10px 10px;background:linear-gradient(180deg,#F4F8FF 0%,#E8EFFC 100%);border:1px solid #D0D8EC;border-radius:8px;cursor:var(--xp-cursor-arrow),pointer;font-family:var(--xp-font);font-size:11px;color:#0D1A32;text-align:left;width:100%;min-height:0;min-width:0;transition:all 0.12s ease}
-.start-pinned img,.start-item img,.start-link img{width:26px;height:26px;flex-shrink:0}
+.start-menu__header strong{font-size:14px;font-family:"Franklin Gothic Medium","Trebuchet MS",Arial,sans-serif;font-weight:400;color:#FFF}
+.start-menu__header p{margin:2px 0 0;font-size:10px;opacity:0.85;color:#FFF}
+.start-menu__body{display:flex;flex-direction:row;min-height:0}
+/* columna izquierda: fondo blanco, borde derecho que separa */
+.start-menu__left{flex:1;background:#fff;padding:6px 0;display:flex;flex-direction:column;gap:0;border-right:1px solid #b8c4da}
+/* columna derecha: fondo azul claro tipo XP */
+.start-menu__right{width:170px;background:linear-gradient(180deg,#d3e5fa 0%,#c5d8f6 100%);padding:6px 0;display:flex;flex-direction:column;gap:0}
+/* items columna izquierda: fondo blanco, hover azul XP */
+.start-pinned,.start-item{display:flex;align-items:center;gap:8px;padding:6px 12px;background:transparent;border:none;border-radius:0;cursor:var(--xp-cursor-arrow),pointer;font-family:var(--xp-font);font-size:11px;color:#000;text-align:left;width:100%;min-height:0;min-width:0;transition:background 0.08s}
+.start-pinned img,.start-item img{width:24px;height:24px;flex-shrink:0}
 .start-pinned span{display:flex;flex-direction:column}
 .start-pinned strong{font-weight:700;font-size:12px}
-.start-pinned small{font-size:10px;color:#475B86}
-.start-pinned:hover,.start-item:hover,.start-link:hover,.start-all-programs:hover,.session-action:hover{background:#2567D1;color:#FFF;border-color:#184B94}
+.start-pinned small{font-size:10px;color:#5a6a8a}
+/* items columna derecha: mismo estilo pero sobre fondo azul claro */
+.start-link{display:flex;align-items:center;gap:8px;padding:5px 10px;background:transparent;border:none;border-radius:0;cursor:var(--xp-cursor-arrow),pointer;font-family:var(--xp-font);font-size:11px;color:#000;text-align:left;width:100%;min-height:0;min-width:0;transition:background 0.08s}
+.start-link img{width:20px;height:20px;flex-shrink:0}
+.start-link span{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+/* hover: azul XP */
+.start-pinned:hover,.start-item:hover,.start-link:hover,.start-all-programs:hover{background:#316AC5;color:#FFF}
 .start-pinned:hover strong,.start-pinned:hover small{color:#FFF}
-.start-item span,.start-link span{overflow:hidden}
-.start-separator{height:1px;background:#D0D8EC;margin:4px 4px}
-.start-all-programs{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;margin-top:auto;background:#E8EFFC;border:1px solid #CAD5EA;border-radius:8px;font-family:var(--xp-font);font-size:11px;font-weight:700;color:#0D1A32;cursor:var(--xp-cursor-arrow),pointer;width:100%;min-height:0;min-width:0}
-.start-menu__footer{height:42px;background:linear-gradient(180deg,#D5E5FB 0%,#C4D4F8 100%);border-top:1px solid #AABEE2;display:flex;justify-content:flex-end;align-items:center;gap:12px;padding:0 12px}
-.session-action{display:flex;align-items:center;gap:8px;background:linear-gradient(180deg,#F4F8FF 0%,#E8EFFC 100%);border:1px solid #C4D4F8;cursor:var(--xp-cursor-arrow),pointer;color:#0D1A32;font-family:var(--xp-font);font-size:11px;padding:6px 10px;border-radius:8px;min-width:0;min-height:0;transition:all 0.12s ease}
-.session-action img{width:20px;height:20px}
-.session-action:hover{background:#1F6FE3;color:#FFF;border-color:#1B4DBB}
-.session-action--danger{color:#7A1010}
-.session-action--danger:hover{background:#C04040;color:#FFF}
+/* separador */
+.start-separator{height:1px;background:#c5ccdb;margin:4px 10px}
+/* "Todos los programas" al fondo de columna izquierda */
+.start-all-programs{display:flex;justify-content:space-between;align-items:center;padding:6px 12px;margin-top:auto;background:transparent;border:none;border-top:1px solid #c5ccdb;font-family:var(--xp-font);font-size:11px;font-weight:700;color:#000;cursor:var(--xp-cursor-arrow),pointer;width:100%;min-height:0;min-width:0}
+/* footer con botones Cerrar sesión / Apagar */
+.start-menu__footer{height:38px;background:linear-gradient(180deg,#1058c0 0%,#0d44a8 100%);border-top:1px solid #0830a0;display:flex;justify-content:flex-end;align-items:center;gap:10px;padding:0 10px}
+.session-action{display:flex;align-items:center;gap:6px;background:linear-gradient(180deg,#4a90d9 0%,#2f6dbf 100%);border:1px solid #1a4a90;cursor:var(--xp-cursor-arrow),pointer;color:#FFF;font-family:var(--xp-font);font-size:11px;padding:4px 10px;border-radius:3px;min-width:0;min-height:0;transition:all 0.1s ease;text-shadow:1px 1px 0 rgba(0,0,0,0.4)}
+.session-action img{width:18px;height:18px}
+.session-action:hover{background:linear-gradient(180deg,#5aa8f0 0%,#3a82d4 100%);border-color:#1a5aaa}
+.session-action--danger{background:linear-gradient(180deg,#d94a4a 0%,#b83030 100%);border-color:#8a1a1a}
+.session-action--danger:hover{background:linear-gradient(180deg,#e86060 0%,#c84040 100%)}
 
 .dialog-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:500}
 .power-dialog{width:400px;background:linear-gradient(180deg,#DCE8F8 0%,#C4D8F0 100%);border:0;box-shadow:inset -1px -1px #00138C,inset 1px 1px #0831D9,inset -2px -2px #001EA0,inset 2px 2px #166AEE,inset -3px -3px #003BDA,inset 3px 3px #0855DD,5px 5px 20px rgba(0,0,0,0.5);border-top-left-radius:8px;border-top-right-radius:8px;padding:0;overflow:hidden;color:#000;font-family:var(--xp-font)}
