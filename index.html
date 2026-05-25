@@ -133,11 +133,11 @@
             </div>
             <div class="xp-credentials">
               <strong class="xp-username" id="login-user-caption" style="font-family:'Franklin Gothic Medium',Arial,sans-serif;font-size:19px;font-weight:400;">Zar</strong>
-              <small id="login-user-subtitle" style="font-size:11px;color:rgba(255,255,255,0.6);">Haz clic para iniciar sesión</small>
             </div>
           </button>
 
-          <form class="xp-login-form" id="login-form" autocomplete="on" hidden>
+          <!-- form y hint ocultos permanentemente: login directo con clic -->
+          <form class="xp-login-form" id="login-form" autocomplete="on" hidden style="display:none!important">
             <div class="xp-password-row">
               <input id="password" name="password" type="password" placeholder="Escribe tu contraseña" aria-label="Contraseña">
               <div class="xp-controls">
@@ -147,7 +147,7 @@
             </div>
           </form>
 
-          <p class="login-hint" id="login-status">Crea tu cuenta para continuar.</p>
+          <p class="login-hint" id="login-status" style="display:none!important"></p>
 
         </div>
       </div>
@@ -165,6 +165,29 @@
         <p>Si abres el archivo con <code>file://</code>, algunos sonidos y funciones pueden fallar. Clona desde <strong>GitHub</strong> y ejecuta <code>node server.js</code> en <code>http://127.0.0.1:3000</code>.</p>
       </aside>
 
+    </section>
+
+    <!-- ===================================================
+         PANTALLA WELCOME (entre login y escritorio)
+    ==================================================== -->
+    <section class="screen welcome-screen" id="welcome-screen" aria-label="Bienvenida" hidden>
+      <div class="welcome-main">
+        <div class="welcome-left">
+          <span class="welcome-word">bienvenido</span>
+        </div>
+        <div class="welcome-divider"></div>
+        <div class="welcome-right">
+          <div class="welcome-user">
+            <div class="welcome-avatar">
+              <img data-profile-avatar src="./XP ALL/fotoperfil.JPEG" alt="avatar">
+            </div>
+            <div class="welcome-user-info">
+              <strong id="welcome-user-name">Zar</strong>
+              <span>Cargando tu configuración personal...</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- ===================================================
