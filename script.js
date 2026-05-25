@@ -1197,6 +1197,24 @@
 
   // ===== Ventanas =========================================================
 
+  const CTRL_ICONS = {
+    minimize: "./XP ALL/win32.run.cf/static/images/xp/icons/Minimize.png",
+    maximize: "./XP ALL/win32.run.cf/static/images/xp/icons/Maximize.png",
+    restore:  "./XP ALL/win32.run.cf/static/images/xp/icons/Restore.png",
+    close:    "./XP ALL/win32.run.cf/static/images/xp/icons/Exit.png",
+  };
+
+  function setControlIcon(btn, type) {
+    let img = btn.querySelector("img");
+    if (!img) {
+      img = document.createElement("img");
+      img.alt = "";
+      btn.textContent = "";
+      btn.appendChild(img);
+    }
+    img.src = CTRL_ICONS[type];
+  }
+
   function initWindows() {
     document.querySelectorAll(".xp-window").forEach((win) => {
       const id = win.dataset.windowId;
@@ -1209,6 +1227,14 @@
         zIndex: 100,
       };
       windowState.set(id, state);
+
+      // Inyectar íconos en los botones de control
+      win.querySelectorAll("[data-window-action]").forEach((btn) => {
+        const action = btn.dataset.windowAction;
+        if (action === "minimize") setControlIcon(btn, "minimize");
+        else if (action === "maximize") setControlIcon(btn, "maximize");
+        else if (action === "close") setControlIcon(btn, "close");
+      });
 
       // Controles
       win.querySelectorAll("[data-window-action]").forEach((btn) => {
@@ -1348,6 +1374,8 @@
     if (!state) return;
     state.maximized = !state.maximized;
     state.element.classList.toggle("is-maximized", state.maximized);
+    const maxBtn = state.element.querySelector('[data-window-action="maximize"]');
+    if (maxBtn) setControlIcon(maxBtn, state.maximized ? "restore" : "maximize");
     playSystemSound("restore");
   }
 
