@@ -8,7 +8,7 @@
 
   // ===== Configuracion persistida =========================================
 
-  const STORAGE_KEY = "xp-personal-config-v3";
+  const STORAGE_KEY = "xp-personal-config-v4";
   const DEFAULT_AVATAR = "./XP ALL/fotoperfil.JPEG";
   const defaults = {
     displayName: "Zar",
@@ -30,8 +30,8 @@
     bootTypewriterSpeed: 1,
     desktopGridLock: true,
     hiddenDesktopIcons: {},
-    themeMode: "dark",
-    fullBootEnabled: true,
+    themeMode: "normal",
+    fullBootEnabled: false,
     bootTypewriter: true,
     biosText: {
       motherboard: "GIGABYTE B650 EAGLE AX ACPI BIOS Revision F31",
@@ -89,7 +89,6 @@
   if (!config.displayName || config.displayName === "Vick" || config.displayName === "Invitado") config.displayName = "Zar";
   if (!config.profileAvatar || config.profileAvatar === "./XP ALL/Windows XP Icon Pack/Windows XP High Resolution Icon Pack/Windows XP Icons/User Accounts.png") config.profileAvatar = DEFAULT_AVATAR;
   if (config.startLabel === "inicio") config.startLabel = "start";
-  if (!config.themeMode || config.themeMode === "normal") config.themeMode = "dark";
 
   // ===== Audio ============================================================
 
