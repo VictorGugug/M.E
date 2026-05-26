@@ -2479,10 +2479,10 @@
 
   function loadAppDocuments() {
     if (dom.notepadTextarea) {
-      dom.notepadTextarea.value = localStorage.getItem(APP_STORAGE_KEYS.notepad) || "Escribe aquí tus notas personales...\n";
+      dom.notepadTextarea.value = localStorage.getItem(APP_STORAGE_KEYS.notepad) || "";
     }
     if (dom.wordpadArea) {
-      dom.wordpadArea.value = localStorage.getItem(APP_STORAGE_KEYS.wordpad) || "Documento rápido para escribir ideas de la página, letras, listas o notas largas.";
+      dom.wordpadArea.value = localStorage.getItem(APP_STORAGE_KEYS.wordpad) || "";
     }
   }
 
