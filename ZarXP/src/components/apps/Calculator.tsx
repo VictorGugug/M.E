@@ -36,6 +36,12 @@ const menuStyle: React.CSSProperties = {
   borderRadius: 2,
 };
 
+function B({ style, children, onClick, title }: { style?: React.CSSProperties; children: React.ReactNode; onClick: () => void; title?: string }) {
+  return (
+    <button style={{ ...numBtn, ...style }} onClick={onClick} title={title}>{children}</button>
+  );
+}
+
 export default function Calculator(_: { id: string }) {
   const [display, setDisplay] = useState("0.");
   const [prev, setPrev] = useState<number | null>(null);
@@ -49,9 +55,13 @@ export default function Calculator(_: { id: string }) {
   };
 
   const digit = (d: string) => {
-    if (fresh) { setDisplay(d === "." ? "0." : d); setFresh(false); return; }
+    if (fresh) { setDisplay(d === "." ? "0." : d + "."); setFresh(false); return; }
     if (d === ".") { if (!display.includes(".")) setDisplay(display + "."); return; }
-    setDisplay((cur) => (cur === "0." ? d : cur.replace(/\.?$/, "") + d + (cur.includes(".") ? "." : "")));
+    setDisplay((cur) => {
+      const hadDot = cur.includes(".");
+      const base = cur.replace(/\.$/, "");
+      return base + d + (hadDot ? "" : ".");
+    });
   };
 
   const compute = (a: number, b: number, o: string): number => {
@@ -104,10 +114,6 @@ export default function Calculator(_: { id: string }) {
   const memRecall = () => { show(memory); setFresh(true); };
   const memStore = () => setMemory(parseFloat(display));
   const memPlus = () => setMemory((m) => m + parseFloat(display));
-
-  const B = ({ style, children, onClick, title }: { style?: React.CSSProperties; children: React.ReactNode; onClick: () => void; title?: string }) => (
-    <button style={{ ...numBtn, ...style }} onClick={onClick} title={title}>{children}</button>
-  );
 
   return (
     <div style={{ width: "100%", height: "100%", background: "#ECE9D8", display: "flex", flexDirection: "column", fontFamily: "Tahoma, sans-serif", userSelect: "none", padding: 2 }}>
