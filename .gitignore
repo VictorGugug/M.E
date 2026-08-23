@@ -5,3 +5,6 @@ dist
 _archive
 _DEL
 _to_delete
+
+.firecrawl
+
