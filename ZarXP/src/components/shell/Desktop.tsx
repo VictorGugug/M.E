@@ -1,31 +1,32 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, lazy, Suspense } from "react";
 import { useWindowStore } from "../../store/windowStore";
 import type { DesktopIcon, AppId } from "../../types";
 import Taskbar from "./Taskbar";
 import StartMenu from "./StartMenu";
 import Window from "./Window";
-import Notepad from "../apps/Notepad";
-import Calculator from "../apps/Calculator";
-import Paint from "../apps/Paint";
-import MediaPlayer from "../apps/MediaPlayer";
-import Terminal from "../apps/Terminal";
-import InternetExplorer from "../apps/InternetExplorer";
-import ControlPanel from "../apps/ControlPanel";
-import TaskManager from "../apps/TaskManager";
-import RunDialog from "../dialogs/RunDialog";
-import ShutdownDialog from "../dialogs/ShutdownDialog";
-import VolumeControl from "../dialogs/VolumeControl";
-import DisplayProperties from "../dialogs/DisplayProperties";
-import SystemProperties from "../dialogs/SystemProperties";
-import DateTimeDialog from "../dialogs/DateTimeDialog";
-import SearchDialog from "../dialogs/SearchDialog";
-import Explorer from "../apps/Explorer";
-import MyComputer from "../apps/MyComputer";
-import MyDocuments from "../apps/MyDocuments";
-import RecycleBin from "../apps/RecycleBin";
-import Solitaire from "../games/Solitaire";
-import Minesweeper from "../games/Minesweeper";
 import { assetUrl } from "../../utils/assets"
+
+const Notepad = lazy(() => import("../apps/Notepad"));
+const Calculator = lazy(() => import("../apps/Calculator"));
+const Paint = lazy(() => import("../apps/Paint"));
+const MediaPlayer = lazy(() => import("../apps/MediaPlayer"));
+const Terminal = lazy(() => import("../apps/Terminal"));
+const InternetExplorer = lazy(() => import("../apps/InternetExplorer"));
+const ControlPanel = lazy(() => import("../apps/ControlPanel"));
+const TaskManager = lazy(() => import("../apps/TaskManager"));
+const RunDialog = lazy(() => import("../dialogs/RunDialog"));
+const ShutdownDialog = lazy(() => import("../dialogs/ShutdownDialog"));
+const VolumeControl = lazy(() => import("../dialogs/VolumeControl"));
+const DisplayProperties = lazy(() => import("../dialogs/DisplayProperties"));
+const SystemProperties = lazy(() => import("../dialogs/SystemProperties"));
+const DateTimeDialog = lazy(() => import("../dialogs/DateTimeDialog"));
+const SearchDialog = lazy(() => import("../dialogs/SearchDialog"));
+const Explorer = lazy(() => import("../apps/Explorer"));
+const MyComputer = lazy(() => import("../apps/MyComputer"));
+const MyDocuments = lazy(() => import("../apps/MyDocuments"));
+const RecycleBin = lazy(() => import("../apps/RecycleBin"));
+const Solitaire = lazy(() => import("../games/Solitaire"));
+const Minesweeper = lazy(() => import("../games/Minesweeper"));
 
 const DESKTOP_ICONS: DesktopIcon[] = [
   { id: "my-computer", label: "My Computer", icon: "MyComputer.png", defaultPosition: { x: 10, y: 10 } },
@@ -101,7 +102,7 @@ export default function Desktop() {
       style={{
         position: "fixed",
         inset: 0,
-        backgroundImage: `url(${assetUrl("assets/wallpapers/bliss.jpg")})`,
+        backgroundImage: `url(${assetUrl("assets/wallpapers/bliss.webp")})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         zIndex: 1,
@@ -137,7 +138,9 @@ export default function Desktop() {
         const AppComp = APP_COMPONENTS[win.appId];
         return (
           <Window key={win.id} config={win}>
-            {AppComp ? <AppComp id={win.id} /> : <div style={{ padding: 16, color: "#666" }}>App not found: {win.appId}</div>}
+            <Suspense fallback={<div style={{ padding: 16, color: "#666" }}>Loading...</div>}>
+              {AppComp ? <AppComp id={win.id} /> : <div style={{ padding: 16, color: "#666" }}>App not found: {win.appId}</div>}
+            </Suspense>
           </Window>
         );
       })}

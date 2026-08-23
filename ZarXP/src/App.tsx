@@ -19,7 +19,7 @@ export default function App() {
 
   useEffect(() => {
     if (step !== "loading") return;
-    const t = setTimeout(() => setStep("login"), 2500);
+    const t = setTimeout(() => setStep("login"), 1200);
     return () => clearTimeout(t);
   }, [step]);
 
@@ -34,7 +34,7 @@ export default function App() {
     setTimeout(() => {
       setStep("desktop");
       setBootPhase("desktop");
-    }, 2500);
+    }, 900);
   };
 
   if (step === "loading") {

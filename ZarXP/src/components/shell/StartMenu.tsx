@@ -18,6 +18,8 @@ const RIGHT_ITEMS: { id: AppId; label: string; icon: string }[] = [
   { id: "my-computer", label: "My Computer", icon: "MyComputer.png" },
   { id: "network-places", label: "My Network Places", icon: "MyNetworkPlaces.png" },
   { id: "control-panel", label: "Control Panel", icon: "ControlPanel.png" },
+  { id: "display-properties", label: "Printers and Faxes", icon: "PrintersandFaxes.png" },
+  { id: "system-properties", label: "Help and Support", icon: "HelpandSupport.png" },
   { id: "search", label: "Search", icon: "Search.png" },
   { id: "run", label: "Run...", icon: "Run.png" },
 ];
