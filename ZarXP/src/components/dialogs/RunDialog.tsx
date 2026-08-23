@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useWindowStore } from "../../store/windowStore";
+import { assetUrl } from "../../utils/assets"
 
 const styles: Record<string, React.CSSProperties> = {
   container: { display: "flex", flexDirection: "column", height: "100%", fontFamily: "Tahoma, sans-serif", fontSize: 12, userSelect: "none" },
@@ -20,7 +21,7 @@ export default function RunDialog({ id }: { id: string }) {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <img src="/assets/icons/Run.png" alt="" style={styles.icon} />
+        <img src={assetUrl("assets/icons/Run.png")} alt="" style={styles.icon} />
         <span>Run</span>
       </div>
       <div style={styles.body}>

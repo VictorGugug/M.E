@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useWindowStore } from "../../store/windowStore";
+import { assetUrl } from "../../utils/assets"
 
 const BIOS_LINES = [
   { text: "Award Modular BIOS v6.00PG, An Energy Star Ally", cls: "strong", delay: 0 },
@@ -64,14 +65,14 @@ export default function BootScreen() {
     return (
       <div className="boot-xp" style={{ position: "fixed", inset: 0, background: "#000", zIndex: 9999, display: "flex", flexDirection: "column", color: "#F4F4F4", fontFamily: "Arial,Helvetica,sans-serif" }}>
         <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%,-50%)", width: "min(420px,78vw)", textAlign: "center" }}>
-          <img src="/assets/images/xp-loading-logo.jpg" alt="" style={{ width: "100%", maxWidth: 400 }} />
+          <img src={assetUrl("assets/images/xp-loading-logo.jpg")} alt="" style={{ width: "100%", maxWidth: 400 }} />
           <div className="xp-loader">
             <div /><div /><div />
           </div>
         </div>
         <div style={{ position: "absolute", left: 24, right: 24, bottom: 22, display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
           <p style={{ margin: 0, fontSize: 14, color: "#F4F4F4" }}>Copyright &copy; Microsoft Corporation</p>
-          <img src="/assets/images/xp-loading-mslogo.jpg" alt="" style={{ width: 120 }} />
+          <img src={assetUrl("assets/images/xp-loading-mslogo.jpg")} alt="" style={{ width: 120 }} />
         </div>
       </div>
     );

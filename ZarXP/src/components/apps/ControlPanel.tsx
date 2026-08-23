@@ -1,4 +1,5 @@
 import { useWindowStore } from "../../store/windowStore";
+import { assetUrl } from "../../utils/assets"
 
 const categories = [
   { label: "System", icon: "SystemProperties.png", app: "system-properties" as const },
@@ -21,7 +22,7 @@ export default function ControlPanel(_: { id: string }) {
       <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, padding: 12, alignContent: "start" }}>
         {categories.map((cat) => (
           <div key={cat.label} style={{ display: "flex", alignItems: "center", gap: 8, padding: 6, cursor: "pointer", borderRadius: 4 }} onClick={() => openWindow(cat.app)}>
-            <img src={`/assets/icons/${cat.icon}`} alt="" style={{ width: 28, height: 28 }} />
+            <img src={assetUrl(`assets/icons/${cat.icon}`)} alt="" style={{ width: 28, height: 28 }} />
             <span style={{ fontSize: 11, color: "#000" }}>{cat.label}</span>
           </div>
         ))}

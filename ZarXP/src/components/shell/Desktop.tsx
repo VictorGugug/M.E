@@ -25,6 +25,7 @@ import MyDocuments from "../apps/MyDocuments";
 import RecycleBin from "../apps/RecycleBin";
 import Solitaire from "../games/Solitaire";
 import Minesweeper from "../games/Minesweeper";
+import { assetUrl } from "../../utils/assets"
 
 const DESKTOP_ICONS: DesktopIcon[] = [
   { id: "my-computer", label: "My Computer", icon: "MyComputer.png", defaultPosition: { x: 10, y: 10 } },
@@ -100,7 +101,7 @@ export default function Desktop() {
       style={{
         position: "fixed",
         inset: 0,
-        backgroundImage: "url(/assets/wallpapers/bliss.jpg)",
+        backgroundImage: `url(${assetUrl("assets/wallpapers/bliss.jpg")})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         zIndex: 1,
@@ -110,7 +111,7 @@ export default function Desktop() {
       <div className="desktop-icons">
         {DESKTOP_ICONS.map((icon) => (
           <button key={icon.id} className="desktop-icon" onDoubleClick={() => openApp(icon.id)}>
-            <img src={`/assets/icons/${icon.icon}`} alt={icon.label} />
+            <img src={assetUrl(`assets/icons/${icon.icon}`)} alt={icon.label} />
             <span>{icon.label}</span>
           </button>
         ))}

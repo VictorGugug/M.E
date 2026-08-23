@@ -1,3 +1,4 @@
+import { assetUrl } from "../../utils/assets"
 export default function MyDocuments(_: { id: string }) {
   const items = [
     { name: "My Music", type: "File Folder", icon: "FolderClosed.png", date: "5/12/2006 3:14 PM" },
@@ -14,7 +15,7 @@ export default function MyDocuments(_: { id: string }) {
   return (
     <div style={{ width: "100%", height: "100%", background: "#FFF", fontFamily: "Tahoma, sans-serif", fontSize: 11, display: "flex", flexDirection: "column", userSelect: "none" }}>
       <div style={{ padding: "4px 8px", background: "#ECE9D8", borderBottom: "1px solid #ACA899", display: "flex", alignItems: "center", gap: 4, fontWeight: "bold" }}>
-        <img src="/assets/icons/FolderOpened.png" alt="" style={{ width: 16, height: 16 }} />
+        <img src={assetUrl("assets/icons/FolderOpened.png")} alt="" style={{ width: 16, height: 16 }} />
         <span>My Documents</span>
       </div>
       <div style={{ flex: 1, overflow: "auto" }}>
@@ -29,7 +30,7 @@ export default function MyDocuments(_: { id: string }) {
           <tbody>
             {items.map((item) => (
               <tr key={item.name}>
-                <td style={tdStyle}><img src={`/assets/icons/${item.icon}`} alt="" style={{ width: 16, height: 16, marginRight: 4, verticalAlign: "middle" }} />{item.name}</td>
+                <td style={tdStyle}><img src={assetUrl(`assets/icons/${item.icon}`)} alt="" style={{ width: 16, height: 16, marginRight: 4, verticalAlign: "middle" }} />{item.name}</td>
                 <td style={tdStyle}>{item.type}</td>
                 <td style={tdStyle}>{item.date}</td>
               </tr>

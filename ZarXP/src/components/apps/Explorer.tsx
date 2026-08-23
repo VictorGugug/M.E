@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { assetUrl } from "../../utils/assets"
 
 interface TreeNode {
   name: string;
@@ -73,7 +74,7 @@ export default function Explorer(_: { id: string }) {
           {hasChildren ? (
             <span onClick={(e) => { e.stopPropagation(); toggleExpand(node.name); }} style={{ width: 12, fontSize: 9, cursor: "pointer" }}>{isExpanded ? "▾" : "▸"}</span>
           ) : <span style={{ width: 12 }} />}
-          <img src={`/assets/icons/${node.icon}`} alt="" style={{ width: 16, height: 16, marginRight: 3 }} />
+          <img src={assetUrl(`assets/icons/${node.icon}`)} alt="" style={{ width: 16, height: 16, marginRight: 3 }} />
           <span>{node.name}</span>
         </div>,
         ...(isExpanded && hasChildren ? renderTree(node.children!, depth + 1) : []),
@@ -104,7 +105,7 @@ export default function Explorer(_: { id: string }) {
             <tbody>
               {(selected.files || []).map((f) => (
                 <tr key={f.name}>
-                  <td style={tdStyle}><img src={`/assets/icons/${f.icon}`} alt="" style={{ width: 16, height: 16, marginRight: 4, verticalAlign: "middle" }} />{f.name}</td>
+                  <td style={tdStyle}><img src={assetUrl(`assets/icons/${f.icon}`)} alt="" style={{ width: 16, height: 16, marginRight: 4, verticalAlign: "middle" }} />{f.name}</td>
                   <td style={tdStyle}>{f.type}</td>
                   <td style={tdStyle}>{f.size || ""}</td>
                 </tr>
