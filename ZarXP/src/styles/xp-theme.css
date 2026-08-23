@@ -38,13 +38,17 @@ body.wait { cursor: url('/assets/cursors/default_wait.cur'), wait; }
 .xp-start-btn:hover { background-position: 0 -30px; }
 .xp-start-btn:active { background-position: 0 -60px; }
 .xp-taskband { display: flex; align-items: center; height: 28px; padding: 0 2px; gap: 2px; flex-shrink: 0; margin-top: 1px; }
+.xp-ql-btn { width: 24px; height: 24px; border: 1px solid transparent; background: none; cursor: pointer; border-radius: 2px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 0; }
+.xp-ql-btn:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.5); }
+.xp-ql-btn:active { background: rgba(0,0,0,0.15); border-color: rgba(0,0,0,0.3); }
 .xp-taskbar-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.3); margin: 0 2px; }
 .xp-taskbar-tasks { flex: 1; display: flex; align-items: center; gap: 2px; padding: 0 2px; overflow: hidden; min-width: 0; height: 28px; margin-top: 1px; }
-.xp-task-btn { height: 24px; border: none; background-image: url('/assets/taskbar/taskband-button.png'); background-repeat: no-repeat; background-position: 0 0; cursor: pointer; display: flex; align-items: center; gap: 4px; color: #FFF; font-size: 11px; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-shrink: 1; min-width: 0; padding: 0 8px 0 8px; image-rendering: pixelated; image-rendering: crisp-edges; }
+.xp-task-btn { height: 24px; border: none; background-image: url('/assets/taskbar/taskband-button.png'); background-repeat: no-repeat; background-size: 100% 168px; background-position: 0 0; cursor: pointer; display: flex; align-items: center; gap: 4px; color: #FFF; font-size: 11px; max-width: 160px; min-width: 40px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-shrink: 1; padding: 0 8px; image-rendering: pixelated; }
 .xp-task-btn-active { background-position: 0 -112px; }
-.xp-task-btn-inactive { background-position: 0 -28px; }
+.xp-task-btn-inactive { background-position: 0 0; }
 .xp-task-btn:hover { background-position: 0 -28px; }
 .xp-task-btn:active { background-position: 0 -56px; }
+.xp-task-btn-active:hover, .xp-task-btn-active:active { background-position: 0 -112px; }
 .xp-tray { display: flex; align-items: center; height: 28px; padding: 0 8px; gap: 6px; flex-shrink: 0; background-image: url('/assets/taskbar/taskbar-tray.png'); background-repeat: no-repeat; background-position: bottom left; margin-top: 1px; image-rendering: pixelated; image-rendering: crisp-edges; }
 .xp-tray-icon { width: 16px; height: 16px; cursor: pointer; opacity: 0.9; image-rendering: pixelated; image-rendering: crisp-edges; }
 .xp-tray-clock { color: #FFF; font-size: 11px; cursor: pointer; padding-left: 4px; font-family: 'XP Font', Tahoma, sans-serif; }

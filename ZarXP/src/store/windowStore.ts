@@ -8,7 +8,7 @@ const APPS: Record<AppId, AppDefinition> = {
   "internet-explorer": { id: "internet-explorer", title: "Internet Explorer", icon: "InternetExplorer6.png", defaultWidth: 800, defaultHeight: 550, menuBar: true, statusBar: true },
   notepad: { id: "notepad", title: "Untitled - Notepad", icon: "Notepad.png", defaultWidth: 500, defaultHeight: 400, menuBar: true, statusBar: true, minWidth: 300, minHeight: 200 },
   paint: { id: "paint", title: "untitled - Paint", icon: "Paint.png", defaultWidth: 700, defaultHeight: 500, menuBar: true, statusBar: true, minWidth: 400, minHeight: 300 },
-  calculator: { id: "calculator", title: "Calculator", icon: "Calculator.png", defaultWidth: 280, defaultHeight: 360, resizable: false },
+  calculator: { id: "calculator", title: "Calculator", icon: "Calculator.png", defaultWidth: 260, defaultHeight: 320, resizable: false },
   "media-player": { id: "media-player", title: "Windows Media Player", icon: "WindowsMediaPlayer10.png", defaultWidth: 650, defaultHeight: 480, menuBar: true, statusBar: true, minWidth: 500, minHeight: 350 },
   terminal: { id: "terminal", title: "Command Prompt", icon: "CommandPrompt.png", defaultWidth: 600, defaultHeight: 400, minWidth: 300, minHeight: 200 },
   "control-panel": { id: "control-panel", title: "Control Panel", icon: "ControlPanel.png", defaultWidth: 550, defaultHeight: 400, menuBar: true, statusBar: true },

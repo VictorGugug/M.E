@@ -29,14 +29,14 @@ export default function Taskbar({ onOpen }: { onOpen: (id: AppId) => void }) {
     <div className="xp-taskbar">
       <button className="xp-start-btn" onClick={(e) => { e.stopPropagation(); toggleStartMenu(); }} />
       <div className="xp-taskband">
-        <button onClick={() => onOpen("internet-explorer")} style={{ width: 26, height: 26, border: "none", background: "none", cursor: "pointer", borderRadius: 2, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+        <button className="xp-ql-btn" onClick={() => onOpen("internet-explorer")} title="Internet Explorer">
           <img src={assetUrl("assets/icons/InternetExplorer6.png")} width="16" height="16" alt="" />
         </button>
-        <button onClick={() => onOpen("explorer")} style={{ width: 26, height: 26, border: "none", background: "none", cursor: "pointer", borderRadius: 2, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+        <button className="xp-ql-btn" onClick={() => onOpen("explorer")} title="Windows Explorer">
           <img src={assetUrl("assets/icons/Explorer.png")} width="16" height="16" alt="" />
         </button>
         <div className="xp-taskbar-divider" />
-        <button onClick={() => onOpen("media-player")} style={{ width: 26, height: 26, border: "none", background: "none", cursor: "pointer", borderRadius: 2, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+        <button className="xp-ql-btn" onClick={() => onOpen("media-player")} title="Windows Media Player">
           <img src={assetUrl("assets/icons/WindowsMediaPlayer10.png")} width="16" height="16" alt="" />
         </button>
       </div>
