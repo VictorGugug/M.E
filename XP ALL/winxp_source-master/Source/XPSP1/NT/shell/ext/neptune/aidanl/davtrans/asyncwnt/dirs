@@ -1,4 +1,0 @@
-DIRS = \
-      IDL \      
-      CLSIDSLIB \      
-      DLL

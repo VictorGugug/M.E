@@ -1,6 +1,0 @@
-LIBRARY         TSVER
-
-
-EXPORTS
-		TsVerEventStartup		  @1
-        CheckClientVersion        @2

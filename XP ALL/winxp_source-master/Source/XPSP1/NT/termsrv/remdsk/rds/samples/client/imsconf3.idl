@@ -1,6 +1,0 @@
-// include the real idl file
-
-#include "..\..\h\imsconf3.idl"
-
-
-

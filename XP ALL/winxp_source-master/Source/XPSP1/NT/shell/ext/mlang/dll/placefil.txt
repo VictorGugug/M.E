@@ -1,2 +1,0 @@
-mlang.dat          retail
-mlang.dll          retail

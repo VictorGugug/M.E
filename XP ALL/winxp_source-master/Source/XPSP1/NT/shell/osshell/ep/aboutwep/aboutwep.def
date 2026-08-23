@@ -1,6 +1,0 @@
-LIBRARY		ABOUTWEP
-
-EXPORTS
-	WEP
-	AboutWEP
-	AboutDlgProc

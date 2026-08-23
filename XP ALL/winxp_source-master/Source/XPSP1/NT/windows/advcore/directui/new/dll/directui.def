@@ -1,9 +1,0 @@
-LIBRARY DIRECTUI
-
-EXPORTS
-
-; DLL entry point
-DllMain
-
-; Properties
-CoCreateValue

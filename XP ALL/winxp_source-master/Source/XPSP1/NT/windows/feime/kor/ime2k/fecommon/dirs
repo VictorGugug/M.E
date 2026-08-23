@@ -1,7 +1,0 @@
-DIRS=\
-          include    \
-          srcimm     \
-          srcuim     \
-          lib        \
-          imembx{32} \
-          padrs

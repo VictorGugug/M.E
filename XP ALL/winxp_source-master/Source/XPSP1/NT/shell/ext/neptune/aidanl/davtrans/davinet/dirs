@@ -1,4 +1,0 @@
-DIRS = \
-    idl \
-    clsidslib \
-    dll

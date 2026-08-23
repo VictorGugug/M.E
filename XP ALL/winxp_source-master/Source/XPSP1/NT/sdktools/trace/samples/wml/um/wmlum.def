@@ -1,6 +1,0 @@
-LIBRARY WMIUM
-
-EXPORTS
-	WmlTrace
-	WmlInitialize
-	WmlUninitialize

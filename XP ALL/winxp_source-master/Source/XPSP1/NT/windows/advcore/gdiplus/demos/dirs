@@ -1,6 +1,0 @@
-DIRS=\
-    life
-
-OPTIONAL_DIRS = \
-     sidewalk
-     trialpha

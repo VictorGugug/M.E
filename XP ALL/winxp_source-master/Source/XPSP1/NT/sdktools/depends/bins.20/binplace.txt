@@ -1,5 +1,0 @@
-depends.cnt    idw
-depends.exe    idw
-depends.hlp    idw
-depends.txt    idw
-depends.dll    idw

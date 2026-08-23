@@ -1,2 +1,0 @@
-#include "..\apidll\apitable.cpp"
-

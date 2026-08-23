@@ -1,5 +1,0 @@
-DIRS=\
-    CustDllM \
-    MigExe
-
-OPTIONAL_DIRS=

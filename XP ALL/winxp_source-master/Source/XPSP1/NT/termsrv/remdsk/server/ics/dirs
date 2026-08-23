@@ -1,6 +1,0 @@
-DIRS=\ 
-	ICShelper
-
-OPTIONAL_DIRS=\
-	ICSTest
-

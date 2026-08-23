@@ -1,7 +1,0 @@
-LIBRARY	     TWEAKUI
-
-EXPORTS
-           CPlApplet
-           TweakMeUp
-           TweakLogon
-           RepairHotkeys

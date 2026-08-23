@@ -1,2 +1,0 @@
-#include <..\..\imagehlp\msvcrtp.c>
-

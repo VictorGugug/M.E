@@ -1,7 +1,0 @@
-
-DIRS=\
-    Inc          \
-    Engine       \
-    Test         \
-
-OPTIONAL_DIRS=  

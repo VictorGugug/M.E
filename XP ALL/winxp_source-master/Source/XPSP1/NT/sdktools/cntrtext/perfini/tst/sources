@@ -1,4 +1,0 @@
-ALT_PROJECT=TST
-ALT_PROJECT_TARGET=$(ALT_PROJECT)
-
-!include ..\sources.inc

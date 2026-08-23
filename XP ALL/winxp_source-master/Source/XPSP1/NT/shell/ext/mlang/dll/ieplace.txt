@@ -1,2 +1,0 @@
-mlang.dat          retail:en\base\winnt\not_loc\browser
-mlang.dll          retail:en\base\winnt\not_loc\browser

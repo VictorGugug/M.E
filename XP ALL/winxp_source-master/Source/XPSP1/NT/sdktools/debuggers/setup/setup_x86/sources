@@ -1,5 +1,0 @@
-TARGETNAME=setup_x86
-C_DEFINES=/DBUILD_X86
-
-!include ..\sources.inc
-

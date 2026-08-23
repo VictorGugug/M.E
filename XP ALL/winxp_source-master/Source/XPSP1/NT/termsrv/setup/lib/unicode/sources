@@ -1,8 +1,0 @@
-#Copyright (c) 1998 - 1999 Microsoft Corporation
-
-!include ..\sources.inc
-
-MINORCOMP=maksu
-TARGETNAME=$(MINORCOMP)
-C_DEFINES=$(C_DEFINES) -DUNICODE -D_UNICODE
-

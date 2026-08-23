@@ -1,2 +1,0 @@
-instmsi.exe     symbolcd\cd\tools\setup\winnt\i386:dbg\setup\winnt\i386
-msizap.exe      symbolcd\cd\tools\setup\winnt\i386:dbg\setup\winnt\i386

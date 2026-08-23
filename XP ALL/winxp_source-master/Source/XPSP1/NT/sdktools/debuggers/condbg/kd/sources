@@ -1,4 +1,0 @@
-DEBUGGER_NAME = kd
-C_DEFINES = $(C_DEFINES) -DKERNEL
-
-!include ..\sources.inc

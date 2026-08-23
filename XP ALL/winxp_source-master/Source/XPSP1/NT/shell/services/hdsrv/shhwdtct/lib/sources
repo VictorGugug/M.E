@@ -1,5 +1,0 @@
-!include ..\sources.inc
-
-SOURCES_USED = $(SOURCES_USED) ..\sources.inc
-
-TARGETTYPE=LIBRARY

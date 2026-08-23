@@ -1,8 +1,0 @@
-!include ..\sources.inc
- 
- 
-# 
-# Fusionized
-# 
-SXS_MANIFEST_RESOURCE_ID=123
-SXS_APPLICATION_MANIFEST=WindowsShell.Manifest

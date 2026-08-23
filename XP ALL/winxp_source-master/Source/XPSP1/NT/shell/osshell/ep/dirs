@@ -1,9 +1,0 @@
-DIRS=	carddll	\
-	winmine \
-        freecell
-
-OPTIONAL_DIRS= 	aboutwep\ 
-                idlewild\
-		taipei	\
-		tetris
-

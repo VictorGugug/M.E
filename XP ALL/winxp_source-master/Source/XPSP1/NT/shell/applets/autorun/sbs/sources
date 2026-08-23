@@ -1,4 +1,0 @@
-ALT_PROJECT_TARGET=sbsinf
-SERVER=5
-!include ..\sources.inc
-

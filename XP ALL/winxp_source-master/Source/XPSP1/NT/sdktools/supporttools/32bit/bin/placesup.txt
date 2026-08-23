@@ -1,9 +1,0 @@
-bindiff.exe     		idw
-dllfind.exe     		idw
-ntdetect.chk    		idw
-spcheck.exe			idw
-activate.exe			idw
-iadstools.dll			reskit\bin
-replmon.exe			reskit\bin
-comctl32.ocx			reskit\bin
-comdlg32.ocx			reskit\bin

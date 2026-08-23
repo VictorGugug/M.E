@@ -1,6 +1,0 @@
-!include ..\sources.inc
-
-# target
-TARGETNAME=script_a
-TARGETTYPE=DYNLINK
-

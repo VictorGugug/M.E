@@ -1,9 +1,0 @@
-; KbdLayout.def : Declares the module parameters.
-
-LIBRARY      "KbdLayout.DLL"
-
-EXPORTS
-	DllCanUnloadNow      PRIVATE
-	DllGetClassObject    PRIVATE
-	DllRegisterServer    PRIVATE
-	DllUnregisterServer	 PRIVATE

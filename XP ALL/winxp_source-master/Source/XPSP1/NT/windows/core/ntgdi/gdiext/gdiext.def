@@ -1,8 +1,0 @@
-LIBRARY GDIEXT
-
-EXPORTS
-
-    GdxDllInitialize
-    GdxTransparentBlt
-    TriangleMesh
-    GdxAlphaBlt

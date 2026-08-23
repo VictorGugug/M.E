@@ -1,3 +1,0 @@
-ModuleID	ModuleLanguage	RequiredID	RequiredLanguage	RequiredVersion
-s128	i2	s128	i2	S32
-ModuleDependency	ModuleID	ModuleLanguage	RequiredID	RequiredLanguage

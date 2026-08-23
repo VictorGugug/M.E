@@ -1,9 +1,0 @@
-; tsuserex.def : Declares the module parameters.
-
-LIBRARY      "tsuserex.DLL"
-
-EXPORTS
-	DllCanUnloadNow PRIVATE
-	DllGetClassObject PRIVATE
-	DllRegisterServer PRIVATE
-	DllUnregisterServer PRIVATE

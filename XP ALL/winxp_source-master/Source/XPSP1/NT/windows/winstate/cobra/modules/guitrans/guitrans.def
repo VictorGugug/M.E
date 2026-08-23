@@ -1,7 +1,0 @@
-LIBRARY GUITRN
-
-EXPORTS
-    DllMain
-    TransportModule
-    ModuleInitialize
-    ModuleTerminate

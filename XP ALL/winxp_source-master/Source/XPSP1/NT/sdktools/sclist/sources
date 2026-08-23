@@ -1,7 +1,0 @@
-TARGETNAME=sclist
-TARGETPATH=obj
-TARGETTYPE=PROGRAM
-SOURCES=sclist.c sclist.rc
-UMTYPE=console
-
-USE_MSVCRT=1

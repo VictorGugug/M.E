@@ -1,4 +1,0 @@
-DIRS    = dataclen cleanmgr fldrclnr
-
-OPTIONAL_DIRS=
-

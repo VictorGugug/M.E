@@ -1,0 +1,64 @@
+@font-face { font-family: 'XP Font'; src: url('/assets/fonts/ms_sans_serif.ttf'); }
+@font-face { font-family: 'XP Font Bold'; src: url('/assets/fonts/ms_sans_serif_bold.ttf'); }
+* { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+html, body, #root { width: 100%; height: 100%; overflow: hidden; font-family: 'XP Font', Tahoma, sans-serif; font-size: 12px; }
+body { cursor: url('/assets/cursors/default-cursor.cur'), default; }
+input, textarea, select { cursor: url('/assets/cursors/ibeam.cur'), text; }
+button, [role="button"] { cursor: url('/assets/cursors/arrow.cur'), default; }
+body.busy { cursor: url('/assets/cursors/default_busy.cur'), wait; }
+body.wait { cursor: url('/assets/cursors/default_wait.cur'), wait; }
+.help-cursor { cursor: url('/assets/cursors/help_m.cur'), help; }
+.move-cursor { cursor: url('/assets/cursors/3dgmove.cur'), move; }
+.no-drop-cursor { cursor: url('/assets/cursors/3dgnodrop.cur'), no-drop; }
+:root { --xp-body: #ECE9D8; --xp-highlight: #316AC5; }
+.desktop-icons { position: absolute; top: 10px; left: 10px; display: flex; flex-direction: column; gap: 4px; flex-wrap: wrap; max-height: calc(100vh - 60px); }
+.desktop-icon { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 80px; padding: 6px 4px; background: none; border: none; color: #FFF; text-align: center; font-size: 11px; border-radius: 4px; cursor: url('/assets/cursors/arrow.cur'), default; }
+.desktop-icon:hover { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 5px 3px; }
+.desktop-icon.selected { background: rgba(49,106,197,0.6); border: 1px solid rgba(49,106,197,0.9); padding: 5px 3px; }
+.desktop-icon img { width: 32px; height: 32px; pointer-events: none; }
+.desktop-icon span { text-shadow: 1px 1px 2px rgba(0,0,0,0.8); overflow: hidden; text-overflow: ellipsis; max-width: 72px; line-height: 1.2; }
+.desktop-context-menu { position: absolute; background: #FFF; border: 1px solid #7F9DB9; box-shadow: 2px 2px 5px rgba(0,0,0,0.3); z-index: 10000; min-width: 180px; padding: 2px; }
+.context-item { display: flex; align-items: center; gap: 8px; padding: 4px 24px 4px 8px; font-size: 11px; cursor: url('/assets/cursors/arrow.cur'), default; }
+.context-item:hover { background: var(--xp-highlight); color: #FFF; }
+.context-separator { height: 1px; background: #D4D0C8; margin: 3px 4px; }
+.context-disabled { color: #999; cursor: default; }
+.context-disabled:hover { background: none; color: #999; }
+.xp-loader { width: 150px; height: 20px; border: 2px solid #B2B2B2; border-radius: 7px; margin: 112px auto 0; padding: 2px 1px; overflow: hidden; font-size: 0; background: #060606; }
+.xp-loader div { width: 9px; height: 100%; background: linear-gradient(to bottom,#2838C7 0%,#5979EF 17%,#869EF3 32%,#869EF3 45%,#5979EF 59%,#2838C7 100%); display: inline-block; margin-right: 2px; animation: xpLoader 2s linear infinite; }
+@keyframes xpLoader { from { transform: translateX(-30px); } to { transform: translateX(150px); } }
+.window-menu { height: 20px; display: flex; align-items: center; padding: 0 4px; background: var(--xp-body); border-bottom: 1px solid #C0BBA1; flex-shrink: 0; }
+.window-menu-item { padding: 2px 6px; font-size: 11px; cursor: url('/assets/cursors/arrow.cur'), default; border-radius: 2px; }
+.window-menu-item:hover { background: var(--xp-highlight); color: #FFF; }
+.window-body { flex: 1; background: #FFF; overflow: auto; position: relative; }
+.xp-win .window-statusbar { margin: 0 3px; box-shadow: inset 0px 1px 2px #808080; padding: 2px 1px; display: flex; height: 20px; flex-shrink: 0; background: var(--xp-body); }
+.window-statusbar span { font-size: 11px; padding: 1px 4px; }
+
+.xp-taskbar { height: 30px; width: 100%; background-image: url('/assets/taskbar/taskbar-bg.png'); background-repeat: repeat-x; background-position: bottom left; image-rendering: pixelated; image-rendering: crisp-edges; position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000; display: flex; align-items: stretch; }
+.xp-start-btn { width: 99px; height: 30px; background-image: url('/assets/taskbar/start-button.png'); background-repeat: no-repeat; background-position: 0 0; border: none; cursor: pointer; flex-shrink: 0; padding: 0; image-rendering: pixelated; image-rendering: crisp-edges; }
+.xp-start-btn:hover { background-position: 0 -30px; }
+.xp-start-btn:active { background-position: 0 -60px; }
+.xp-taskband { display: flex; align-items: center; height: 28px; padding: 0 2px; gap: 2px; flex-shrink: 0; margin-top: 1px; }
+.xp-taskbar-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.3); margin: 0 2px; }
+.xp-taskbar-tasks { flex: 1; display: flex; align-items: center; gap: 2px; padding: 0 2px; overflow: hidden; min-width: 0; height: 28px; margin-top: 1px; }
+.xp-task-btn { height: 24px; border: none; background-image: url('/assets/taskbar/taskband-button.png'); background-repeat: no-repeat; background-position: 0 0; cursor: pointer; display: flex; align-items: center; gap: 4px; color: #FFF; font-size: 11px; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-shrink: 1; min-width: 0; padding: 0 8px 0 8px; image-rendering: pixelated; image-rendering: crisp-edges; }
+.xp-task-btn-active { background-position: 0 -112px; }
+.xp-task-btn-inactive { background-position: 0 -28px; }
+.xp-task-btn:hover { background-position: 0 -28px; }
+.xp-task-btn:active { background-position: 0 -56px; }
+.xp-tray { display: flex; align-items: center; height: 28px; padding: 0 8px; gap: 6px; flex-shrink: 0; background-image: url('/assets/taskbar/taskbar-tray.png'); background-repeat: no-repeat; background-position: bottom left; margin-top: 1px; image-rendering: pixelated; image-rendering: crisp-edges; }
+.xp-tray-icon { width: 16px; height: 16px; cursor: pointer; opacity: 0.9; image-rendering: pixelated; image-rendering: crisp-edges; }
+.xp-tray-clock { color: #FFF; font-size: 11px; cursor: pointer; padding-left: 4px; font-family: 'XP Font', Tahoma, sans-serif; }
+
+/* XP checkbox sprite (13x13, 12 states) */
+.xp-checkbox { width: 13px; height: 13px; background-image: url('/assets/taskbar/checkbox13.png'); background-repeat: no-repeat; background-position: 0 0; display: inline-block; flex-shrink: 0; image-rendering: pixelated; }
+.xp-checkbox-checked { background-position: 0 -52px; }
+.xp-checkbox:hover { background-position: 0 -13px; }
+.xp-checkbox-checked:hover { background-position: 0 -65px; }
+
+/* XP radio sprite (13x104, 8 states) */
+.xp-radio { width: 13px; height: 13px; background-image: url('/assets/taskbar/radiobutton13.png'); background-repeat: no-repeat; background-position: 0 0; display: inline-block; flex-shrink: 0; image-rendering: pixelated; }
+.xp-radio-checked { background-position: 0 -52px; }
+.xp-radio:hover { background-position: 0 -13px; }
+.xp-radio-checked:hover { background-position: 0 -65px; }
+
+

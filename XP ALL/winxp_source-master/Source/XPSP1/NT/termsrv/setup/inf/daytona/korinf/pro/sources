@@ -1,6 +1,0 @@
-#Copyright (c) 1998 - 1999 Microsoft Corporation
-
-!include ..\..\..\sources.inc
-
-ALT_PROJECT=KOR
-ALT_PROJECT_TARGET=KOR
