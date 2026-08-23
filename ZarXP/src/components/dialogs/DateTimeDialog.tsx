@@ -2,20 +2,20 @@ import { useState, useEffect, useCallback } from "react";
 import { useWindowStore } from "../../store/windowStore";
 
 const s: Record<string, React.CSSProperties> = {
-  container: { display: "flex", flexDirection: "column", height: "100%", fontFamily: "Tahoma, sans-serif", fontSize: 12, userSelect: "none" },
-  body: { flex: 1, padding: 12, display: "flex", gap: 16, background: "#ece9d8" },
-  calSection: { display: "flex", flexDirection: "column", gap: 4 },
+  container: { display: "flex", flexDirection: "column", height: "100%", fontFamily: "Tahoma, sans-serif", fontSize: 12, userSelect: "none", overflow: "hidden" },
+  body: { flex: 1, padding: 12, display: "flex", gap: 16, background: "#ece9d8", overflow: "hidden", flexWrap: "wrap", alignContent: "flex-start" },
+  calSection: { display: "flex", flexDirection: "column", gap: 4, minWidth: 190 },
   calHeader: { display: "flex", alignItems: "center", justifyContent: "space-between", fontWeight: 700, fontSize: 12 },
   calNav: { cursor: "pointer", padding: "0 4px", fontSize: 14, userSelect: "none" },
-  calGrid: { display: "grid", gridTemplateColumns: "repeat(7, 28px)", gap: 1, fontSize: 11 },
+  calGrid: { display: "grid", gridTemplateColumns: "repeat(7, 26px)", gap: 1, fontSize: 11 },
   calDay: { textAlign: "center", padding: 2, color: "#333", cursor: "pointer" },
   calDayHeader: { textAlign: "center", padding: 2, fontWeight: 700, fontSize: 10, color: "#666" },
   today: { background: "#3a6ea5", color: "#fff", borderRadius: 2 },
-  clockSection: { display: "flex", flexDirection: "column", alignItems: "center", gap: 8 },
-  clock: { fontFamily: "Consolas, monospace", fontSize: 32, fontWeight: 700, color: "#0a246a", padding: "8px 16px", border: "1px solid #7f9db9", background: "#fff" },
-  dateLabel: { fontSize: 14, fontWeight: 700 },
+  clockSection: { display: "flex", flexDirection: "column", alignItems: "center", gap: 8, minWidth: 140 },
+  clock: { fontFamily: "Consolas, monospace", fontSize: 28, fontWeight: 700, color: "#0a246a", padding: "8px 16px", border: "1px solid #7f9db9", background: "#fff" },
+  dateLabel: { fontSize: 13, fontWeight: 700 },
   row: { display: "flex", alignItems: "center", gap: 6, marginTop: 6 },
-  select: { height: 22, fontSize: 12, width: 180 },
+  select: { height: 22, fontSize: 12, width: 160 },
   buttons: { display: "flex", justifyContent: "flex-end", gap: 6, padding: "6px 12px", borderTop: "1px solid #d4d0c8", background: "#ece9d8" },
   btn: { minWidth: 70, height: 24, fontSize: 12, cursor: "pointer", background: "#ece9d8", border: "1px solid #7f9db9", borderTopColor: "#fff", borderLeftColor: "#fff" },
 };
