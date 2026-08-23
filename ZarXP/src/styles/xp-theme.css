@@ -34,24 +34,28 @@ body.wait { cursor: url('/assets/cursors/default_wait.cur'), wait; }
 .window-statusbar span { font-size: 11px; padding: 1px 4px; }
 
 .xp-taskbar { height: 30px; width: 100%; background-image: url('/assets/taskbar/taskbar-bg.png'); background-repeat: repeat-x; background-position: bottom left; image-rendering: pixelated; image-rendering: crisp-edges; position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000; display: flex; align-items: stretch; }
-.xp-start-btn { width: 99px; height: 30px; background-image: url('/assets/taskbar/start-button.png'); background-repeat: no-repeat; background-position: 0 0; border: none; cursor: pointer; flex-shrink: 0; padding: 0; image-rendering: pixelated; image-rendering: crisp-edges; }
-.xp-start-btn:hover { background-position: 0 -30px; }
-.xp-start-btn:active { background-position: 0 -60px; }
+.xp-start-btn { width: 97px; height: 30px; border: none; cursor: pointer; flex-shrink: 0; padding: 0 0 2px 8px; display: flex; align-items: center; gap: 4px; background: radial-gradient(130% 100% at 30% 15%, #8CD97E 0%, #55AC4E 30%, #38883A 60%, #24702C 85%, #1B6124 100%); border-radius: 0 12px 12px 0; box-shadow: inset 0 1px 1px rgba(255,255,255,0.45), inset -1px -1px 1px rgba(0,40,0,0.25), 1px 0 2px rgba(0,0,0,0.35); }
+.xp-start-btn:hover { filter: brightness(1.12); }
+.xp-start-btn:active { filter: brightness(0.9); }
+.xp-start-btn span { font-family: 'Franklin Gothic Medium', 'Tahoma', sans-serif; font-style: italic; font-weight: bold; font-size: 17px; color: #FFF; text-shadow: 1px 1px 2px rgba(0,0,0,0.7); margin-bottom: 2px; }
+.xp-start-flag { width: 22px; height: 22px; flex-shrink: 0; filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.45)); }
 .xp-taskband { display: flex; align-items: center; height: 28px; padding: 0 2px; gap: 2px; flex-shrink: 0; margin-top: 1px; }
 .xp-ql-btn { width: 24px; height: 24px; border: 1px solid transparent; background: none; cursor: pointer; border-radius: 2px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 0; }
 .xp-ql-btn:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.5); }
 .xp-ql-btn:active { background: rgba(0,0,0,0.15); border-color: rgba(0,0,0,0.3); }
 .xp-taskbar-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.3); margin: 0 2px; }
 .xp-taskbar-tasks { flex: 1; display: flex; align-items: center; gap: 2px; padding: 0 2px; overflow: hidden; min-width: 0; height: 28px; margin-top: 1px; }
-.xp-task-btn { height: 24px; border: none; background-image: url('/assets/taskbar/taskband-button.png'); background-repeat: no-repeat; background-size: 100% 168px; background-position: 0 0; cursor: pointer; display: flex; align-items: center; gap: 4px; color: #FFF; font-size: 11px; max-width: 160px; min-width: 40px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-shrink: 1; padding: 0 8px; image-rendering: pixelated; }
-.xp-task-btn-active { background-position: 0 -112px; }
+.xp-task-btn { height: 24px; border: none; background-image: url('/assets/taskbar/taskband-button.png'); background-repeat: no-repeat; background-size: 100% 144px; background-position: 0 0; cursor: pointer; display: flex; align-items: center; gap: 4px; color: #FFF; font-size: 11px; max-width: 160px; min-width: 40px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-shrink: 1; padding: 0 8px; image-rendering: pixelated; text-shadow: 1px 1px 1px rgba(0,0,0,0.6); }
+.xp-task-btn-active { background-position: 0 -96px; }
 .xp-task-btn-inactive { background-position: 0 0; }
-.xp-task-btn:hover { background-position: 0 -28px; }
-.xp-task-btn:active { background-position: 0 -56px; }
-.xp-task-btn-active:hover, .xp-task-btn-active:active { background-position: 0 -112px; }
-.xp-tray { display: flex; align-items: center; height: 28px; padding: 0 8px; gap: 6px; flex-shrink: 0; background-image: url('/assets/taskbar/taskbar-tray.png'); background-repeat: no-repeat; background-position: bottom left; margin-top: 1px; image-rendering: pixelated; image-rendering: crisp-edges; }
-.xp-tray-icon { width: 16px; height: 16px; cursor: pointer; opacity: 0.9; image-rendering: pixelated; image-rendering: crisp-edges; }
+.xp-task-btn:hover { background-position: 0 -24px; }
+.xp-task-btn:active { background-position: 0 -48px; }
+.xp-task-btn-active:hover, .xp-task-btn-active:active { background-position: 0 -96px; }
+.xp-tray { display: flex; align-items: center; height: 28px; padding: 0 8px; gap: 6px; flex-shrink: 0; background-image: url('/assets/taskbar/taskbar-tray.png'); background-repeat: no-repeat; background-position: bottom left; margin-top: 1px; image-rendering: pixelated; position: relative; }
+.xp-tray-icon { width: 16px; height: 16px; cursor: pointer; opacity: 0.9; image-rendering: pixelated; }
+.xp-tray-icon:hover { opacity: 1; filter: brightness(1.25) drop-shadow(0 0 2px rgba(255,255,255,0.6)); }
 .xp-tray-clock { color: #FFF; font-size: 11px; cursor: pointer; padding-left: 4px; font-family: 'XP Font', Tahoma, sans-serif; }
+.xp-balloon { position: absolute; bottom: 34px; right: 8px; width: 220px; background: #FFFFE1; border: 1px solid #000; border-radius: 6px; padding: 8px 10px; font-size: 11px; color: #000; font-family: 'XP Font', Tahoma, sans-serif; box-shadow: 2px 2px 6px rgba(0,0,0,0.4); z-index: 2000; cursor: pointer; }
 
 /* XP checkbox sprite (13x13, 12 states) */
 .xp-checkbox { width: 13px; height: 13px; background-image: url('/assets/taskbar/checkbox13.png'); background-repeat: no-repeat; background-position: 0 0; display: inline-block; flex-shrink: 0; image-rendering: pixelated; }

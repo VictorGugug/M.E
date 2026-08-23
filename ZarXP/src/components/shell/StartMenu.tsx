@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { AppId } from "../../types";
 import { playSound } from "../../utils/sound";
 import { assetUrl } from "../../utils/assets"
@@ -24,7 +25,25 @@ const RIGHT_ITEMS: { id: AppId; label: string; icon: string }[] = [
   { id: "run", label: "Run...", icon: "Run.png" },
 ];
 
+const ALL_PROGRAMS: { id: AppId; label: string; icon: string }[] = [
+  { id: "internet-explorer", label: "Internet Explorer", icon: "InternetExplorer6.png" },
+  { id: "notepad", label: "Notepad", icon: "Notepad.png" },
+  { id: "paint", label: "Paint", icon: "Paint.png" },
+  { id: "calculator", label: "Calculator", icon: "Calculator.png" },
+  { id: "media-player", label: "Windows Media Player", icon: "WindowsMediaPlayer10.png" },
+  { id: "terminal", label: "Command Prompt", icon: "CommandPrompt.png" },
+  { id: "explorer", label: "Windows Explorer", icon: "Explorer.png" },
+  { id: "task-manager", label: "Windows Task Manager", icon: "TaskManager.png" },
+  { id: "solitaire", label: "Solitaire", icon: "Solitaire.png" },
+  { id: "minesweeper", label: "Minesweeper", icon: "Minesweeper.png" },
+  { id: "system-properties", label: "System Properties", icon: "SystemProperties.png" },
+  { id: "display-properties", label: "Display Properties", icon: "DisplayProperties.png" },
+  { id: "date-time", label: "Date and Time", icon: "DateandTime.png" },
+  { id: "volume", label: "Volume Control", icon: "Volume.png" },
+];
+
 export default function StartMenu({ onOpen }: { onOpen: (id: AppId) => void }) {
+  const [allPrograms, setAllPrograms] = useState(false);
   const handleOpen = (id: AppId) => { playSound("Windows XP Menu Command.wav", 0.15); onOpen(id); };
   return (
     <div 
@@ -73,6 +92,65 @@ export default function StartMenu({ onOpen }: { onOpen: (id: AppId) => void }) {
               <span className="start-item-text">{item.label}</span>
             </div>
           ))}
+          <div style={{ borderTop: "1px solid #C9C7B4", margin: "3px 4px" }} />
+          <div
+            className="start-item"
+            onClick={(e) => { e.stopPropagation(); setAllPrograms((v) => !v); }}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 8,
+              padding: "5px 8px",
+              fontSize: 12,
+              fontWeight: "bold",
+              cursor: "pointer",
+              borderRadius: 2,
+              position: "relative"
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "#1E4DB5"; e.currentTarget.style.color = "#FFF"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = allPrograms ? "#1E4DB5" : "transparent"; e.currentTarget.style.color = allPrograms ? "#FFF" : "initial"; }}
+          >
+            <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <img src={assetUrl("assets/icons/Programs.png")} alt="" style={{ width: 24, height: 24 }} />
+              All Programs
+            </span>
+            <span style={{ fontSize: 10 }}>&#9654;</span>
+            {allPrograms && (
+              <div
+                style={{
+                  position: "absolute",
+                  left: "100%",
+                  bottom: -4,
+                  width: 230,
+                  maxHeight: 340,
+                  overflowY: "auto",
+                  background: "#FFF",
+                  border: "1px solid #7F9DB9",
+                  boxShadow: "3px 3px 6px rgba(0,0,0,0.3)",
+                  padding: 3,
+                  zIndex: 1001,
+                  color: "#000",
+                  fontWeight: "normal"
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {ALL_PROGRAMS.map((app) => (
+                  <div
+                    key={app.id}
+                    className="allprog-item"
+                    onClick={(e) => { e.stopPropagation(); handleOpen(app.id); }}
+                    style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 8px", fontSize: 11, cursor: "pointer", borderRadius: 2 }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = "#1E4DB5"; e.currentTarget.style.color = "#FFF"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#000"; }}
+                  >
+                    <img src={assetUrl(`assets/icons/${app.icon}`)} alt="" style={{ width: 20, height: 20 }} />
+                    <span>{app.label}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
         <div style={{ width: "50%", display: "flex", flexDirection: "column", padding: "4px 0", background: "#D4D0C8" }}>
           {RIGHT_ITEMS.map((item) => (
