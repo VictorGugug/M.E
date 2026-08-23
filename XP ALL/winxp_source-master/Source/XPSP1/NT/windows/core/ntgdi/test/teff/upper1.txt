@@ -1,3 +1,0 @@
-sdfg:bad_syntax
-echo syntax:    %0 file
-goto end

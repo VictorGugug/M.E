@@ -1,4 +1,0 @@
-LIBRARY LOADRAS
-EXPORTS
-    WinState_RasSetEntryPropertiesW
-

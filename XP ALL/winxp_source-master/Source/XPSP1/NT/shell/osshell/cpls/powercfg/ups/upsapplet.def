@@ -1,6 +1,0 @@
-LIBRARY         UPSAPPLET
-DESCRIPTION     "UPS Power Options Tab"
-
-EXPORTS
-    DllCanUnloadNow     PRIVATE
-    DllGetClassObject   PRIVATE

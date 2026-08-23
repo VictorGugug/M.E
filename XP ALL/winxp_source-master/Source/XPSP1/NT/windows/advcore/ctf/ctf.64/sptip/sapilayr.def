@@ -1,5 +1,0 @@
-LIBRARY     SPTIP
-
-EXPORTS
-        DllRegisterServer               PRIVATE
-        DllUnregisterServer             PRIVATE

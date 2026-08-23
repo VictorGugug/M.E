@@ -1,8 +1,0 @@
-LIBRARY tsproxydll
-
-EXPORTS
-   GetExtensionVersion
-   HttpExtensionProc
-   TerminateExtension
-   GetFilterVersion
-   HttpFilterProc

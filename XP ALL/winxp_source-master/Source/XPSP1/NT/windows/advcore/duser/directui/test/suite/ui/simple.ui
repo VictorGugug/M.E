@@ -1,5 +1,0 @@
-<element resid=main borderthickness=rect(4,4,4,4) layout=borderlayout() content="Hello World! This is a test. Testing 1, 2, 3, 4!!!">
-    <element layoutpos=left background=red>
-        "Hey!"
-    </element>    
-</element>

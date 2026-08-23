@@ -1,4 +1,0 @@
-ALT_PROJECT_TARGET=perinf
-PERSONAL=1
-!include ..\sources.inc
-

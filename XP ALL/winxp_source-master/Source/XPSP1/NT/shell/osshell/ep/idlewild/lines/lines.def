@@ -1,5 +1,0 @@
-LIBRARY LINES
-
-EXPORTS
-	WEP
-	ScrSaveProc

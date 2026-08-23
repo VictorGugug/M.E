@@ -1,5 +1,0 @@
-LIBRARY FILTER
-
-EXPORTS
-    EntryPoint
-    ModInfo

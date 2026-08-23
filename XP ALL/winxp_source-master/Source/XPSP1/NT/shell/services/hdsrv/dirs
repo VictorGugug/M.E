@@ -1,5 +1,0 @@
-DIRS= \
-    lib       \
-    idl       \
-    shsrvice  \
-    shhwdtct

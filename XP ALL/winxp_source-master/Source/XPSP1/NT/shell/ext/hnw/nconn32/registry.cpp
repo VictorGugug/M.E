@@ -1,1 +1,0 @@
-#include "..\shared\registry.cpp"

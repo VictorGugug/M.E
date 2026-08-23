@@ -1,5 +1,0 @@
-DIRS= convold   \
-      convphon  \
-      genptbl   \
-      sortptbl  \
-      gennpsrc

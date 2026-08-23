@@ -1,7 +1,0 @@
-
-DIRS=\
-    Library     \
-    Heap        \
-    Interface
-
-OPTIONAL_DIRS=

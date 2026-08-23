@@ -1,9 +1,0 @@
-//Microsoft Developer Studio generated resource script.
-//
-// History:
-//
-//    01/29/2001 mnikkel  Created
-/////////////////////////////////////////////////////////////////////////////
-//
-#include "..\ver.rc"
-#include "fileverinfo.rc"

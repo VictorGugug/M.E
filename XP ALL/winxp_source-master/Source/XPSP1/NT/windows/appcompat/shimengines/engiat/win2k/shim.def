@@ -1,8 +1,0 @@
-LIBRARY Shim
-EXPORTS
-    LoadPatchDll
-    PatchNewModules
-    SE_DynamicShim
-
-
-

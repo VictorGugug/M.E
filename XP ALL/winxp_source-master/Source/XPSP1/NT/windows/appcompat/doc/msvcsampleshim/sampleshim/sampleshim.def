@@ -1,6 +1,0 @@
-LIBRARY SampleShim
-EXPORTS
-    GetHookAPIs
-    
-
-

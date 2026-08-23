@@ -1,5 +1,0 @@
-LIBRARY MHELP
-
-EXPORTS
-    EntryPoint
-    ModInfo

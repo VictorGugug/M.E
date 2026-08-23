@@ -1,5 +1,0 @@
-dirs=\
-    winnt
-
-# Doesn't build
-# optional_dirs=win95{x86}

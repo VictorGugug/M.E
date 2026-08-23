@@ -1,2 +1,0 @@
-instmsi.exe     symbolcd\cd\tools\setup\win9x:dbg\setup\win9x
-msizap.exe      symbolcd\cd\tools\setup\win9x:dbg\setup\win9x

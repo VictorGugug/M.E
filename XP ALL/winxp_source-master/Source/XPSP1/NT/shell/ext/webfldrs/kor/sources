@@ -1,4 +1,0 @@
-ALT_PROJECT_TARGET=kor
-WEBFOLDERS_X86=1
-!include ..\sources.inc
-SOURCES_USED=..\sources.inc

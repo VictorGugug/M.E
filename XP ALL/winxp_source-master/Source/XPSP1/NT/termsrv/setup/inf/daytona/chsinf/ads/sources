@@ -1,5 +1,0 @@
-#Copyright (c) 1998 - 1999 Microsoft Corporation
-!include ..\..\..\sources.inc
-
-ALT_PROJECT=CHS
-ALT_PROJECT_TARGET=CHS

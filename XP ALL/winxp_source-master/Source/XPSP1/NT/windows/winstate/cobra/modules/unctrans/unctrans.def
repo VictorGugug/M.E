@@ -1,7 +1,0 @@
-LIBRARY UNCTRANS
-
-EXPORTS
-    DllMain
-    TransportModule
-    ModuleInitialize
-    ModuleTerminate

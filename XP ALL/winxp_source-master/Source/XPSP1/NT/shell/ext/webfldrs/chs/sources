@@ -1,4 +1,0 @@
-ALT_PROJECT_TARGET=chs
-WEBFOLDERS_X86=1
-!include ..\sources.inc
-SOURCES_USED=..\sources.inc

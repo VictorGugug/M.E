@@ -1,4 +1,0 @@
-ALT_PROJECT_TARGET=blainf
-SERVER=4
-!include ..\sources.inc
-

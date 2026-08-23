@@ -1,3 +1,0 @@
-DEBUGGER_NAME = cdb
-
-!include ..\sources.inc

@@ -1,4 +1,0 @@
-
-
-BOOL DisplayDataSourceOptions (HWND hWndParent) ;
-

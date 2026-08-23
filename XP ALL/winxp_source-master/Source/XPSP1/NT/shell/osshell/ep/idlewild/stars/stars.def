@@ -1,5 +1,0 @@
-LIBRARY STARS
-
-EXPORTS
-	WEP
-	ScrSaveProc

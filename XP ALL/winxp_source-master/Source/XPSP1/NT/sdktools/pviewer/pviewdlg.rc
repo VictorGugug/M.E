@@ -1,3 +1,0 @@
-#include <windows.h>
-#include "pviewdlg.h"
-#include "pviewdlg.dlg"

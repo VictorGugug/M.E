@@ -1,7 +1,0 @@
-DIRS = library \
-       svclib \
-       clitool \
-       mediate \
-       service \
-       snapin 
-

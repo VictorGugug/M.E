@@ -1,5 +1,0 @@
-
-
-
-BOOL SetTimeframe (HWND hWndParent) ;
-
