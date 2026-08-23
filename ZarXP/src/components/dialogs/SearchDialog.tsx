@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { assetUrl } from "../../utils/assets"
 
 const s: Record<string, React.CSSProperties> = {
   container: { display: "flex", height: "100%", fontFamily: "Tahoma, sans-serif", fontSize: 12, userSelect: "none" },
@@ -27,7 +28,7 @@ export default function SearchDialog(_: { id: string }) {
     <div style={s.container}>
       <div style={s.left}>
         <div style={{ alignSelf: "center", textAlign: "center" }}>
-          <img src="/assets/icons/Search.png" alt="" style={{ width: 48, height: 48 }} />
+          <img src={assetUrl("assets/icons/Search.png")} alt="" style={{ width: 48, height: 48 }} />
         </div>
         <div style={s.title}>What do you want to search for?</div>
         {options.map((o) => (

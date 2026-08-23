@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useWindowStore } from "./store/windowStore";
 import Desktop from "./components/shell/Desktop";
 import { playSound } from "./utils/sound";
+import { assetUrl } from "./utils/assets"
 
 const VALID_STEPS = ["loading", "login", "welcome", "desktop"] as const;
 type Step = (typeof VALID_STEPS)[number];
@@ -40,12 +41,12 @@ export default function App() {
     return (
       <div style={{ position: "fixed", inset: 0, background: "#000", color: "#F4F4F4", fontFamily: "Arial,Helvetica,sans-serif", zIndex: 9999, display: "flex", flexDirection: "column" }}>
         <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%,-50%)", width: "min(420px,78vw)", textAlign: "center" }}>
-          <img src="/assets/images/xp-loading-logo.jpg" alt="" style={{ width: "100%", maxWidth: 400 }} />
+          <img src={assetUrl("assets/images/xp-loading-logo.jpg")} alt="" style={{ width: "100%", maxWidth: 400 }} />
           <div className="xp-loader"><div /><div /><div /></div>
         </div>
         <div style={{ position: "absolute", left: 24, right: 24, bottom: 22, display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
           <p style={{ margin: 0, fontSize: 14, color: "#F4F4F4" }}>Copyright &copy; Microsoft Corporation</p>
-          <img src="/assets/images/xp-loading-mslogo.jpg" alt="" style={{ width: 120 }} />
+          <img src={assetUrl("assets/images/xp-loading-mslogo.jpg")} alt="" style={{ width: 120 }} />
         </div>
       </div>
     );
@@ -57,7 +58,7 @@ export default function App() {
         <div style={{ height: 70, background: "#00309C", borderBottom: "2px solid #C7DDFF", flexShrink: 0 }} />
         <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 34, padding: "22px 52px", background: "radial-gradient(circle at 7% 5%,#91B1EF 0,#7698E6 6%,#5A7EDC 13%,transparent 14%)" }}>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "center", paddingRight: 36, borderRight: "1px solid rgba(255,255,255,0.72)" }}>
-            <img src="/assets/images/xp-logo.png" alt="Windows XP" style={{ width: "min(430px,100%)", filter: "drop-shadow(0 2px 2px rgba(0,0,0,0.26))" }} />
+            <img src={assetUrl("assets/images/xp-logo.png")} alt="Windows XP" style={{ width: "min(430px,100%)", filter: "drop-shadow(0 2px 2px rgba(0,0,0,0.26))" }} />
             <p style={{ margin: "14px 10px 0 0", fontSize: 12, color: "rgba(255,255,255,0.9)" }}>To begin, click your user name</p>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -68,7 +69,7 @@ export default function App() {
               onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "transparent"; }}
             >
               <div style={{ width: 64, height: 64, border: "2px solid rgba(255,255,255,0.25)", borderRadius: 4, overflow: "hidden", background: "#2a3a4a", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <img src="/assets/images/user.png" alt="" style={{ width: 64, height: 64 }} />
+                <img src={assetUrl("assets/images/user.png")} alt="" style={{ width: 64, height: 64 }} />
               </div>
               <span style={{ fontWeight: 700 }}>XP User</span>
             </button>
@@ -76,7 +77,7 @@ export default function App() {
         </div>
         <div style={{ height: 70, background: "linear-gradient(90deg,#3833ac,#00309c)", flexShrink: 0, display: "flex", alignItems: "center", padding: "0 20px", gap: 16 }}>
           <button onClick={doLogin} style={{ display: "flex", alignItems: "center", gap: 8, color: "#FFF", background: "none", border: "none", cursor: "pointer", fontSize: 12, fontFamily: "inherit" }}>
-            <img src="/assets/icons/Power.png" alt="" style={{ width: 16, height: 16 }} />
+            <img src={assetUrl("assets/icons/Power.png")} alt="" style={{ width: 16, height: 16 }} />
             Turn Off Computer
           </button>
         </div>

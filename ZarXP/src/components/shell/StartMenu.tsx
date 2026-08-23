@@ -1,5 +1,6 @@
 import type { AppId } from "../../types";
 import { playSound } from "../../utils/sound";
+import { assetUrl } from "../../utils/assets"
 
 const LEFT_ITEMS: { id: AppId; label: string; icon: string }[] = [
   { id: "internet-explorer", label: "Internet Explorer", icon: "InternetExplorer6.png" },
@@ -43,7 +44,7 @@ export default function StartMenu({ onOpen }: { onOpen: (id: AppId) => void }) {
     >
       <div style={{ height: 3, background: "linear-gradient(90deg, #0A246A, #1E4DB5, #3A72F0, #4A82F5, #2B6EEA, #0A4FC6, #063BA4)", flexShrink: 0 }} />
       <div style={{ height: 63, background: "linear-gradient(180deg,#1868CE 0%,#4791EB 50%,#2777DD 100%)", display: "flex", alignItems: "center", gap: 10, padding: "0 12px" }}>
-        <img src="/assets/images/user.png" alt="" style={{ width: 48, height: 48, borderRadius: 4 }} />
+        <img src={assetUrl("assets/images/user.png")} alt="" style={{ width: 48, height: 48, borderRadius: 4 }} />
         <span style={{ fontSize: 16, color: "#FFF", fontFamily: "'XP Font Bold',Tahoma,sans-serif" }}>XP User</span>
       </div>
       <div style={{ height: 2, background: "linear-gradient(to right,transparent,#DA884A,transparent)", flexShrink: 0 }} />
@@ -66,7 +67,7 @@ export default function StartMenu({ onOpen }: { onOpen: (id: AppId) => void }) {
               onMouseEnter={(e) => { e.currentTarget.style.background = "#1E4DB5"; e.currentTarget.style.color = "#FFF"; }}
               onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "initial"; }}
             >
-              <img src={`/assets/icons/${item.icon}`} alt="" style={{ width: 24, height: 24 }} />
+              <img src={assetUrl(`assets/icons/${item.icon}`)} alt="" style={{ width: 24, height: 24 }} />
               <span className="start-item-text">{item.label}</span>
             </div>
           ))}
@@ -88,7 +89,7 @@ export default function StartMenu({ onOpen }: { onOpen: (id: AppId) => void }) {
               onMouseEnter={(e) => { e.currentTarget.style.background = "#1E4DB5"; e.currentTarget.style.color = "#FFF"; }}
               onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "initial"; }}
             >
-              <img src={`/assets/icons/${item.icon}`} alt="" style={{ width: 20, height: 20 }} />
+              <img src={assetUrl(`assets/icons/${item.icon}`)} alt="" style={{ width: 20, height: 20 }} />
               <span>{item.label}</span>
             </div>
           ))}
@@ -114,7 +115,7 @@ export default function StartMenu({ onOpen }: { onOpen: (id: AppId) => void }) {
           onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.2)"; }}
           onMouseLeave={(e) => { e.currentTarget.style.background = "none"; }}
         >
-          <img src="/assets/icons/LogOff.png" alt="" style={{ width: 16, height: 16 }} />
+          <img src={assetUrl("assets/icons/LogOff.png")} alt="" style={{ width: 16, height: 16 }} />
           <span>Log Off</span>
         </button>
         <button 
@@ -136,7 +137,7 @@ export default function StartMenu({ onOpen }: { onOpen: (id: AppId) => void }) {
           onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.2)"; }}
           onMouseLeave={(e) => { e.currentTarget.style.background = "none"; }}
         >
-          <img src="/assets/icons/Power.png" alt="" style={{ width: 16, height: 16 }} />
+          <img src={assetUrl("assets/icons/Power.png")} alt="" style={{ width: 16, height: 16 }} />
           <span>Turn Off Computer</span>
         </button>
       </div>

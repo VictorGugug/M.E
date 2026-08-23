@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useWindowStore } from "../../store/windowStore";
 import { playSound } from "../../utils/sound";
+import { assetUrl } from "../../utils/assets"
 
 const s: Record<string, React.CSSProperties> = {
   container: { display: "flex", flexDirection: "column", height: "100%", fontFamily: "Tahoma, sans-serif", fontSize: 12, userSelect: "none" },
@@ -22,12 +23,12 @@ export default function ShutdownDialog({ id }: { id: string }) {
   return (
     <div style={s.container}>
       <div style={s.header}>
-        <img src="/assets/icons/Power.png" alt="" style={s.logo} />
+        <img src={assetUrl("assets/icons/Power.png")} alt="" style={s.logo} />
         <span>Shut Down Windows</span>
       </div>
       <div style={s.body}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-          <img src="/assets/images/xp-logo.png" alt="" style={{ width: 48, height: 48 }} />
+          <img src={assetUrl("assets/images/xp-logo.png")} alt="" style={{ width: 48, height: 48 }} />
           <span style={{ fontSize: 11, color: "#333" }}>What do you want the computer to do?</span>
         </div>
         {[

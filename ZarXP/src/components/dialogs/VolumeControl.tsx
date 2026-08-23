@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { assetUrl } from "../../utils/assets"
 
 const s: Record<string, React.CSSProperties> = {
   container: { display: "flex", flexDirection: "column", height: "100%", fontFamily: "Tahoma, sans-serif", fontSize: 12, userSelect: "none", padding: 12, gap: 10 },
@@ -22,7 +23,7 @@ export default function VolumeControl(_: { id: string }) {
   return (
     <div style={s.container}>
       <div style={s.header}>
-        <img src="/assets/icons/Volume.png" alt="" style={s.icon} />
+        <img src={assetUrl("assets/icons/Volume.png")} alt="" style={s.icon} />
         <span style={s.title}>Volume Control</span>
       </div>
       <select style={s.select} value="SoundMAX Digital Audio">

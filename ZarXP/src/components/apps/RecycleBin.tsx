@@ -1,3 +1,4 @@
+import { assetUrl } from "../../utils/assets"
 const deletedItems = [
   { name: "Old Resume.doc", original: "C:\\My Documents\\", date: "6/15/2006 2:30 PM" },
   { name: "Backup Notes.txt", original: "C:\\My Documents\\", date: "6/14/2006 11:15 AM" },
@@ -13,7 +14,7 @@ export default function RecycleBin(_: { id: string }) {
     <div style={{ width: "100%", height: "100%", background: "#FFF", fontFamily: "Tahoma, sans-serif", fontSize: 11, display: "flex", userSelect: "none" }}>
       <div style={{ width: 140, background: "#D4D0C8", borderRight: "1px solid #808080", padding: 4, display: "flex", flexDirection: "column", gap: 4 }}>
         <div style={{ padding: "8px 4px", textAlign: "center" }}>
-          <img src="/assets/icons/RecycleBinempty.png" alt="" style={{ width: 36, height: 36 }} />
+          <img src={assetUrl("assets/icons/RecycleBinempty.png")} alt="" style={{ width: 36, height: 36 }} />
           <div style={{ fontWeight: "bold", marginTop: 4 }}>Recycle Bin</div>
         </div>
         <button style={btnStyle}>Empty Recycle Bin</button>

@@ -2,8 +2,9 @@ import type { ReactNode } from "react";
 import { useWindowStore } from "../../store/windowStore";
 import type { WindowConfig } from "../../types";
 import { playSound } from "../../utils/sound";
+import { assetUrl } from "../../utils/assets"
 
-const WIN_SVG = "/assets/icons/win";
+const WIN_SVG = assetUrl("assets/icons/win");
 
 export default function Window({ config, children }: { config: WindowConfig; children: ReactNode }) {
   const { focusWindow, closeWindow, minimizeWindow, maximizeWindow, restoreWindow, updatePosition, updateSize } = useWindowStore();
@@ -112,7 +113,7 @@ export default function Window({ config, children }: { config: WindowConfig; chi
         }}
         onMouseDown={startDrag}
       >
-        {config.icon && <img src={`/assets/icons/${config.icon}`} alt="" style={{ width: 20, height: 20, marginRight: 4 }} />}
+        {config.icon && <img src={assetUrl(`assets/icons/${config.icon}`)} alt="" style={{ width: 20, height: 20, marginRight: 4 }} />}
         <span style={{ flex: 1, color: "#FFF", fontWeight: 600, fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
           {config.title}
         </span>
@@ -178,7 +179,7 @@ export default function Window({ config, children }: { config: WindowConfig; chi
           <div onMouseDown={(e) => startResize(e, "ne")} style={{ position: "absolute", top: -3, right: -3, width: 8, height: 8, cursor: "ne-resize", zIndex: 11 }} />
           <div onMouseDown={(e) => startResize(e, "sw")} style={{ position: "absolute", bottom: -3, left: -3, width: 8, height: 8, cursor: "sw-resize", zIndex: 11 }} />
           <div onMouseDown={(e) => startResize(e, "se")} style={{ position: "absolute", bottom: -3, right: -3, width: 8, height: 8, cursor: "se-resize", zIndex: 11 }} />
-          <img src="/assets/taskbar/resizegrip2.png" alt="" style={{ position: "absolute", bottom: 1, right: 1, width: 32, height: 17, pointerEvents: "none", imageRendering: "pixelated", zIndex: 12 }} />
+          <img src={assetUrl("assets/taskbar/resizegrip2.png")} alt="" style={{ position: "absolute", bottom: 1, right: 1, width: 32, height: 17, pointerEvents: "none", imageRendering: "pixelated", zIndex: 12 }} />
         </>
       )}
     </div>

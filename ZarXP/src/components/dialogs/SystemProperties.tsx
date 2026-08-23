@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useWindowStore } from "../../store/windowStore";
+import { assetUrl } from "../../utils/assets"
 
 const tabs = ["General", "Computer Name", "Hardware", "Advanced"] as const;
 type Tab = (typeof tabs)[number];
@@ -22,7 +23,7 @@ function TabContent({ tab }: { tab: Tab }) {
     case "General":
       return (
         <>
-          <img src="/assets/images/xp-logo.png" alt="" style={s.logo} />
+          <img src={assetUrl("assets/images/xp-logo.png")} alt="" style={s.logo} />
           <div style={s.title}>System:</div>
           <div style={s.line}>Microsoft Windows XP Professional</div>
           <div style={s.line}>Version 2002</div>
