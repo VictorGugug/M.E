@@ -6,15 +6,18 @@ const COLORS = [
   "#C0DCC0","#A6CAF0","#FFCC99","#FFFFCC","#99CCFF","#CC99FF","#FF99CC","#CCFFFF",
 ];
 
+const svgIcon = (paths: string) =>
+  `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">${paths}</svg>`)}`
+
 const TOOLS = [
-  { id: "pencil", label: "Pencil" },
-  { id: "brush", label: "Brush" },
-  { id: "eraser", label: "Eraser" },
-  { id: "fill", label: "Fill" },
-  { id: "line", label: "Line" },
-  { id: "rect", label: "Rectangle" },
-  { id: "ellipse", label: "Ellipse" },
-  { id: "pick", label: "Pick Color" },
+  { id: "pencil", label: "Pencil", icon: svgIcon('<path d="M3 13l1-4 7-7 3 3-7 7-4 1z" fill="#f4c20d" stroke="#000" stroke-width="1"/><path d="M11 2l3 3" stroke="#000" stroke-width="1"/>') },
+  { id: "brush", label: "Brush", icon: svgIcon('<path d="M12 2l2 2-6 6-2-2 6-6z" fill="#8b4513" stroke="#000" stroke-width="0.8"/><path d="M6 8l2 2-3 3c-1 1-3 1-3-1 0-1 1-2 2-3l2-1z" fill="#c0c0c0" stroke="#000" stroke-width="0.8"/>') },
+  { id: "eraser", label: "Eraser", icon: svgIcon('<rect x="3" y="7" width="8" height="5" fill="#ffb6c1" stroke="#000" stroke-width="1" transform="rotate(-20 7 9)"/><path d="M4 12h9" stroke="#000" stroke-width="1"/>') },
+  { id: "fill", label: "Fill", icon: svgIcon('<path d="M5 3l6 6-4 4-6-6 4-4z" fill="#4169e1" stroke="#000" stroke-width="0.8"/><path d="M13 9c1.5 2 1.5 4 0 4s-1.5-2 0-4z" fill="#4169e1" stroke="#000" stroke-width="0.6"/>') },
+  { id: "line", label: "Line", icon: svgIcon('<path d="M2 14L14 2" stroke="#000" stroke-width="1.5"/>') },
+  { id: "rect", label: "Rectangle", icon: svgIcon('<rect x="2" y="4" width="12" height="8" fill="none" stroke="#000" stroke-width="1.4"/>') },
+  { id: "ellipse", label: "Ellipse", icon: svgIcon('<ellipse cx="8" cy="8" rx="6" ry="4.5" fill="none" stroke="#000" stroke-width="1.4"/>') },
+  { id: "pick", label: "Pick Color", icon: svgIcon('<circle cx="7" cy="7" r="4" fill="none" stroke="#000" stroke-width="1.4"/><path d="M10 10l4 4" stroke="#000" stroke-width="1.6"/>') },
 ];
 
 export default function Paint(_: { id: string }) {
@@ -118,7 +121,9 @@ export default function Paint(_: { id: string }) {
     <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: "#ECE9D8", fontSize: 11 }}>
       <div style={{ display: "flex", gap: 1, padding: "2px 4px", borderBottom: "1px solid #C0BBA1", background: "#ECE9D8" }}>
         {TOOLS.map((t) => (
-          <button key={t.id} onClick={() => setTool(t.id)} style={{ width: 24, height: 24, border: tool === t.id ? "2px inset #FFF" : "1px solid #808080", background: "#D4D0C8", cursor: "pointer", fontSize: 10, padding: 0, display: "flex", alignItems: "center", justifyContent: "center" }} title={t.label}>{t.label[0]}</button>
+          <button key={t.id} onClick={() => setTool(t.id)} style={{ width: 24, height: 24, border: tool === t.id ? "2px inset #FFF" : "1px solid #808080", background: "#D4D0C8", cursor: "pointer", padding: 0, display: "flex", alignItems: "center", justifyContent: "center" }} title={t.label}>
+            <img src={t.icon} alt="" width="16" height="16" style={{ pointerEvents: "none" }} />
+          </button>
         ))}
       </div>
       <div style={{ display: "flex", gap: 2, padding: "2px 4px", borderBottom: "1px solid #C0BBA1", background: "#ECE9D8", alignItems: "center" }}>
