@@ -2,9 +2,4 @@ node_modules
 dist
 *.log
 .DS_Store
-_archive
-_DEL
-_to_delete
-
-.firecrawl
 
