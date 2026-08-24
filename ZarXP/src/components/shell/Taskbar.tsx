@@ -1,5 +1,6 @@
 ﻿import { useState, useEffect } from "react";
 import { useWindowStore } from "../../store/windowStore";
+import { useLangStore } from "../../store/langStore";
 import type { AppId } from "../../types";
 import { assetUrl } from "../../utils/assets"
 
@@ -14,6 +15,7 @@ export default function Taskbar({ onOpen }: { onOpen: (id: AppId) => void }) {
   const [volume, setVolume] = useState(72);
   const [volMute, setVolMute] = useState(false);
   const zMax = Math.max(0, ...windows.map((w) => w.zIndex));
+  const t = useLangStore((s) => s.t);
 
   useEffect(() => {
     const update = () => {
@@ -89,7 +91,7 @@ export default function Taskbar({ onOpen }: { onOpen: (id: AppId) => void }) {
             onClick={(e) => e.stopPropagation()}
             style={{ position: "absolute", bottom: 30, right: 60, width: 68, background: "#ECE9D8", border: "1px solid #0831D9", boxShadow: "2px 2px 4px rgba(0,0,0,0.35)", padding: "6px 4px 8px", display: "flex", flexDirection: "column", alignItems: "center", gap: 4, zIndex: 870 }}
           >
-            <span style={{ fontSize: 11 }}>Volume</span>
+            <span style={{ fontSize: 11 }}>{t("volume")}</span>
             <input
               type="range"
               min="0"
@@ -101,7 +103,7 @@ export default function Taskbar({ onOpen }: { onOpen: (id: AppId) => void }) {
             <label style={{ display: "flex", alignItems: "center", gap: 3, fontSize: 11 }}>
               <span className={`xp-checkbox${volMute ? " xp-checkbox-checked" : ""}`} />
               <input type="checkbox" style={{ display: "none" }} checked={volMute} onChange={() => setVolMute(!volMute)} />
-              Mute
+              {t("mute")}
             </label>
           </div>
         )}
@@ -114,19 +116,28 @@ export default function Taskbar({ onOpen }: { onOpen: (id: AppId) => void }) {
               <>
                 <div className="balloon-title">
                   <img className="balloon-icon" src={`${OL}/icon/tour.png`} alt="" />
-                  Take a tour of Windows XP
+                  {t("balloonTourTitle")}
                 </div>
                 <span className="balloon-text" style={{ cursor: "url('/assets/cursors/pointer.cur'), pointer" }} onClick={() => { setBalloon(null); onOpen("tour-xp"); }}>
-                  To learn about the fun features Windows XP has to offer, <span style={{ color: "#0000CC", textDecoration: "underline" }}>click here</span>. To find this info later, click Help and Support on the Start menu.
+                  {(() => {
+                    const parts = t("balloonTourBody").split("|");
+                    return (
+                      <>
+                        {parts[0]}
+                        <span style={{ color: "#0000CC", textDecoration: "underline" }}>{parts[1]}</span>
+                        {parts[2]}
+                      </>
+                    );
+                  })()}
                 </span>
               </>
             ) : (
               <>
                 <div className="balloon-title">
                   <img className="balloon-icon" src={`${IC}/SafelyRemoveHardware.png`} alt="" />
-                  Safely Remove Hardware
+                  {t("balloonRemoveTitle")}
                 </div>
-                <span className="balloon-text">No removable devices are connected.</span>
+                <span className="balloon-text">{t("balloonRemoveBody")}</span>
               </>
             )}
           </div>
