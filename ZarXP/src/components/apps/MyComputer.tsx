@@ -1,4 +1,5 @@
-﻿import { useWindowStore } from "../../store/windowStore";
+﻿import { useState } from "react";
+import { useWindowStore } from "../../store/windowStore";
 import { assetUrl } from "../../utils/assets"
 import type { AppId } from "../../types";
 
@@ -65,6 +66,7 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
 export default function MyComputer(_: { id: string }) {
   const openWindow = useWindowStore((s) => s.openWindow);
   const open = (id: AppId) => openWindow(id);
+  const [find, setFind] = useState("");
 
   return (
     <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: "#FFF", fontFamily: "Tahoma, sans-serif", overflow: "hidden" }}>
@@ -102,9 +104,8 @@ export default function MyComputer(_: { id: string }) {
             <Pane
               title="System Tasks"
               links={[
-                { label: "View system information", icon: `${IC}/UserAccounts.png`, onClick: () => open("system-properties") },
-                { label: "Add or remove programs", icon: `${IC}/ChangeorRemovePrograms.png`, onClick: () => open("settings") },
-                { label: "Change a setting", icon: `${IC}/ControlPanel.png`, onClick: () => open("display-properties") },
+                { label: "Account Manager", icon: `${IC}/UserAccounts.png`, onClick: () => open("user-accounts") },
+                { label: "Control Panel", icon: `${OL}/icon/folder/control.png`, onClick: () => open("control-panel") },
               ]}
             />
             <Pane
@@ -122,7 +123,20 @@ export default function MyComputer(_: { id: string }) {
               <div style={{ fontWeight: "bold" }}>My Computer</div>
               <div>System Folder</div>
             </div>
-            <img src={assetUrl("assets/xpui/search/rover.png")} alt="" style={{ width: 84, alignSelf: "flex-end", marginTop: "auto", marginRight: 4, filter: "drop-shadow(2px 2px 2px rgba(0,0,0,0.25))" }} />
+            <div style={{ marginTop: "auto", position: "relative", height: 128, flexShrink: 0 }}>
+              <div style={{ position: "absolute", bottom: 118, left: 0, right: 0, background: "#ECE9D8", border: "1px solid #0831D9", borderRadius: 4, padding: "5px 6px", boxShadow: "2px 2px 4px rgba(0,0,0,0.3)" }}>
+                <div style={{ fontWeight: "bold", marginBottom: 3 }}>What do you want to find?</div>
+                <input
+                  value={find}
+                  onChange={(e) => setFind(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter" && find.trim()) { open("search"); setFind(""); } }}
+                  style={{ width: "100%", border: "1px solid #7F9DB9", fontSize: 11, padding: "1px 3px", outline: "none" }}
+                />
+                <div style={{ position: "absolute", bottom: -10, left: 30, width: 0, height: 0, borderLeft: "9px solid transparent", borderRight: "9px solid transparent", borderTop: "10px solid #0831D9" }} />
+                <div style={{ position: "absolute", bottom: -8, left: 30, width: 0, height: 0, borderLeft: "9px solid transparent", borderRight: "9px solid transparent", borderTop: "9px solid #ECE9D8" }} />
+              </div>
+              <img src={assetUrl("assets/xpui/search/rover.png")} alt="" className="rover-anim" style={{ width: 78, position: "absolute", bottom: -4, left: 12, filter: "drop-shadow(2px 2px 2px rgba(0,0,0,0.3))" }} />
+            </div>
           </div>
         </div>
         <div className="xp-explorer-body">

@@ -1,6 +1,7 @@
 import "./styles/xp-theme.css";
 import { useState, useEffect } from "react";
 import { useWindowStore } from "./store/windowStore";
+import { useUserStore } from "./store/userStore";
 import Desktop from "./components/shell/Desktop";
 import { playSound } from "./utils/sound";
 import { assetUrl } from "./utils/assets"
@@ -16,6 +17,7 @@ function initialStep(): Step {
 
 export default function App() {
   const { setBootPhase } = useWindowStore();
+  const { userName, userPicture } = useUserStore();
   const [step, setStep] = useState<Step>(initialStep);
   const [power, setPower] = useState<null | "shutting-down" | "standby" | "off">(null);
 
@@ -104,27 +106,29 @@ export default function App() {
         <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 34, padding: "22px 52px", background: "radial-gradient(circle at 7% 5%,#91B1EF 0,#7698E6 6%,#5A7EDC 13%,transparent 14%)" }}>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "center", paddingRight: 36, borderRight: "1px solid rgba(255,255,255,0.72)" }}>
             <img src={assetUrl("assets/images/xp-logo.png")} alt="Windows XP" style={{ width: "min(430px,100%)", filter: "drop-shadow(0 2px 2px rgba(0,0,0,0.26))" }} />
-            <p style={{ margin: "14px 10px 0 0", fontSize: 12, color: "rgba(255,255,255,0.9)" }}>To begin, click your user name</p>
+            <p style={{ margin: "14px 10px 0 0", fontSize: 20, fontFamily: "Tahoma, sans-serif" }}>To begin, click your user name</p>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             <button
               onClick={doLogin}
-              style={{ background: "transparent", border: "1px solid transparent", padding: "5px 10px 5px 5px", borderRadius: 4, color: "#FFF", display: "flex", alignItems: "center", gap: 12, cursor: "pointer", minWidth: 340, fontFamily: "inherit", fontSize: 15 }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.28)"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "transparent"; }}
+              style={{ background: "transparent", border: "none", padding: "5px 10px 5px 5px", color: "#FFF", display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.12)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
             >
-              <div style={{ width: 64, height: 64, border: "2px solid rgba(255,255,255,0.25)", borderRadius: 4, overflow: "hidden", background: "#2a3a4a", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <img src={assetUrl("assets/images/user.png")} alt="" style={{ width: 64, height: 64 }} />
-              </div>
-              <span style={{ fontWeight: 700 }}>XP User</span>
+              <img src={assetUrl(`assets/xpui/user/${userPicture}`)} alt="" width={48} height={48} style={{ border: "2px solid #FFF", borderRadius: 5 }} />
+              <span style={{ fontSize: 20, fontFamily: "Tahoma, sans-serif" }}>{userName}</span>
             </button>
           </div>
         </div>
         <div style={{ height: 2, background: "linear-gradient(90deg,#00309C,#F7963C,#00309C)", flexShrink: 0 }} />
-        <div style={{ height: "18%", minHeight: 90, background: "linear-gradient(90deg,#3833ac,#00309c)", flexShrink: 0, display: "flex", alignItems: "center", padding: "0 20px", gap: 16 }}>
-          <button onClick={doLogin} style={{ display: "flex", alignItems: "center", gap: 8, color: "#FFF", background: "none", border: "none", cursor: "pointer", fontSize: 12, fontFamily: "inherit" }}>
-            <img src={assetUrl("assets/icons/Power.png")} alt="" style={{ width: 16, height: 16 }} />
-            Turn Off Computer
+        <div style={{ height: "18%", minHeight: 90, background: "linear-gradient(90deg,#3833AC,#00309C)", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 40px" }}>
+          <span style={{ fontSize: 12, color: "rgba(255,255,255,0.85)" }}>After you log on, you can add or change accounts.<br />Just go to Control Panel and click User Accounts.</span>
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent("zarxp-power", { detail: { action: "shut-down" } }))}
+            style={{ display: "flex", alignItems: "center", gap: 8, background: "linear-gradient(180deg,#E85A3A,#C43B1E)", border: "1px solid #8F2410", borderRadius: 4, color: "#FFF", padding: "5px 14px", fontSize: 12, fontFamily: "Tahoma, sans-serif", cursor: "pointer", boxShadow: "inset 0 1px 1px rgba(255,255,255,0.4)" }}
+          >
+            <img src={assetUrl("assets/icons/Power.png")} alt="" style={{ width: 18, height: 18 }} />
+            Turn off computer
           </button>
         </div>
       </div>
@@ -134,13 +138,24 @@ export default function App() {
   if (step === "welcome") {
     return (
       <div style={{ position: "fixed", inset: 0, background: "#5A7EDC", zIndex: 9998, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-        <div style={{ height: 70, background: "#00309C", flexShrink: 0 }} />
-        <div style={{ height: 2, background: "linear-gradient(45deg,#466dcd,#c7ddff,#b0c9f7,#5a7edc)", flexShrink: 0 }} />
-        <div style={{ flex: 1, background: "radial-gradient(circle at 5% 5%,#91b1ef 0,#7698e6 6%,#5a7edc 12%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <span style={{ fontSize: 42, color: "#FFF", fontStyle: "italic", fontWeight: "bold" }}>Welcome</span>
+        <div style={{ height: "18%", minHeight: 90, background: "linear-gradient(180deg,#0A246A 0%,#0831D9 55%,#4A82F5 100%)", borderBottom: "2px solid #C7DDFF", flexShrink: 0 }} />
+        <div style={{ flex: 1, display: "flex", alignItems: "stretch", background: "radial-gradient(circle at 7% 5%,#91B1EF 0,#7698E6 6%,#5A7EDC 13%,transparent 14%)" }}>
+          <div className="welcome-left" style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "flex-end", paddingRight: 36 }}>
+            <span style={{ fontSize: 54, color: "#FFF", fontStyle: "italic", fontWeight: "bold", fontFamily: "Franklin Gothic Medium, Tahoma, sans-serif", textShadow: "2px 2px 3px rgba(0,0,0,0.3)" }}>welcome</span>
+          </div>
+          <div className="welcome-divider" style={{ width: 1, background: "rgba(255,255,255,0.75)", margin: "40px 0" }} />
+          <div className="welcome-right" style={{ flex: 1, display: "flex", alignItems: "center", paddingLeft: 40 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+              <img src={assetUrl(`assets/xpui/user/${userPicture}`)} alt="" width={48} height={48} style={{ border: "2px solid #FFF", borderRadius: 5 }} />
+              <div>
+                <div style={{ fontSize: 19, fontFamily: "Tahoma, sans-serif" }}>{userName}</div>
+                <div style={{ fontSize: 12, fontWeight: "bold" }}>Loading your personal settings...</div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div style={{ height: 2, background: "linear-gradient(45deg,#003399,#f99736,#c2814d,#00309c)", flexShrink: 0 }} />
-        <div style={{ height: 70, width: "100%", background: "linear-gradient(90deg,#3833ac,#00309c)", flexShrink: 0 }} />
+        <div style={{ height: 2, background: "linear-gradient(90deg,#003399,#F7963C,#00309C)", flexShrink: 0 }} />
+        <div style={{ height: "18%", minHeight: 90, width: "100%", background: "linear-gradient(90deg,#3833ac,#00309c)", flexShrink: 0 }} />
       </div>
     );
   }

@@ -1,4 +1,4 @@
-export type AppId = "my-computer" | "my-documents" | "my-pictures" | "my-music" | "my-videos" | "recycle-bin" | "internet-explorer" | "outlook-express" | "tour-xp" | "msn-messenger" | "wordpad" | "security-center" | "notepad" | "paint" | "calculator" | "media-player" | "terminal" | "control-panel" | "task-manager" | "run" | "search" | "shutdown" | "system-properties" | "display-properties" | "volume" | "date-time" | "about-xp" | "explorer" | "solitaire" | "minesweeper" | "settings" | "network-places";
+export type AppId = "my-computer" | "my-documents" | "my-pictures" | "my-music" | "my-videos" | "recycle-bin" | "internet-explorer" | "outlook-express" | "tour-xp" | "msn-messenger" | "wordpad" | "security-center" | "user-accounts" | "notepad" | "paint" | "calculator" | "media-player" | "terminal" | "control-panel" | "task-manager" | "run" | "search" | "shutdown" | "system-properties" | "display-properties" | "volume" | "date-time" | "about-xp" | "explorer" | "solitaire" | "minesweeper" | "settings" | "network-places";
 
 export type WindowState = "normal" | "minimized" | "maximized";
 
