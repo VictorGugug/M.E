@@ -22,6 +22,7 @@ const SystemProperties = lazy(() => import("../dialogs/SystemProperties"));
 const DateTimeDialog = lazy(() => import("../dialogs/DateTimeDialog"));
 const SearchDialog = lazy(() => import("../dialogs/SearchDialog"));
 const AboutXP = lazy(() => import("../dialogs/AboutXP"));
+const SecurityCenter = lazy(() => import("../apps/SecurityCenter"));
 const TourXP = lazy(() => import("../apps/TourXP"));
 const Wordpad = lazy(() => import("../apps/Wordpad"));
 const OutlookExpress = lazy(() => import("../apps/OutlookExpress"));
@@ -70,6 +71,7 @@ const APP_COMPONENTS: Record<string, React.FC<{ id: string }>> = {
   "wordpad": Wordpad,
   "settings": ControlPanel,
   "about-xp": AboutXP,
+  "security-center": SecurityCenter,
   "recycle-bin": RecycleBin,
   "solitaire": Solitaire,
   "minesweeper": Minesweeper,

@@ -1,34 +1,38 @@
 import { useState } from "react";
 import { useWindowStore } from "../../store/windowStore";
-import { playSound } from "../../utils/sound";
 import { assetUrl } from "../../utils/assets"
 
 const s: Record<string, React.CSSProperties> = {
   container: { display: "flex", flexDirection: "column", height: "100%", fontFamily: "Tahoma, sans-serif", fontSize: 12, userSelect: "none" },
-  header: { display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", background: "linear-gradient(180deg, #0a246a, #3a6ea5)", color: "#fff", fontWeight: 700, fontSize: 13 },
-  logo: { width: 32, height: 32 },
-  body: { flex: 1, padding: "16px 16px 8px", display: "flex", flexDirection: "column", gap: 6 },
-  radioRow: { display: "flex", alignItems: "center", gap: 6, cursor: "pointer" },
-  selectRow: { display: "flex", alignItems: "center", gap: 6, marginTop: 8 },
-  select: { width: 180, height: 22, fontSize: 12 },
-  buttons: { display: "flex", justifyContent: "flex-end", gap: 6, padding: "6px 12px", borderTop: "1px solid #d4d0c8" },
-  btn: { minWidth: 70, height: 24, fontSize: 12, cursor: "pointer", background: "#ece9d8", border: "1px solid #7f9db9", borderTopColor: "#fff", borderLeftColor: "#fff" },
+  header: { display: "flex", alignItems: "center", gap: 8, padding: "7px 10px", background: "linear-gradient(180deg, #1868CE 0%, #1072D8 8%, #0A5BC4 40%, #0A54BA 88%, #094FAE 100%)", color: "#fff", fontWeight: 700, fontSize: 13, flexShrink: 0 },
+  headerIcon: { width: 34, height: 34, background: "linear-gradient(180deg,#F28A5E 0%,#E85A3A 40%,#D43B1E 100%)", borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid #B22B10", boxShadow: "inset 0 1px 1px rgba(255,255,255,0.5)" },
+  body: { flex: 1, padding: "14px 14px 8px", display: "flex", flexDirection: "column", gap: 5, background: "#ECE9D8" },
+  radioRow: { display: "flex", alignItems: "center", gap: 7, cursor: "pointer", padding: "2px 0" },
+  selectRow: { display: "flex", alignItems: "center", gap: 6, marginTop: 10 },
+  select: { width: 190, height: 22, fontSize: 12, fontFamily: "Tahoma, sans-serif" },
+  buttons: { display: "flex", justifyContent: "center", gap: 6, padding: "8px 12px 10px", background: "#ECE9D8", flexShrink: 0 },
+  btn: { minWidth: 72, height: 24, fontSize: 12, cursor: "pointer", background: "linear-gradient(180deg,#FDFDFB,#F0EFE2 60%,#E4E2D0)", border: "1px solid #ACA899", borderRadius: 3, fontFamily: "Tahoma, sans-serif" },
 };
 
 export default function ShutdownDialog({ id }: { id: string }) {
   const [action, setAction] = useState("shut-down");
   const closeWindow = useWindowStore((s) => s.closeWindow);
-  playSound("Windows XP Shutdown.wav");
+
+  const confirm = () => {
+    window.dispatchEvent(new CustomEvent("zarxp-power", { detail: { action } }));
+  };
 
   return (
     <div style={s.container}>
       <div style={s.header}>
-        <img src={assetUrl("assets/icons/Power.png")} alt="" style={s.logo} />
+        <div style={s.headerIcon}>
+          <img src={assetUrl("assets/icons/Power.png")} alt="" style={{ width: 22, height: 22 }} />
+        </div>
         <span>Shut Down Windows</span>
       </div>
       <div style={s.body}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-          <img src={assetUrl("assets/images/xp-logo.png")} alt="" style={{ width: 48, height: 48 }} />
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+          <img src={assetUrl("assets/images/xp-logo.png")} alt="" style={{ width: 44, height: 44 }} />
           <span style={{ fontSize: 11, color: "#333" }}>What do you want the computer to do?</span>
         </div>
         {[
@@ -36,9 +40,8 @@ export default function ShutdownDialog({ id }: { id: string }) {
           { value: "restart", label: "Restart" },
           { value: "stand-by", label: "Stand by" },
         ].map((opt) => (
-          <label key={opt.value} style={s.radioRow}>
+          <label key={opt.value} style={s.radioRow} onClick={() => setAction(opt.value)}>
             <span className={`xp-radio${action === opt.value ? " xp-radio-checked" : ""}`} />
-            <input type="radio" name="action" style={{ display: "none" }} checked={action === opt.value} onChange={() => setAction(opt.value)} />
             <span>{opt.label}</span>
           </label>
         ))}
@@ -52,7 +55,7 @@ export default function ShutdownDialog({ id }: { id: string }) {
         </div>
       </div>
       <div style={s.buttons}>
-        <button style={s.btn}>OK</button>
+        <button style={s.btn} onClick={confirm}>OK</button>
         <button style={s.btn} onClick={() => closeWindow(id)}>Cancel</button>
         <button style={s.btn}>Help</button>
       </div>

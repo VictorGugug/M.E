@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { useWindowStore } from "../../store/windowStore";
 import { assetUrl } from "../../utils/assets"
 
@@ -26,7 +26,7 @@ ruffle-player { width: 100% !important; height: 100% !important; }
 </head>
 <body>
 <div id="ruffle-container"></div>
-<script src="${ruffleSrc}"><\/script>
+<script src="${ruffleSrc}"></script>
 <script>
 window.RufflePlayer = window.RufflePlayer || {};
 window.addEventListener("load", function () {
@@ -48,7 +48,7 @@ window.addEventListener("load", function () {
     allowScriptAccess: true
   });
 });
-<\/script>
+</script>
 </body>
 </html>`;
 

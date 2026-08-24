@@ -122,6 +122,7 @@ export default function MyComputer(_: { id: string }) {
               <div style={{ fontWeight: "bold" }}>My Computer</div>
               <div>System Folder</div>
             </div>
+            <img src={assetUrl("assets/xpui/search/rover.png")} alt="" style={{ width: 84, alignSelf: "flex-end", marginTop: "auto", marginRight: 4, filter: "drop-shadow(2px 2px 2px rgba(0,0,0,0.25))" }} />
           </div>
         </div>
         <div className="xp-explorer-body">

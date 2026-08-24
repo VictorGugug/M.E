@@ -7,6 +7,7 @@ import { assetUrl } from "./utils/assets"
 
 const VALID_STEPS = ["loading", "login", "welcome", "desktop"] as const;
 type Step = (typeof VALID_STEPS)[number];
+type PowerAction = "shut-down" | "restart" | "stand-by";
 
 function initialStep(): Step {
   const param = new URLSearchParams(window.location.search).get("step");
@@ -16,6 +17,7 @@ function initialStep(): Step {
 export default function App() {
   const { setBootPhase } = useWindowStore();
   const [step, setStep] = useState<Step>(initialStep);
+  const [power, setPower] = useState<null | "shutting-down" | "standby" | "off">(null);
 
   useEffect(() => {
     if (step !== "loading") return;
@@ -24,9 +26,27 @@ export default function App() {
   }, [step]);
 
   useEffect(() => {
-    if (step !== "login") return;
-    playSound("Windows XP Startup.wav", 0.4);
-  }, [step]);
+    const handler = (e: Event) => {
+      const action = (e as CustomEvent).detail.action as PowerAction;
+      if (action === "stand-by") { setPower("standby"); return; }
+      setPower("shutting-down");
+      playSound("Windows XP Shutdown.wav", 0.5);
+      setTimeout(() => {
+        if (action === "restart") { window.location.href = window.location.pathname; }
+        else { setPower("off"); }
+      }, 2600);
+    };
+    window.addEventListener("zarxp-power", handler);
+    return () => window.removeEventListener("zarxp-power", handler);
+  }, []);
+
+  useEffect(() => {
+    if (power !== "standby") return;
+    const wake = () => setPower(null);
+    window.addEventListener("mousedown", wake);
+    window.addEventListener("keydown", wake);
+    return () => { window.removeEventListener("mousedown", wake); window.removeEventListener("keydown", wake); };
+  }, [power]);
 
   const doLogin = () => {
     playSound("Windows XP Logon Sound.wav", 0.4);
@@ -36,6 +56,31 @@ export default function App() {
       setBootPhase("desktop");
     }, 900);
   };
+
+  if (power === "standby") {
+    return <div style={{ position: "fixed", inset: 0, background: "#000", zIndex: 99999 }} />;
+  }
+
+  if (power === "off") {
+    return (
+      <div onClick={() => { setPower(null); setStep("loading"); }} style={{ position: "fixed", inset: 0, background: "#000", zIndex: 99999, display: "flex", alignItems: "flex-end", justifyContent: "center", cursor: "pointer" }}>
+        <span style={{ color: "#333", fontSize: 12, fontFamily: "Tahoma, sans-serif", marginBottom: 26, opacity: 0.7 }}>It is now safe to turn off your computer. Click to power on.</span>
+      </div>
+    );
+  }
+
+  if (power === "shutting-down") {
+    return (
+      <div style={{ position: "fixed", inset: 0, background: "linear-gradient(180deg,#5A7EDC 0%,#3F63C8 100%)", zIndex: 99999, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+        <div style={{ height: "34%", minHeight: 90, background: "linear-gradient(180deg,#0A246A 0%,#0831D9 60%,#4A82F5 100%)", borderBottom: "2px solid #C7DDFF", flexShrink: 0 }} />
+        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 22 }}>
+          <img src={assetUrl("assets/images/xp-logo.png")} alt="" style={{ width: 130, filter: "drop-shadow(0 2px 2px rgba(0,0,0,0.26))" }} />
+          <span style={{ fontSize: 24, color: "#FFF", fontFamily: "Tahoma, sans-serif" }}>Windows is shutting down...</span>
+        </div>
+        <div style={{ height: "34%", minHeight: 90, background: "linear-gradient(90deg,#3833AC,#00309C)", borderTop: "2px solid #F7963C", flexShrink: 0 }} />
+      </div>
+    );
+  }
 
   if (step === "loading") {
     return (
@@ -55,7 +100,7 @@ export default function App() {
   if (step === "login") {
     return (
       <div style={{ position: "fixed", inset: 0, background: "#5A7EDC", color: "#FFF", zIndex: 9998, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-        <div style={{ height: 70, background: "#00309C", borderBottom: "2px solid #C7DDFF", flexShrink: 0 }} />
+        <div style={{ height: "18%", minHeight: 90, background: "linear-gradient(180deg,#0A246A 0%,#0831D9 55%,#4A82F5 100%)", borderBottom: "2px solid #C7DDFF", flexShrink: 0 }} />
         <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 34, padding: "22px 52px", background: "radial-gradient(circle at 7% 5%,#91B1EF 0,#7698E6 6%,#5A7EDC 13%,transparent 14%)" }}>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "center", paddingRight: 36, borderRight: "1px solid rgba(255,255,255,0.72)" }}>
             <img src={assetUrl("assets/images/xp-logo.png")} alt="Windows XP" style={{ width: "min(430px,100%)", filter: "drop-shadow(0 2px 2px rgba(0,0,0,0.26))" }} />
@@ -75,7 +120,8 @@ export default function App() {
             </button>
           </div>
         </div>
-        <div style={{ height: 70, background: "linear-gradient(90deg,#3833ac,#00309c)", flexShrink: 0, display: "flex", alignItems: "center", padding: "0 20px", gap: 16 }}>
+        <div style={{ height: 2, background: "linear-gradient(90deg,#00309C,#F7963C,#00309C)", flexShrink: 0 }} />
+        <div style={{ height: "18%", minHeight: 90, background: "linear-gradient(90deg,#3833ac,#00309c)", flexShrink: 0, display: "flex", alignItems: "center", padding: "0 20px", gap: 16 }}>
           <button onClick={doLogin} style={{ display: "flex", alignItems: "center", gap: 8, color: "#FFF", background: "none", border: "none", cursor: "pointer", fontSize: 12, fontFamily: "inherit" }}>
             <img src={assetUrl("assets/icons/Power.png")} alt="" style={{ width: 16, height: 16 }} />
             Turn Off Computer

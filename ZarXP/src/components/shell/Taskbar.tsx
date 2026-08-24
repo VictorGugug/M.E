@@ -10,6 +10,9 @@ export default function Taskbar({ onOpen }: { onOpen: (id: AppId) => void }) {
   const { windows, toggleStartMenu, focusWindow, minimizeWindow, restoreWindow } = useWindowStore();
   const [clock, setClock] = useState("");
   const [balloon, setBalloon] = useState<null | "tour" | "remove">(null);
+  const [volOpen, setVolOpen] = useState(false);
+  const [volume, setVolume] = useState(72);
+  const [volMute, setVolMute] = useState(false);
   const zMax = Math.max(0, ...windows.map((w) => w.zIndex));
 
   useEffect(() => {
@@ -21,6 +24,13 @@ export default function Taskbar({ onOpen }: { onOpen: (id: AppId) => void }) {
     const iv = setInterval(update, 1000);
     return () => clearInterval(iv);
   }, []);
+
+  useEffect(() => {
+    if (!volOpen) return;
+    const close = () => setVolOpen(false);
+    window.addEventListener("click", close);
+    return () => window.removeEventListener("click", close);
+  }, [volOpen]);
 
   useEffect(() => {
     const t = setTimeout(() => setBalloon("tour"), 2500);
@@ -69,11 +79,32 @@ export default function Taskbar({ onOpen }: { onOpen: (id: AppId) => void }) {
         ))}
       </div>
       <div className="xp-tray">
-        <img src={`${OL}/icon/info.png`} alt="" className="xp-tray-icon" title="About Windows" onClick={(e) => { e.stopPropagation(); onOpen("about-xp"); }} />
-        <img src={`${IC}/NetworkConnection.png`} alt="" className="xp-tray-icon" title="Network Status" onClick={(e) => { e.stopPropagation(); onOpen("network-places"); }} />
-        <img src={`${OL}/icon/speaker.png`} alt="" className="xp-tray-icon" onClick={(e) => { e.stopPropagation(); onOpen("volume"); }} title="Volume" />
+        <img src={`${OL}/icon/messenger.png`} alt="" className="xp-tray-icon" title="Windows Messenger" onClick={(e) => { e.stopPropagation(); onOpen("msn-messenger"); }} />
+        <img src={`${IC}/SecurityCenter.png`} alt="" className="xp-tray-icon" title="Windows Security Center" onClick={(e) => { e.stopPropagation(); onOpen("security-center"); }} />
+        <img src={`${OL}/icon/speaker.png`} alt="" className="xp-tray-icon" title="Volume" onClick={(e) => { e.stopPropagation(); setVolOpen((v) => !v); }} />
         <img src={`${IC}/SafelyRemoveHardware.png`} alt="" className="xp-tray-icon" title="Safely Remove Hardware" onClick={(e) => { e.stopPropagation(); setBalloon((b) => (b === "remove" ? null : "remove")); }} />
         <span className="xp-tray-clock" onClick={(e) => { e.stopPropagation(); onOpen("date-time"); }}>{clock}</span>
+        {volOpen && (
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{ position: "absolute", bottom: 30, right: 60, width: 68, background: "#ECE9D8", border: "1px solid #0831D9", boxShadow: "2px 2px 4px rgba(0,0,0,0.35)", padding: "6px 4px 8px", display: "flex", flexDirection: "column", alignItems: "center", gap: 4, zIndex: 870 }}
+          >
+            <span style={{ fontSize: 11 }}>Volume</span>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={volume}
+              onChange={(e) => setVolume(Number(e.target.value))}
+              style={{ writingMode: "vertical-lr" as React.CSSProperties["writingMode"], direction: "rtl", width: 24, height: 90, accentColor: "#2E71DC", cursor: "pointer" }}
+            />
+            <label style={{ display: "flex", alignItems: "center", gap: 3, fontSize: 11 }}>
+              <span className={`xp-checkbox${volMute ? " xp-checkbox-checked" : ""}`} />
+              <input type="checkbox" style={{ display: "none" }} checked={volMute} onChange={() => setVolMute(!volMute)} />
+              Mute
+            </label>
+          </div>
+        )}
         {balloon && (
           <div className="xp-balloon" onClick={(e) => e.stopPropagation()}>
             <button className="balloon-close" onClick={() => setBalloon(null)} aria-label="Close">
