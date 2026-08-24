@@ -2,6 +2,7 @@
 import type { AppId } from "../../types";
 import { playSound } from "../../utils/sound";
 import { assetUrl } from "../../utils/assets"
+import { useUserStore } from "../../store/userStore"
 
 const OL = assetUrl("assets/xpui");
 
@@ -66,13 +67,15 @@ function SmButton({ item, onOpen, size }: { item: { id: AppId; label: string; su
 
 export default function StartMenu({ onOpen }: { onOpen: (id: AppId) => void }) {
   const [allPrograms, setAllPrograms] = useState(false);
+  const userName = useUserStore((s) => s.userName);
+  const userPicture = useUserStore((s) => s.userPicture);
   const handleOpen = (id: AppId) => { playSound("Windows XP Menu Command.wav", 0.15); onOpen(id); };
 
   return (
     <div className="xp-startmenu" onClick={(e) => e.stopPropagation()}>
       <div className="sm-top">
-        <img className="user-picture" src={`${OL}/user/ball.png`} alt="" />
-        <span className="user-name">XP User</span>
+        <img className="user-picture" src={`${OL}/user/${userPicture}`} alt="" />
+        <span className="user-name">{userName}</span>
       </div>
       <div className="sm-middle">
         <div className="sm-left">

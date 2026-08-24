@@ -28,6 +28,16 @@ body.wait { cursor: url('/assets/cursors/default_wait.cur'), wait; }
 .xp-loader div { width: 9px; height: 100%; background: linear-gradient(to bottom,#2838C7 0%,#5979EF 17%,#869EF3 32%,#869EF3 45%,#5979EF 59%,#2838C7 100%); display: inline-block; margin-right: 2px; animation: xpLoader 2s linear infinite; }
 @keyframes xpLoader { from { transform: translateX(-30px); } to { transform: translateX(150px); } }
 
+@keyframes welcomeDivider { from { transform: scaleY(0); opacity: 0; } to { transform: scaleY(1); opacity: 1; } }
+@keyframes welcomeLeft { from { transform: translateX(-60px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes welcomeRight { from { transform: translateX(60px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.welcome-divider { transform-origin: center; animation: welcomeDivider 0.5s ease-out both; }
+.welcome-left { animation: welcomeLeft 0.6s 0.15s ease-out both; }
+.welcome-right { animation: welcomeRight 0.6s 0.25s ease-out both; }
+
+@keyframes roverIdle { 0%, 100% { transform: translateY(0) rotate(0deg); } 25% { transform: translateY(-3px) rotate(-1.5deg); } 50% { transform: translateY(0) rotate(0deg); } 75% { transform: translateY(-2px) rotate(1.5deg); } }
+.rover-anim { animation: roverIdle 2.6s ease-in-out infinite; transform-origin: bottom center; }
+
 .xp-win { position: absolute; display: flex; flex-direction: column; overflow: hidden; filter: drop-shadow(rgba(0,0,0,0.5) 4px 4px 4px); border-top-left-radius: 8px; border-top-right-radius: 8px; }
 .xp-titlebar { display: flex; align-items: center; gap: 5px; height: 30px; flex-shrink: 0; padding: 0 5px; color: rgb(216,228,248); background: radial-gradient(circle at 0% 25%, rgb(114,118,209) 0%, rgba(114,118,209,0.6) 1%, rgba(114,118,209,0) 2%, rgba(114,118,209,0) 100%), radial-gradient(circle at 100% 25%, rgb(114,118,209) 0%, rgba(114,118,209,0.6) 1%, rgba(114,118,209,0) 2%, rgba(114,118,209,0) 100%), linear-gradient(rgb(152,178,232) 0%, rgb(155,183,234) 8%, rgb(137,172,232) 10%, rgb(124,158,226) 19%, rgb(122,151,223) 21%, rgb(123,151,225) 52%, rgb(126,161,229) 78%, rgb(127,164,229) 89%, rgb(124,154,226) 93%, rgb(120,143,220) 100%); box-shadow: rgba(116,124,213,0.4) 2px 0 0 inset, rgb(116,124,213) 1px 0 0 inset, rgba(110,109,197,0.4) -2px 0 0 inset, rgb(110,109,197) -1px 0 0 inset; }
 .xp-win.active .xp-titlebar { color: #FFF; background: radial-gradient(circle at 0% 20%, rgb(0,50,193) 0%, rgba(0,50,193,0.5) 1%, rgba(0,50,193,0) 2%, rgba(0,50,193,0) 100%), radial-gradient(circle at 100% 20%, rgb(0,50,193) 0%, rgba(0,50,193,0.5) 1%, rgba(0,50,193,0) 2%, rgba(0,50,193,0) 100%), linear-gradient(rgb(60,148,254) 0%, rgb(44,145,255) 8%, rgb(4,116,254) 10%, rgb(1,86,229) 19%, rgb(0,84,227) 21%, rgb(0,87,237) 52%, rgb(2,105,253) 78%, rgb(2,105,253) 89%, rgb(0,100,252) 93%, rgb(110,167,255) 96%, rgb(190,210,255) 100%); box-shadow: rgba(0,38,172,0.667) -1px -1px 1px inset, rgba(0,32,200,0.667) -2px -1px 1px inset, rgba(0,59,224,0.667) -3px -1px 1px inset, rgba(0,32,200,0.667) 1px -1px 1px inset, rgba(0,56,216,0.667) 2px -1px 1px inset, rgba(0,70,228,0.667) 3px -1px 1px inset; }
