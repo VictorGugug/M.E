@@ -14,6 +14,7 @@ const RECENT: { id: AppId; label: string; sub: string; icon: string }[] = [
   { id: "tour-xp", label: "Tour Windows XP", sub: "", icon: `${OL}/icon/tour.png` },
   { id: "msn-messenger", label: "Windows Messenger", sub: "", icon: `${OL}/icon/messenger.png` },
   { id: "media-player", label: "Windows Media Player", sub: "", icon: `${OL}/icon/player.png` },
+  { id: "internet-explorer", label: "Public Forum", sub: "", icon: `${OL}/icon/forum.png` },
   { id: "wordpad", label: "Wordpad", sub: "", icon: `${OL}/icon/wordpad.png` },
   { id: "paint", label: "Paint", sub: "", icon: `${OL}/icon/paint.png` },
 ];
