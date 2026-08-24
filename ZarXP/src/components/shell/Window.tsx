@@ -1,10 +1,10 @@
-import type { ReactNode } from "react";
+﻿import type { ReactNode } from "react";
 import { useWindowStore } from "../../store/windowStore";
 import type { WindowConfig } from "../../types";
 import { playSound } from "../../utils/sound";
 import { assetUrl } from "../../utils/assets"
 
-const WIN_SVG = assetUrl("assets/icons/win");
+const UI = assetUrl("assets/xpui/interface");
 
 export default function Window({ config, children }: { config: WindowConfig; children: ReactNode }) {
   const { focusWindow, closeWindow, minimizeWindow, maximizeWindow, restoreWindow, updatePosition, updateSize } = useWindowStore();
@@ -22,6 +22,7 @@ export default function Window({ config, children }: { config: WindowConfig; chi
   const doClose = (e: React.MouseEvent) => { e.stopPropagation(); closeWindow(config.id); };
 
   const startDrag = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).closest(".xp-win-buttons")) return;
     doFocus();
     if (config.state === "maximized") return;
     const wrapper = (e.currentTarget.closest(".xp-win") as HTMLElement);
@@ -80,95 +81,47 @@ export default function Window({ config, children }: { config: WindowConfig; chi
     zIndex: config.zIndex,
     display: config.state === "minimized" ? "none" : "flex",
     flexDirection: "column",
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
-    boxShadow: isActive
-      ? "inset -1px -1px #00138c, inset 1px 1px #0831d9, inset -2px -2px #001ea0, inset 2px 2px #166aee, inset -3px -3px #003bda, inset 3px 3px #0855dd"
-      : "inset -1px -1px #7B9FDF, inset 1px 1px #B0C9F7, inset -2px -2px #7B9FDF, inset 2px 2px #B0C9F7",
     minWidth: config.minWidth || 200,
     minHeight: config.minHeight || 100,
   };
 
-  const tbBg = isActive
-    ? "linear-gradient(180deg, rgba(9,151,255,1) 0%, rgba(0,83,238,1) 8%, rgba(0,80,238,1) 40%, rgba(0,102,255,1) 88%, rgba(0,102,255,1) 93%, rgba(0,91,255,1) 95%, rgba(0,61,215,1) 96%, rgba(0,61,215,1) 100%)"
-    : "linear-gradient(180deg, rgb(118,151,231) 0%, rgb(126,158,227) 3%, rgb(148,175,232) 6%, rgb(151,180,233) 8%, rgb(130,165,228) 14%, rgb(124,159,226) 17%, rgb(121,150,222) 25%, rgb(123,153,225) 56%, rgb(130,169,233) 81%, rgb(128,165,231) 89%, rgb(123,150,225) 94%, rgb(122,147,223) 97%, rgb(171,186,227) 100%)";
-
   return (
-    <div className="xp-win" style={style} onMouseDown={doFocus}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          padding: "3px 5px 3px 3px",
-          background: tbBg,
-          borderTopLeftRadius: 8,
-          borderTopRightRadius: 7,
-          height: 28,
-          flexShrink: 0,
-          borderTop: "1px solid #0831d9",
-          borderLeft: "1px solid #0831d9",
-          borderRight: "1px solid #001ea0",
-          fontSize: 13,
-          textShadow: "1px 1px #0f1089",
-        }}
-        onMouseDown={startDrag}
-      >
-        {config.icon && <img src={assetUrl(`assets/icons/${config.icon}`)} alt="" style={{ width: 20, height: 20, marginRight: 4 }} />}
-        <span style={{ flex: 1, color: "#FFF", fontWeight: 600, fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-          {config.title}
-        </span>
-        <div style={{ display: "flex", marginRight: 0, flexShrink: 0, gap: 2 }}>
-          <button
-            onClick={doMinimize}
-            aria-label="Minimize"
-            style={{
-              width: 21, height: 21, border: "none", cursor: "pointer", background: "#0050ee",
-              backgroundImage: `url(${WIN_SVG}/minimize.svg)`, backgroundRepeat: "no-repeat",
-              backgroundPosition: "center", borderRadius: 0, flexShrink: 0,
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundImage = `url(${WIN_SVG}/minimize-hover.svg)`; }}
-            onMouseLeave={(e) => { e.currentTarget.style.backgroundImage = `url(${WIN_SVG}/minimize.svg)`; }}
-          />
-          <button
-            onClick={doMaxRestore}
-            aria-label={maxd ? "Restore" : "Maximize"}
-            style={{
-              width: 21, height: 21, border: "none", cursor: "pointer", background: "#0050ee",
-              backgroundImage: `url(${WIN_SVG}/${maxd ? "restore" : "maximize"}.svg)`,
-              backgroundRepeat: "no-repeat", backgroundPosition: "center", borderRadius: 0, flexShrink: 0,
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundImage = `url(${WIN_SVG}/${maxd ? "restore-hover" : "maximize-hover"}.svg)`; }}
-            onMouseLeave={(e) => { e.currentTarget.style.backgroundImage = `url(${WIN_SVG}/${maxd ? "restore" : "maximize"}.svg)`; }}
-          />
-          <button
-            onClick={doClose}
-            aria-label="Close"
-            style={{
-              width: 21, height: 21, border: "none", cursor: "pointer", background: "#0050ee",
-              backgroundImage: `url(${WIN_SVG}/close.svg)`, backgroundRepeat: "no-repeat",
-              backgroundPosition: "center", borderRadius: 0, flexShrink: 0,
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundImage = `url(${WIN_SVG}/close-hover.svg)`; }}
-            onMouseLeave={(e) => { e.currentTarget.style.backgroundImage = `url(${WIN_SVG}/close.svg)`; }}
-          />
+    <div className={isActive ? "xp-win active" : "xp-win"} style={style} onMouseDown={doFocus}>
+      <div className="xp-titlebar" onMouseDown={startDrag}>
+        <div className="xp-win-title">
+          {config.icon && <img src={assetUrl(`assets/icons/${config.icon}`)} alt="" />}
+          <span className="label">{config.title}</span>
+        </div>
+        <div className="xp-win-buttons">
+          <button onClick={doMinimize} aria-label="Minimize" tabIndex={-1}>
+            <img src={`${UI}/minimize.png`} alt="" />
+          </button>
+          <button onClick={doMaxRestore} aria-label={maxd ? "Restore" : "Maximize"} tabIndex={-1}>
+            <img src={`${UI}/maximize.png`} alt="" />
+          </button>
+          <button onClick={doClose} aria-label="Close" tabIndex={-1}>
+            <img src={`${UI}/close.png`} alt="" />
+          </button>
         </div>
       </div>
-      {config.menuBar && (
-        <div className="window-menu">
-          <span className="window-menu-item">File</span>
-          <span className="window-menu-item">Edit</span>
-          <span className="window-menu-item">View</span>
-          <span className="window-menu-item">Help</span>
+      <div className="xp-win-inner">
+        {config.menuBar && (
+          <div className="window-menu">
+            <span className="window-menu-item">File</span>
+            <span className="window-menu-item">Edit</span>
+            <span className="window-menu-item">View</span>
+            <span className="window-menu-item">Help</span>
+          </div>
+        )}
+        <div className="window-body">
+          {children}
         </div>
-      )}
-      <div className="window-body" style={{ flex: 1, background: "#FFF", overflow: "auto", position: "relative" }}>
-        {children}
+        {config.statusBar && (
+          <div className="window-statusbar">
+            <span>Ready</span>
+          </div>
+        )}
       </div>
-      {config.statusBar && (
-        <div className="window-statusbar" style={{ margin: "0 3px", boxShadow: "inset 0px 1px 2px #808080", padding: "2px 1px", display: "flex", height: 20, flexShrink: 0, background: "#ECE9D8" }}>
-          <span style={{ fontSize: 11, padding: "1px 4px" }}>Ready</span>
-        </div>
-      )}
       {config.resizable && (
         <>
           <div onMouseDown={(e) => startResize(e, "n")} style={{ position: "absolute", top: -3, left: 4, right: 4, height: 5, cursor: "n-resize", zIndex: 10 }} />
@@ -179,7 +132,7 @@ export default function Window({ config, children }: { config: WindowConfig; chi
           <div onMouseDown={(e) => startResize(e, "ne")} style={{ position: "absolute", top: -3, right: -3, width: 8, height: 8, cursor: "ne-resize", zIndex: 11 }} />
           <div onMouseDown={(e) => startResize(e, "sw")} style={{ position: "absolute", bottom: -3, left: -3, width: 8, height: 8, cursor: "sw-resize", zIndex: 11 }} />
           <div onMouseDown={(e) => startResize(e, "se")} style={{ position: "absolute", bottom: -3, right: -3, width: 8, height: 8, cursor: "se-resize", zIndex: 11 }} />
-          <img src={assetUrl("assets/taskbar/resizegrip2.png")} alt="" style={{ position: "absolute", bottom: 1, right: 1, width: 16, height: 14, pointerEvents: "none", imageRendering: "pixelated", zIndex: 12 }} />
+          <img src={assetUrl("assets/taskbar/resizegrip2.png")} alt="" style={{ position: "absolute", bottom: 6, right: 6, width: 16, height: 14, pointerEvents: "none", imageRendering: "pixelated", zIndex: 12 }} />
         </>
       )}
     </div>

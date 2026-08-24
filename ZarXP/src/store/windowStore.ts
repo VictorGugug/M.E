@@ -2,7 +2,7 @@ import { create } from "zustand";
 import type { WindowConfig, AppId, AppDefinition } from "../types";
 
 const APPS: Record<AppId, AppDefinition> = {
-  "my-computer": { id: "my-computer", title: "My Computer", icon: "MyComputer.png", defaultWidth: 720, defaultHeight: 520, menuBar: true, statusBar: true },
+  "my-computer": { id: "my-computer", title: "My Computer", icon: "MyComputer.png", defaultWidth: 720, defaultHeight: 520, statusBar: true },
   "my-documents": { id: "my-documents", title: "My Documents", icon: "MyDocuments.png", defaultWidth: 640, defaultHeight: 460, menuBar: true, statusBar: true },
   "my-pictures": { id: "my-pictures", title: "My Pictures", icon: "MyPictures.png", defaultWidth: 640, defaultHeight: 460, menuBar: true, statusBar: true },
   "my-music": { id: "my-music", title: "My Music", icon: "MyMusic.png", defaultWidth: 640, defaultHeight: 460, menuBar: true, statusBar: true },

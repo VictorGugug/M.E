@@ -1,140 +1,143 @@
-import { useState } from "react";
-import { useWindowStore } from "../../store/windowStore";
+﻿import { useWindowStore } from "../../store/windowStore";
 import { assetUrl } from "../../utils/assets"
 import type { AppId } from "../../types";
 
-const panelHeader: React.CSSProperties = {
-  background: "linear-gradient(90deg,#7BA2D9 0%,#6D95D6 50%,#5B85CE 100%)",
-  color: "#FFF",
-  fontSize: 11,
-  fontWeight: "bold",
-  padding: "4px 10px",
-  textShadow: "1px 1px 1px rgba(0,0,0,0.3)",
-};
+const OL = assetUrl("assets/xpui");
+const IC = assetUrl("assets/icons");
 
-const panelBody: React.CSSProperties = {
-  background: "linear-gradient(180deg,#D6E5F7 0%,#C3D9F2 100%)",
-  padding: "6px 10px",
-  display: "flex",
-  flexDirection: "column",
-  gap: 4,
-};
-
-const link: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  gap: 6,
-  fontSize: 11,
-  color: "#215DC6",
-  cursor: "pointer",
-  textDecoration: "none",
-};
-
-const linkHover = (e: React.MouseEvent, on: boolean) => {
-  const el = e.currentTarget as HTMLElement;
-  el.style.textDecoration = on ? "underline" : "none";
-};
-
-function SidebarSection({ title, children }: { title: string; children: React.ReactNode }) {
+function MenuList({ label, items }: { label: string; items: { label: string; disabled?: boolean; sep?: boolean; onClick?: () => void }[] }) {
   return (
-    <div style={{ borderRadius: "4px 4px 0 0", overflow: "hidden", border: "1px solid #B0C4E0", marginBottom: 10 }}>
-      <div style={panelHeader}>{title}</div>
-      <div style={panelBody}>{children}</div>
+    <div className="list">
+      <button className="button">{label}</button>
+      <ul className="dropdown">
+        {items.map((it, i) =>
+          it.sep ? (
+            <li key={i} className="separator" />
+          ) : (
+            <li key={i} className={it.disabled ? "disabled" : ""} onClick={it.onClick}>{it.label}</li>
+          )
+        )}
+      </ul>
     </div>
   );
 }
 
-function GroupHeader({ title }: { title: string }) {
+function Pane({ title, links }: { title: string; links: { label: string; icon: string; onClick?: () => void }[] }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 6, borderBottom: "1px solid #C9C7B4", margin: "8px 0 10px", paddingBottom: 2 }}>
-      <span style={{ fontSize: 12, color: "#215DC6", fontWeight: "bold" }}>{title}</span>
-      <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg,#C9C7B4,transparent)" }} />
-    </div>
-  );
-}
-
-function DriveItem({ icon, label, sub, onOpen, wide }: { icon: string; label: string; sub?: string; onOpen?: () => void; wide?: boolean }) {
-  return (
-    <div
-      style={{ display: "flex", alignItems: "center", gap: 8, width: wide ? 200 : 150, padding: 4, cursor: "default", borderRadius: 2 }}
-      onClick={onOpen}
-      onMouseEnter={(e) => { e.currentTarget.style.background = "#E8F0FB"; }}
-      onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
-    >
-      <img src={assetUrl(`assets/icons/${icon}`)} alt="" style={{ width: 40, height: 40, flexShrink: 0 }} />
-      <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.25 }}>
-        <span style={{ fontSize: 11, color: "#000" }}>{label}</span>
-        {sub && <span style={{ fontSize: 10, color: "#666" }}>{sub}</span>}
+    <div className="xp-pane">
+      <div className="pane-title">{title}</div>
+      <div className="pane-links">
+        {links.map((l) => (
+          <a key={l.label} onClick={l.onClick}>
+            <img src={l.icon} alt="" />
+            {l.label}
+          </a>
+        ))}
       </div>
     </div>
   );
 }
 
+function Tile({ icon, label, sub, onClick }: { icon: string; label: string; sub?: string; onClick?: () => void }) {
+  return (
+    <button className="xp-tile" onClick={onClick}>
+      <img src={icon} alt="" />
+      <span className="tile-text">
+        <span className="tile-label">{label}</span>
+        {sub && <span className="tile-sub">{sub}</span>}
+      </span>
+    </button>
+  );
+}
+
+function Group({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <>
+      <div className="xp-group-header">
+        <span>{title}</span>
+        <div className="line" />
+      </div>
+      {children}
+    </>
+  );
+}
+
 export default function MyComputer(_: { id: string }) {
   const openWindow = useWindowStore((s) => s.openWindow);
-  const [selected, setSelected] = useState<string | null>(null);
-
   const open = (id: AppId) => openWindow(id);
 
   return (
-    <div style={{ width: "100%", height: "100%", background: "#FFF", display: "flex", flexDirection: "column", fontFamily: "Tahoma, sans-serif", userSelect: "none", overflow: "hidden" }}>
-      <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
-        <div style={{ width: 185, flexShrink: 0, background: "linear-gradient(180deg,#7BA2D9 0%,#6D95D6 100%)", padding: 8, overflowY: "auto" }}>
-          <SidebarSection title="System Tasks">
-            <a style={link} onMouseEnter={(e) => linkHover(e, true)} onMouseLeave={(e) => linkHover(e, false)} onClick={() => open("system-properties")}>
-              <img src={assetUrl("assets/icons/UserAccounts.png")} width={16} height={16} alt="" />View system information
-            </a>
-            <a style={link} onMouseEnter={(e) => linkHover(e, true)} onMouseLeave={(e) => linkHover(e, false)} onClick={() => open("settings")}>
-              <img src={assetUrl("assets/icons/ChangeorRemovePrograms.png")} width={16} height={16} alt="" />Add or remove programs
-            </a>
-            <a style={link} onMouseEnter={(e) => linkHover(e, true)} onMouseLeave={(e) => linkHover(e, false)} onClick={() => open("display-properties")}>
-              <img src={assetUrl("assets/icons/ControlPanel.png")} width={16} height={16} alt="" />Change a setting
-            </a>
-          </SidebarSection>
-          <SidebarSection title="Other Places">
-            <a style={link} onMouseEnter={(e) => linkHover(e, true)} onMouseLeave={(e) => linkHover(e, false)} onClick={() => open("network-places")}>
-              <img src={assetUrl("assets/icons/MyNetworkPlaces.png")} width={16} height={16} alt="" />My Network Places
-            </a>
-            <a style={link} onMouseEnter={(e) => linkHover(e, true)} onMouseLeave={(e) => linkHover(e, false)} onClick={() => open("my-documents")}>
-              <img src={assetUrl("assets/icons/MyDocuments.png")} width={16} height={16} alt="" />My Documents
-            </a>
-            <a style={link} onMouseEnter={(e) => linkHover(e, true)} onMouseLeave={(e) => linkHover(e, false)} onClick={() => open("my-pictures")}>
-              <img src={assetUrl("assets/icons/MyPictures.png")} width={16} height={16} alt="" />My Pictures
-            </a>
-            <a style={link} onMouseEnter={(e) => linkHover(e, true)} onMouseLeave={(e) => linkHover(e, false)} onClick={() => open("my-music")}>
-              <img src={assetUrl("assets/icons/MyMusic.png")} width={16} height={16} alt="" />My Music
-            </a>
-          </SidebarSection>
-          <SidebarSection title="Details">
-            <div style={{ fontSize: 11, fontWeight: "bold", color: "#000" }}>My Computer</div>
-            <div style={{ fontSize: 11, color: "#333" }}>System Folder</div>
-          </SidebarSection>
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: "#FFF", fontFamily: "Tahoma, sans-serif", overflow: "hidden" }}>
+      <div className="xp-explorer-head">
+        <div className="xp-menubar">
+          <MenuList label="File" items={[{ label: "Create Shortcut", disabled: true }, { label: "Delete", disabled: true }, { label: "Rename", disabled: true }, { label: "Properties", disabled: true }, { label: "", sep: true }, { label: "Close", onClick: () => {} }]} />
+          <MenuList label="Edit" items={[{ label: "Undo", disabled: true }, { label: "Redo", disabled: true }, { label: "", sep: true }, { label: "Cut", disabled: true }, { label: "Copy", disabled: true }, { label: "Paste", disabled: true }, { label: "", sep: true }, { label: "Select All", disabled: true }]} />
+          <MenuList label="View" items={[{ label: "Toolbars", disabled: true }, { label: "Status Bar", disabled: true }, { label: "", sep: true }, { label: "Tiles" }, { label: "Icons" }, { label: "List" }, { label: "Details" }, { label: "", sep: true }, { label: "Refresh", disabled: true }]} />
+          <MenuList label="Favorites" items={[{ label: "Add to Favorites...", disabled: true }, { label: "Organize Favorites...", disabled: true }]} />
+          <MenuList label="Tools" items={[{ label: "Map Network Drive...", disabled: true }, { label: "Disconnect Network Drive...", disabled: true }, { label: "", sep: true }, { label: "Folder Options...", disabled: true }]} />
+          <MenuList label="Help" items={[{ label: "Help and Support Center", onClick: () => open("system-properties") }, { label: "", sep: true }, { label: "About Windows", disabled: true }]} />
+          <div style={{ marginLeft: "auto", background: "#FFF", height: 22, padding: "0 10px", display: "flex", alignItems: "center" }}>
+            <img src={`${OL}/logo/flag.png`} alt="" style={{ height: 16 }} />
+          </div>
         </div>
-        <div style={{ flex: 1, padding: "8px 12px", overflowY: "auto", background: "#FFF" }}>
-          <GroupHeader title="Files Stored on This Computer" />
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-            <DriveItem icon="FolderOpened.png" label="XP User's Documents" onOpen={() => open("my-documents")} />
-            <DriveItem icon="SharedFolder.png" label="Shared Documents" />
-          </div>
-          <GroupHeader title="Hard Disk Drives" />
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-            <DriveItem icon="LocalDisk.png" label="Local Disk (C:)" sub="38.2 GB free of 76.2 GB" onOpen={() => setSelected("c")} />
-            <DriveItem icon="LocalDisk.png" label="Local Disk (D:)" sub="8.3 GB free of 52.8 GB" onOpen={() => setSelected("d")} />
-          </div>
-          <GroupHeader title="Devices with Removable Storage" />
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-            <DriveItem icon="FloppyDisk.png" label="3 Floppy (A:)" />
-            <DriveItem icon="CD-ROM.png" label="CD Drive (E:)" />
-            <DriveItem icon="DVD-ROM.png" label="DVD Drive (F:)" />
-          </div>
-          {selected && (
-            <div style={{ marginTop: 14, padding: 8, background: "#ECE9D8", border: "1px solid #ACA899", borderRadius: 3, fontSize: 11 }}>
-              <b>{selected === "c" ? "Local Disk (C:)" : "Local Disk (D:)"}</b>
-              <div style={{ marginTop: 4, color: "#333" }}>
-                {selected === "c" ? "38.2 GB free of 76.2 GB" : "8.3 GB free of 52.8 GB"} - NTFS
-              </div>
+        <div className="xp-toolbar">
+          <button className="button disabled"><img src={`${OL}/interface/explorer/back.png`} alt="" style={{ height: 22 }} />&nbsp;Back</button>
+          <button className="button disabled"><img src={`${OL}/interface/explorer/forward.png`} alt="" style={{ height: 22 }} /></button>
+          <button className="button disabled" title="Up"><img src={`${OL}/interface/explorer/up.png`} alt="" style={{ height: 22 }} /></button>
+          <div className="separator" />
+          <button className="button" onClick={() => open("search")}><img src={`${OL}/interface/explorer/search.png`} alt="" style={{ height: 22 }} />&nbsp;Search</button>
+          <button className="button" onClick={() => open("explorer")}><img src={`${OL}/interface/explorer/folders.png`} alt="" style={{ height: 22 }} />&nbsp;Folders</button>
+          <div className="separator" />
+          <button className="button" title="Views"><img src={`${OL}/interface/explorer/views.png`} alt="" style={{ height: 22 }} />&#9662;</button>
+        </div>
+        <div className="xp-address">
+          <span className="addr-label">Address</span>
+          <input readOnly value="My Computer" />
+          <button className="go" onClick={() => {}}><img src={`${OL}/interface/explorer/go.png`} alt="" style={{ height: 18 }} /> Go</button>
+        </div>
+      </div>
+      <div className="xp-explorer-middle">
+        <div className="xp-explorer-side">
+          <div className="xp-explorer-blue">
+            <Pane
+              title="System Tasks"
+              links={[
+                { label: "View system information", icon: `${IC}/UserAccounts.png`, onClick: () => open("system-properties") },
+                { label: "Add or remove programs", icon: `${IC}/ChangeorRemovePrograms.png`, onClick: () => open("settings") },
+                { label: "Change a setting", icon: `${IC}/ControlPanel.png`, onClick: () => open("display-properties") },
+              ]}
+            />
+            <Pane
+              title="Other Places"
+              links={[
+                { label: "My Network Places", icon: `${IC}/MyNetworkPlaces.png`, onClick: () => open("network-places") },
+                { label: "My Documents", icon: `${OL}/icon/folder/documents.png`, onClick: () => open("my-documents") },
+                { label: "My Pictures", icon: `${OL}/icon/folder/pictures.png`, onClick: () => open("my-pictures") },
+                { label: "My Music", icon: `${OL}/icon/folder/music.png`, onClick: () => open("my-music") },
+                { label: "My Computer", icon: `${OL}/icon/computer.png` },
+              ]}
+            />
+            <Pane title="Details" links={[]} />
+            <div style={{ background: "rgba(255,255,255,0.7)", borderBottomLeftRadius: 5, borderBottomRightRadius: 5, padding: "2px 10px 8px", marginTop: -14, fontSize: 11 }}>
+              <div style={{ fontWeight: "bold" }}>My Computer</div>
+              <div>System Folder</div>
             </div>
-          )}
+          </div>
+        </div>
+        <div className="xp-explorer-body">
+          <Group title="Files Stored on This Computer">
+            <Tile icon={`${OL}/icon/folder/documents.png`} label="XP User's Documents" onClick={() => open("my-documents")} />
+            <Tile icon={`${OL}/icon/folder/open.png`} label="Shared Documents" />
+          </Group>
+          <Group title="Hard Disk Drives">
+            <Tile icon={`${IC}/LocalDisk.png`} label="Local Disk (C:)" sub="38.2 GB free of 76.2 GB" />
+            <Tile icon={`${IC}/LocalDisk.png`} label="Local Disk (D:)" sub="8.3 GB free of 52.8 GB" />
+          </Group>
+          <Group title="Devices with Removable Storage">
+            <Tile icon={`${IC}/FloppyDisk.png`} label="3 Floppy (A:)" />
+            <Tile icon={`${IC}/CD-ROM.png`} label="CD Drive (D:)" />
+            <Tile icon={`${IC}/DVD-ROM.png`} label="DVD Drive (E:)" />
+          </Group>
         </div>
       </div>
     </div>
