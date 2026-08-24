@@ -35,7 +35,8 @@ body.wait { cursor: url('/assets/cursors/default_wait.cur'), wait; }
 .xp-titlebar .xp-win-title .label { color: #FFF; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 1; min-width: 0; font-family: 'Trebuchet MS', sans-serif; font-size: 12px; }
 .xp-titlebar .xp-win-title img { width: 16px; height: 16px; filter: drop-shadow(rgba(0,0,0,0.5) 2px 1px 0.5px); flex-shrink: 0; }
 .xp-titlebar .xp-win-buttons { margin-left: auto; display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
-.xp-titlebar .xp-win-buttons img { width: 21px; height: 21px; opacity: 0.55; cursor: url('/assets/cursors/arrow.cur'), default; padding: 0; background: none; border: none; }
+.xp-titlebar .xp-win-buttons button { background: none; border: none; padding: 0; margin: 0; display: flex; }
+.xp-titlebar .xp-win-buttons img { width: 21px; height: 21px; opacity: 0.55; cursor: url('/assets/cursors/arrow.cur'), default; }
 .xp-win.active .xp-titlebar .xp-win-buttons img { opacity: 1; }
 .xp-titlebar .xp-win-buttons img:hover { filter: brightness(1.2); opacity: 1; }
 .xp-win-inner { position: relative; flex: 1 1 auto; background-color: #FFF; overflow: hidden; border-style: solid; border-width: 0 4px 4px; border-color: rgb(119,142,219) rgb(117,134,220) rgb(117,134,220) rgb(117,140,220); box-shadow: rgb(117,140,221) -1px 0 0, rgb(117,136,222) 1px 0 0, rgb(109,116,205) 0 1px 0; display: flex; flex-direction: column; width: 100%; min-height: 0; }
@@ -136,7 +137,7 @@ body.wait { cursor: url('/assets/cursors/default_wait.cur'), wait; }
 .xp-startmenu .sm-sep { border-top: 1px solid rgb(199,197,178); margin: 3px 6px; }
 .xp-startmenu .sm-programs { position: relative; }
 .xp-startmenu .sm-programs > .sm-button { padding: 5px 2px; }
-.xp-startmenu .sm-programs .arrow { display: inline-flex; width: 16px; height: 16px; background: linear-gradient(180deg, rgb(109,212,106) 0%, rgb(46,158,46) 100%); border-radius: 3px; align-items: center; justify-content: center; color: #FFF; font-size: 9px; box-shadow: rgb(255,255,255,0.5) 0 1px 1px inset; margin-left: auto; }
+.xp-startmenu .sm-programs .arrow { width: 0; height: 0; border-top: 9px solid transparent; border-bottom: 9px solid transparent; border-left: 12px solid rgb(67, 170, 67); margin-left: auto; margin-right: 4px; filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.4)); }
 .xp-startmenu .sm-programs .menu { position: absolute; left: 100%; bottom: 0; background: #FFF; border-width: 1px 1px 1px 5px; border-style: solid; border-color: rgb(45,124,226); width: 200px; z-index: 999; box-shadow: rgba(0,0,0,0.5) 2px 2px 5px; list-style: none; margin: 0; padding: 0; max-height: 400px; overflow-y: auto; }
 .xp-startmenu .sm-programs .menu li { display: flex; align-items: center; padding: 4px 8px; white-space: nowrap; position: relative; font-size: 11px; color: #000; }
 .xp-startmenu .sm-programs .menu li:hover { background: rgb(49,106,197); color: #FFF; }

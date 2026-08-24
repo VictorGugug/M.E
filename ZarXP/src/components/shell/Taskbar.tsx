@@ -69,7 +69,7 @@ export default function Taskbar({ onOpen }: { onOpen: (id: AppId) => void }) {
         ))}
       </div>
       <div className="xp-tray">
-        <img src={`${OL}/icon/info.png`} alt="" className="xp-tray-icon" title="Windows Task Manager" onClick={(e) => { e.stopPropagation(); onOpen("task-manager"); }} />
+        <img src={`${OL}/icon/info.png`} alt="" className="xp-tray-icon" title="About Windows" onClick={(e) => { e.stopPropagation(); onOpen("about-xp"); }} />
         <img src={`${IC}/NetworkConnection.png`} alt="" className="xp-tray-icon" title="Network Status" onClick={(e) => { e.stopPropagation(); onOpen("network-places"); }} />
         <img src={`${OL}/icon/speaker.png`} alt="" className="xp-tray-icon" onClick={(e) => { e.stopPropagation(); onOpen("volume"); }} title="Volume" />
         <img src={`${IC}/SafelyRemoveHardware.png`} alt="" className="xp-tray-icon" title="Safely Remove Hardware" onClick={(e) => { e.stopPropagation(); setBalloon((b) => (b === "remove" ? null : "remove")); }} />
@@ -85,8 +85,8 @@ export default function Taskbar({ onOpen }: { onOpen: (id: AppId) => void }) {
                   <img className="balloon-icon" src={`${OL}/icon/tour.png`} alt="" />
                   Take a tour of Windows XP
                 </div>
-                <span className="balloon-text">
-                  To learn about the fun features Windows XP has to offer, click here. To find this info later, click Help and Support on the Start menu.
+                <span className="balloon-text" style={{ cursor: "url('/assets/cursors/pointer.cur'), pointer" }} onClick={() => { setBalloon(null); onOpen("tour-xp"); }}>
+                  To learn about the fun features Windows XP has to offer, <span style={{ color: "#0000CC", textDecoration: "underline" }}>click here</span>. To find this info later, click Help and Support on the Start menu.
                 </span>
               </>
             ) : (

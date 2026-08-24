@@ -27,7 +27,7 @@ const APPS: Record<AppId, AppDefinition> = {
   "display-properties": { id: "display-properties", title: "Display Properties", icon: "DisplayProperties.png", defaultWidth: 450, defaultHeight: 400, resizable: false },
   volume: { id: "volume", title: "Volume Control", icon: "Volume.png", defaultWidth: 300, defaultHeight: 250, resizable: false },
   "date-time": { id: "date-time", title: "Date and Time Properties", icon: "DateandTime.png", defaultWidth: 420, defaultHeight: 360, resizable: false },
-  "about-xp": { id: "about-xp", title: "About Windows", icon: "WindowsMediaPlayer10.png", defaultWidth: 400, defaultHeight: 350, resizable: false },
+  "about-xp": { id: "about-xp", title: "About Windows", icon: "WindowsFlag.png", defaultWidth: 400, defaultHeight: 350, resizable: false },
   explorer: { id: "explorer", title: "Windows Explorer", icon: "Explorer.png", defaultWidth: 650, defaultHeight: 450, menuBar: true, statusBar: true },
   solitaire: { id: "solitaire", title: "Solitaire", icon: "Solitaire.png", defaultWidth: 500, defaultHeight: 450, resizable: false },
   minesweeper: { id: "minesweeper", title: "Minesweeper", icon: "Minesweeper.png", defaultWidth: 250, defaultHeight: 320, resizable: false },

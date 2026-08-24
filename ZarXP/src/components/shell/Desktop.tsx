@@ -21,6 +21,11 @@ const DisplayProperties = lazy(() => import("../dialogs/DisplayProperties"));
 const SystemProperties = lazy(() => import("../dialogs/SystemProperties"));
 const DateTimeDialog = lazy(() => import("../dialogs/DateTimeDialog"));
 const SearchDialog = lazy(() => import("../dialogs/SearchDialog"));
+const AboutXP = lazy(() => import("../dialogs/AboutXP"));
+const TourXP = lazy(() => import("../apps/TourXP"));
+const Wordpad = lazy(() => import("../apps/Wordpad"));
+const OutlookExpress = lazy(() => import("../apps/OutlookExpress"));
+const WindowsMessenger = lazy(() => import("../apps/WindowsMessenger"));
 const Explorer = lazy(() => import("../apps/Explorer"));
 const MyComputer = lazy(() => import("../apps/MyComputer"));
 const MyDocuments = lazy(() => import("../apps/MyDocuments"));
@@ -59,11 +64,12 @@ const APP_COMPONENTS: Record<string, React.FC<{ id: string }>> = {
   "my-music": MyDocuments,
   "my-videos": MyDocuments,
   "network-places": ControlPanel,
-  "outlook-express": InternetExplorer,
-  "tour-xp": SearchDialog,
-  "msn-messenger": Terminal,
-  "wordpad": Notepad,
+  "outlook-express": OutlookExpress,
+  "tour-xp": TourXP,
+  "msn-messenger": WindowsMessenger,
+  "wordpad": Wordpad,
   "settings": ControlPanel,
+  "about-xp": AboutXP,
   "recycle-bin": RecycleBin,
   "solitaire": Solitaire,
   "minesweeper": Minesweeper,
