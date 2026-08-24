@@ -2,10 +2,17 @@ import { create } from "zustand";
 import type { WindowConfig, AppId, AppDefinition } from "../types";
 
 const APPS: Record<AppId, AppDefinition> = {
-  "my-computer": { id: "my-computer", title: "My Computer", icon: "MyComputer.png", defaultWidth: 600, defaultHeight: 450, menuBar: true, statusBar: true },
-  "my-documents": { id: "my-documents", title: "My Documents", icon: "MyDocuments.png", defaultWidth: 600, defaultHeight: 450, menuBar: true, statusBar: true },
+  "my-computer": { id: "my-computer", title: "My Computer", icon: "MyComputer.png", defaultWidth: 720, defaultHeight: 520, menuBar: true, statusBar: true },
+  "my-documents": { id: "my-documents", title: "My Documents", icon: "MyDocuments.png", defaultWidth: 640, defaultHeight: 460, menuBar: true, statusBar: true },
+  "my-pictures": { id: "my-pictures", title: "My Pictures", icon: "MyPictures.png", defaultWidth: 640, defaultHeight: 460, menuBar: true, statusBar: true },
+  "my-music": { id: "my-music", title: "My Music", icon: "MyMusic.png", defaultWidth: 640, defaultHeight: 460, menuBar: true, statusBar: true },
+  "my-videos": { id: "my-videos", title: "My Videos", icon: "MyVideos.png", defaultWidth: 640, defaultHeight: 460, menuBar: true, statusBar: true },
   "recycle-bin": { id: "recycle-bin", title: "Recycle Bin", icon: "RecycleBinempty.png", defaultWidth: 500, defaultHeight: 400, menuBar: true, statusBar: true },
   "internet-explorer": { id: "internet-explorer", title: "Internet Explorer", icon: "InternetExplorer6.png", defaultWidth: 800, defaultHeight: 550, menuBar: true, statusBar: true },
+  "outlook-express": { id: "outlook-express", title: "Outlook Express", icon: "OutlookExpress.png", defaultWidth: 700, defaultHeight: 480, menuBar: true, statusBar: true },
+  "tour-xp": { id: "tour-xp", title: "Tour Windows XP", icon: "TourXP.png", defaultWidth: 560, defaultHeight: 400, menuBar: true },
+  "msn-messenger": { id: "msn-messenger", title: "Windows Messenger", icon: "WindowsMessenger.png", defaultWidth: 280, defaultHeight: 420, menuBar: true },
+  wordpad: { id: "wordpad", title: "Document - WordPad", icon: "Wordpad.png", defaultWidth: 620, defaultHeight: 450, menuBar: true, statusBar: true, minWidth: 380, minHeight: 280 },
   notepad: { id: "notepad", title: "Untitled - Notepad", icon: "Notepad.png", defaultWidth: 500, defaultHeight: 400, menuBar: true, statusBar: true, minWidth: 300, minHeight: 200 },
   paint: { id: "paint", title: "untitled - Paint", icon: "Paint.png", defaultWidth: 700, defaultHeight: 500, menuBar: true, statusBar: true, minWidth: 400, minHeight: 300 },
   calculator: { id: "calculator", title: "Calculator", icon: "Calculator.png", defaultWidth: 260, defaultHeight: 320, resizable: false },
