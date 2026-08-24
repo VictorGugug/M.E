@@ -162,17 +162,17 @@ body.wait { cursor: url('/assets/cursors/default_wait.cur'), wait; }
 .xp-startmenu .sm-bottom .sm-bottom-btn:hover { filter: brightness(1.2); }
 .xp-startmenu .sm-bottom .sm-bottom-btn img { width: 22px; height: 22px; flex-shrink: 0; }
 
-.xp-balloon { width: 240px; margin: 0; padding: 10px; display: block; position: absolute; bottom: 40px; right: 26px; filter: drop-shadow(rgba(0,0,0,0.6) 3px 3px 2px); background-color: rgb(255,254,232); color: #000; border: 1px solid #000; border-radius: 6px; text-align: left; z-index: 860; }
+.xp-balloon { width: 250px; margin: 0; padding: 10px 12px; display: block; position: absolute; bottom: 38px; right: 100px; filter: drop-shadow(rgba(0,0,0,0.6) 3px 3px 2px); background-color: rgb(255,254,232); color: #000; border: 1px solid #000; border-radius: 6px; text-align: left; z-index: 860; }
 .xp-balloon::before, .xp-balloon::after { content: " "; position: absolute; width: 0; height: 0; border-style: solid; right: 15px; }
 .xp-balloon::before { bottom: -18px; border-width: 0 17px 18px 0; border-color: transparent #000 transparent transparent; transform: translateX(1px); }
 .xp-balloon::after { bottom: -18px; border-width: 0 17px 18px 0; border-color: transparent rgb(255,254,232) transparent transparent; }
-.xp-balloon .balloon-title { height: 16px; font-weight: 900; display: inline-block; vertical-align: middle; margin-bottom: 10px; font-size: 11px; }
+.xp-balloon .balloon-title { height: 16px; font-weight: 900; display: inline-block; vertical-align: middle; margin-bottom: 10px; font-size: 12px; }
 .xp-balloon .balloon-icon { margin-right: 8px; display: inline-block; width: 16px; height: 16px; vertical-align: middle; }
 .xp-balloon .balloon-close { display: block; position: absolute; right: 5px; top: 5px; width: 16px; height: 16px; border-radius: 3px; border: 1px solid rgb(208,201,182); background: rgb(255,255,247); padding: 0; }
 .xp-balloon .balloon-close img { width: 16px; height: 16px; filter: invert(70%) sepia(100%); }
 .xp-balloon .balloon-close:hover { border: 1px solid #FFF; background: radial-gradient(at 10% 10%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 33%), radial-gradient(at 80% 80%, rgb(255,220,24) 0%, rgba(255,220,24,0) 40%), linear-gradient(rgb(255,173,49), rgb(255,173,49)); }
 .xp-balloon .balloon-close:hover img { filter: none; }
-.xp-balloon .balloon-text { display: block; padding: 0 25px 0 0; color: #000; font-size: 11px; line-height: 1.4; }
+.xp-balloon .balloon-text { display: block; padding: 0 25px 0 0; color: #000; font-size: 12px; line-height: 1.45; }
 
 .xp-checkbox { width: 13px; height: 13px; background-image: url('/assets/taskbar/checkbox13.png'); background-repeat: no-repeat; background-position: 0 0; display: inline-block; flex-shrink: 0; image-rendering: pixelated; }
 .xp-checkbox-checked { background-position: 0 -52px; }

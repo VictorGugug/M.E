@@ -82,7 +82,7 @@ export default function Taskbar({ onOpen }: { onOpen: (id: AppId) => void }) {
       </div>
       <div className="xp-tray">
         <img src={`${OL}/icon/messenger.png`} alt="" className="xp-tray-icon" title="Windows Messenger" onClick={(e) => { e.stopPropagation(); onOpen("msn-messenger"); }} />
-        <img src={`${IC}/SecurityCenter.png`} alt="" className="xp-tray-icon" title="Windows Security Center" onClick={(e) => { e.stopPropagation(); onOpen("security-center"); }} />
+        <img src={`${OL}/icon/security.png`} alt="" className="xp-tray-icon" title="Windows Security Center" onClick={(e) => { e.stopPropagation(); onOpen("security-center"); }} />
         <img src={`${OL}/icon/speaker.png`} alt="" className="xp-tray-icon" title="Volume" onClick={(e) => { e.stopPropagation(); setVolOpen((v) => !v); }} />
         <img src={`${IC}/SafelyRemoveHardware.png`} alt="" className="xp-tray-icon" title="Safely Remove Hardware" onClick={(e) => { e.stopPropagation(); setBalloon((b) => (b === "remove" ? null : "remove")); }} />
         <span className="xp-tray-clock" onClick={(e) => { e.stopPropagation(); onOpen("date-time"); }}>{clock}</span>
@@ -115,7 +115,7 @@ export default function Taskbar({ onOpen }: { onOpen: (id: AppId) => void }) {
             {balloon === "tour" ? (
               <>
                 <div className="balloon-title">
-                  <img className="balloon-icon" src={`${OL}/icon/tour.png`} alt="" />
+                  <img className="balloon-icon" src={`${OL}/icon/info.png`} alt="" />
                   {t("balloonTourTitle")}
                 </div>
                 <span className="balloon-text" style={{ cursor: "url('/assets/cursors/pointer.cur'), pointer" }} onClick={() => { setBalloon(null); onOpen("tour-xp"); }}>
