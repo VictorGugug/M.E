@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useWindowStore } from "../../store/windowStore";
 import { assetUrl } from "../../utils/assets"
 
+const XPUI = assetUrl("assets/xpui");
+
 export default function LoginScreen() {
   const { bootPhase, setBootPhase } = useWindowStore();
   const [showWelcome, setShowWelcome] = useState(false);
@@ -36,32 +38,26 @@ export default function LoginScreen() {
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "#5A7EDC", color: "#FFF", zIndex: 9998, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-      <div style={{ height: 70, background: "#00309C", borderBottom: "2px solid #C7DDFF", flexShrink: 0 }} />
+      <div style={{ height: "18%", minHeight: 90, background: "linear-gradient(180deg,#0A246A 0%,#0831D9 55%,#4A82F5 100%)", borderBottom: "2px solid #C7DDFF", flexShrink: 0 }} />
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 34, padding: "22px 52px", background: "radial-gradient(circle at 7% 5%,#91B1EF 0,#7698E6 6%,#5A7EDC 13%,transparent 14%)" }}>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "center", paddingRight: 36, borderRight: "1px solid rgba(255,255,255,0.72)" }}>
-          <img src={assetUrl("assets/images/xp-logo.png")} alt="Windows XP" style={{ width: "min(430px,100%)", filter: "drop-shadow(0 2px 2px rgba(0,0,0,0.26))" }} />
-          <p style={{ margin: "14px 10px 0 0", fontSize: 12, color: "rgba(255,255,255,0.9)" }}>To begin, click your user name</p>
+          <img src={assetUrl("assets/images/xp-logo.png")} alt="Windows XP" style={{ width: 190, filter: "drop-shadow(0 2px 2px rgba(0,0,0,0.26))" }} />
+          <p style={{ margin: "18px 10px 0 0", fontSize: 20, fontFamily: "Tahoma, sans-serif" }}>To begin, click your user name</p>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           <button
             onClick={handleLogin}
-            style={{ background: "transparent", border: "1px solid transparent", padding: "5px 10px 5px 5px", borderRadius: 4, color: "#FFF", display: "flex", alignItems: "center", gap: 12, cursor: "pointer", minWidth: 340 }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.28)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "transparent"; }}
+            style={{ background: "transparent", border: "none", padding: "5px 10px 5px 5px", color: "#FFF", display: "flex", alignItems: "center", gap: 14, cursor: "pointer" }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.12)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
           >
-            <div style={{ width: 64, height: 64, border: "2px solid rgba(255,255,255,0.25)", borderRadius: 4, overflow: "hidden", background: "#2a3a4a", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <img src={assetUrl("assets/images/user.png")} alt="" style={{ width: 64, height: 64 }} />
-            </div>
-            <span style={{ fontSize: 15, fontWeight: 700 }}>XP User</span>
+            <img src={`${XPUI}/user/ball.png`} alt="" width={48} height={48} style={{ border: "2px solid #FFF", borderRadius: 5 }} />
+            <span style={{ fontSize: 20, fontFamily: "Tahoma, sans-serif" }}>XP User</span>
           </button>
         </div>
       </div>
-      <div style={{ height: 70, background: "linear-gradient(90deg,#3833ac,#00309c)", flexShrink: 0, display: "flex", alignItems: "center", padding: "0 20px", gap: 16 }}>
-        <button onClick={handleLogin} style={{ display: "flex", alignItems: "center", gap: 8, color: "#FFF", background: "none", border: "none", cursor: "pointer", fontSize: 12 }}>
-          <img src={assetUrl("assets/icons/Power.png")} alt="" style={{ width: 16, height: 16 }} />
-          Turn Off Computer
-        </button>
-      </div>
+      <div style={{ height: 2, background: "linear-gradient(90deg,#00309C,#F7963C,#00309C)", flexShrink: 0 }} />
+      <div style={{ height: "18%", minHeight: 90, width: "100%", background: "linear-gradient(90deg,#3833AC,#00309C)", flexShrink: 0 }} />
     </div>
   );
 }
