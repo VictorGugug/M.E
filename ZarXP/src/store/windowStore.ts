@@ -11,17 +11,17 @@ const APPS: Record<AppId, AppDefinition> = {
   "internet-explorer": { id: "internet-explorer", title: "Internet Explorer", icon: "InternetExplorer6.png", defaultWidth: 800, defaultHeight: 550, menuBar: false, statusBar: false, minWidth: 480, minHeight: 320 },
   "outlook-express": { id: "outlook-express", title: "Outlook Express", icon: "OutlookExpress.png", defaultWidth: 700, defaultHeight: 480, menuBar: true, statusBar: true },
   "tour-xp": { id: "tour-xp", title: "Tour Windows XP", icon: "TourXP.png", defaultWidth: 560, defaultHeight: 400, menuBar: true },
-  "msn-messenger": { id: "msn-messenger", title: "Windows Messenger", icon: "WindowsMessenger.png", defaultWidth: 280, defaultHeight: 420, menuBar: true },
+  "msn-messenger": { id: "msn-messenger", title: "Windows Messenger", icon: "WindowsMessenger.png", defaultWidth: 280, defaultHeight: 440, menuBar: true },
   wordpad: { id: "wordpad", title: "Document - WordPad", icon: "Wordpad.png", defaultWidth: 620, defaultHeight: 450, menuBar: true, statusBar: true, minWidth: 380, minHeight: 280 },
   notepad: { id: "notepad", title: "Untitled - Notepad", icon: "Notepad.png", defaultWidth: 500, defaultHeight: 400, menuBar: true, statusBar: true, minWidth: 300, minHeight: 200 },
   paint: { id: "paint", title: "untitled - Paint", icon: "Paint.png", defaultWidth: 700, defaultHeight: 500, menuBar: true, statusBar: true, minWidth: 400, minHeight: 300 },
   calculator: { id: "calculator", title: "Calculator", icon: "Calculator.png", defaultWidth: 260, defaultHeight: 320, resizable: false },
-  "media-player": { id: "media-player", title: "Windows Media Player", icon: "WindowsMediaPlayer10.png", defaultWidth: 650, defaultHeight: 480, menuBar: true, statusBar: true, minWidth: 500, minHeight: 350 },
+  "media-player": { id: "media-player", title: "Windows Media Player", icon: "WindowsMediaPlayer10.png", defaultWidth: 560, defaultHeight: 440, menuBar: false, statusBar: false, minWidth: 420, minHeight: 320 },
   terminal: { id: "terminal", title: "Command Prompt", icon: "CommandPrompt.png", defaultWidth: 600, defaultHeight: 400, minWidth: 300, minHeight: 200 },
-  "control-panel": { id: "control-panel", title: "Control Panel", icon: "ControlPanel.png", defaultWidth: 550, defaultHeight: 400, menuBar: true, statusBar: true },
-  "task-manager": { id: "task-manager", title: "Windows Task Manager", icon: "TaskManager.png", defaultWidth: 500, defaultHeight: 400, resizable: false },
+  "control-panel": { id: "control-panel", title: "Control Panel", icon: "ControlPanel.png", defaultWidth: 620, defaultHeight: 440, menuBar: true, statusBar: true },
+  "task-manager": { id: "task-manager", title: "Windows Task Manager", icon: "TaskManager.png", defaultWidth: 480, defaultHeight: 460, resizable: false },
   run: { id: "run", title: "Run", icon: "Run.png", defaultWidth: 380, defaultHeight: 150, resizable: false },
-  search: { id: "search", title: "Search Results", icon: "Search.png", defaultWidth: 500, defaultHeight: 400, resizable: false },
+  search: { id: "search", title: "Search Results", icon: "Search.png", defaultWidth: 540, defaultHeight: 420, minWidth: 460, minHeight: 340, resizable: false },
   shutdown: { id: "shutdown", title: "Shut Down Windows", icon: "Power.png", defaultWidth: 380, defaultHeight: 300, resizable: false },
   "system-properties": { id: "system-properties", title: "System Properties", icon: "SystemProperties.png", defaultWidth: 480, defaultHeight: 420, resizable: false },
   "display-properties": { id: "display-properties", title: "Display Properties", icon: "DisplayProperties.png", defaultWidth: 450, defaultHeight: 400, resizable: false },
@@ -76,12 +76,30 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
     if (existing) { get().focusWindow(existing.id); return; }
     const minimized = get().windows.find((w) => w.appId === appId && w.state === "minimized");
     if (minimized) { get().restoreWindow(minimized.id); return; }
+
     const id = `win-${++winCounter}`;
     const offset = (winCounter % 10) * 25;
+    const isCentered = [
+      "task-manager", "shutdown", "run", "date-time",
+      "display-properties", "system-properties", "regional-options", "about-xp"
+    ].includes(appId);
+
+    const winW = app.defaultWidth;
+    const winH = app.defaultHeight;
+    const screenW = typeof window !== "undefined" ? window.innerWidth : 1024;
+    const screenH = typeof window !== "undefined" ? window.innerHeight : 768;
+
+    const posX = isCentered
+      ? Math.max(10, Math.floor((screenW - winW) / 2))
+      : 50 + offset;
+    const posY = isCentered
+      ? Math.max(10, Math.floor((screenH - winH - 30) / 2))
+      : 50 + offset;
+
     const win: WindowConfig = {
       id, appId, title: app.title, icon: app.icon,
-      x: 50 + offset, y: 50 + offset,
-      width: app.defaultWidth, height: app.defaultHeight,
+      x: posX, y: posY,
+      width: winW, height: winH,
       state: "normal", zIndex: get().nextZ,
       minWidth: app.minWidth, minHeight: app.minHeight,
       menuBar: app.menuBar, statusBar: app.statusBar, resizable: app.resizable !== false,
@@ -113,8 +131,20 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
   setBootPhase: (phase) => set({ bootPhase: phase }),
   toggleStartMenu: () => set((s) => ({ startMenuOpen: !s.startMenuOpen })),
   closeStartMenu: () => set({ startMenuOpen: false }),
-  minimizeAll: () => set((s) => ({ windows: s.windows.map((w) => w.state === "normal" ? { ...w, state: "minimized" as const } : w) })),
-  cascadeWindows: () => {
-    set({ windows: get().windows.map((w, i) => w.state !== "minimized" ? { ...w, x: 30 + i * 30, y: 30 + i * 30 } : w) });
-  },
+
+  minimizeAll: () => set((s) => ({
+    windows: s.windows.map((w) => ({ ...w, state: "minimized" as const })),
+  })),
+
+  cascadeWindows: () => set((s) => {
+    let count = 0;
+    return {
+      windows: s.windows.map((w) => {
+        if (w.state === "minimized") return w;
+        const off = (count++ % 10) * 26;
+        return { ...w, state: "normal" as const, x: 40 + off, y: 40 + off, zIndex: s.nextZ + count };
+      }),
+      nextZ: s.nextZ + count + 1,
+    };
+  }),
 }));

@@ -96,7 +96,7 @@ export default function Minesweeper(_: { id: string }) {
         setTimer((t) => Math.min(t + 1, 999));
       }, 1000);
     }
-  }, [timer]);
+  }, []);
 
   useEffect(() => {
     if (revealedCount === safeCells && !gameOver) {

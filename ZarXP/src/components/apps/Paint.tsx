@@ -1,13 +1,14 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 
 const COLORS = [
   "#000000","#808080","#800000","#808000","#008000","#008080","#000080","#800080",
   "#FFFFFF","#C0C0C0","#FF0000","#FFFF00","#00FF00","#00FFFF","#0000FF","#FF00FF",
   "#C0DCC0","#A6CAF0","#FFCC99","#FFFFCC","#99CCFF","#CC99FF","#FF99CC","#CCFFFF",
+  "#E0E0E0","#8A4B08","#FF8080","#80FF80","#80FFFF","#0080FF","#FF80FF","#FFFF80"
 ];
 
 const svgIcon = (paths: string) =>
-  `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">${paths}</svg>`)}`
+  `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">${paths}</svg>`)}`;
 
 const TOOLS = [
   { id: "pencil", label: "Pencil", icon: svgIcon('<path d="M3 13l1-4 7-7 3 3-7 7-4 1z" fill="#f4c20d" stroke="#000" stroke-width="1"/><path d="M11 2l3 3" stroke="#000" stroke-width="1"/>') },
@@ -22,8 +23,9 @@ const TOOLS = [
 
 export default function Paint(_: { id: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const snapshotRef = useRef<ImageData | null>(null);
   const [color, setColor] = useState("#000000");
-  const [bgColor, setBgColor] = useState("#FFFFFF");
+  const [secColor, setSecColor] = useState("#FFFFFF");
   const [tool, setTool] = useState("pencil");
   const [drawing, setDrawing] = useState(false);
   const [lineWidth, setLineWidth] = useState(2);
@@ -35,116 +37,196 @@ export default function Paint(_: { id: string }) {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
-    ctx.fillStyle = "#FFFFFF";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.lineCap = "round";
-    ctx.lineWidth = lineWidth;
-  }, [lineWidth]);
+    if (canvas.width === 0 || canvas.height === 0) {
+      canvas.width = 600;
+      canvas.height = 400;
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+  }, []);
 
   const getPos = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const rect = canvasRef.current!.getBoundingClientRect();
-    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    return {
+      x: Math.round(e.clientX - rect.left),
+      y: Math.round(e.clientY - rect.top)
+    };
   };
 
-  const drawAt = (ctx: CanvasRenderingContext2D, from: { x: number; y: number }, to: { x: number; y: number }) => {
-    if (tool === "pencil" || tool === "brush") {
-      ctx.beginPath();
-      ctx.moveTo(from.x, from.y);
-      ctx.lineTo(to.x, to.y);
-      ctx.strokeStyle = color;
-      ctx.lineWidth = tool === "brush" ? 6 : lineWidth;
-      ctx.stroke();
-    }
-    if (tool === "eraser") {
-      ctx.beginPath();
-      ctx.moveTo(from.x, from.y);
-      ctx.lineTo(to.x, to.y);
-      ctx.strokeStyle = "#FFFFFF";
-      ctx.lineWidth = 20;
-      ctx.stroke();
-    }
-  };
+  const clearCanvas = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }, []);
 
   const onMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    setDrawing(true);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
     const pos = getPos(e);
+    setDrawing(true);
     lastPos.current = pos;
     startPos.current = pos;
+    snapshotRef.current = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
     if (tool === "fill") {
-      const ctx = canvasRef.current?.getContext("2d");
-      if (!ctx) return;
       ctx.fillStyle = color;
-      ctx.fillRect(0, 0, canvasRef.current!.width, canvasRef.current!.height);
-    }
-    if (tool === "pick") {
-      const ctx = canvasRef.current?.getContext("2d");
-      if (!ctx) return;
-      const p = ctx.getImageData(pos.x, pos.y, 1, 1).data;
-      setColor(`#${p[0].toString(16).padStart(2,"0")}${p[1].toString(16).padStart(2,"0")}${p[2].toString(16).padStart(2,"0")}`);
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
       setDrawing(false);
+    } else if (tool === "pick") {
+      const p = ctx.getImageData(pos.x, pos.y, 1, 1).data;
+      const hex = `#${p[0].toString(16).padStart(2, "0")}${p[1].toString(16).padStart(2, "0")}${p[2].toString(16).padStart(2, "0")}`;
+      if (e.button === 2) setSecColor(hex);
+      else setColor(hex);
+      setDrawing(false);
+    } else if (tool === "pencil" || tool === "brush" || tool === "eraser") {
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, tool === "brush" ? 4 : tool === "eraser" ? 8 : 1, 0, Math.PI * 2);
+      ctx.fillStyle = tool === "eraser" ? secColor : color;
+      ctx.fill();
     }
   };
 
   const onMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!drawing) return;
-    const ctx = canvasRef.current?.getContext("2d");
-    if (!ctx || !lastPos.current) return;
-    const pos = getPos(e);
-    drawAt(ctx, lastPos.current, pos);
-    lastPos.current = pos;
-  };
+    if (!drawing || !lastPos.current || !startPos.current) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-  const onMouseUp = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!drawing) { setDrawing(false); return; }
-    setDrawing(false);
-    if (startPos.current && (tool === "rect" || tool === "ellipse" || tool === "line")) {
-      const ctx = canvasRef.current?.getContext("2d");
-      if (!ctx) return;
-      const end = getPos(e);
-      const x = Math.min(startPos.current.x, end.x);
-      const y = Math.min(startPos.current.y, end.y);
-      const w = Math.abs(end.x - startPos.current.x);
-      const h = Math.abs(end.y - startPos.current.y);
+    const pos = getPos(e);
+
+    if (tool === "pencil" || tool === "brush") {
+      ctx.beginPath();
+      ctx.moveTo(lastPos.current.x, lastPos.current.y);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = tool === "brush" ? lineWidth * 3 : lineWidth;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.stroke();
+      lastPos.current = pos;
+    } else if (tool === "eraser") {
+      ctx.beginPath();
+      ctx.moveTo(lastPos.current.x, lastPos.current.y);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.strokeStyle = secColor;
+      ctx.lineWidth = lineWidth * 6;
+      ctx.lineCap = "square";
+      ctx.stroke();
+      lastPos.current = pos;
+    } else if (snapshotRef.current) {
+      ctx.putImageData(snapshotRef.current, 0, 0);
       ctx.strokeStyle = color;
       ctx.lineWidth = lineWidth;
-      if (tool === "rect") { ctx.strokeRect(x, y, w, h); }
-      if (tool === "ellipse") { ctx.beginPath(); ctx.ellipse(x + w/2, y + h/2, w/2, h/2, 0, 0, Math.PI*2); ctx.stroke(); }
-      if (tool === "line") { ctx.beginPath(); ctx.moveTo(startPos.current.x, startPos.current.y); ctx.lineTo(end.x, end.y); ctx.stroke(); }
+      ctx.fillStyle = secColor;
+
+      if (tool === "line") {
+        ctx.beginPath();
+        ctx.moveTo(startPos.current.x, startPos.current.y);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+      } else if (tool === "rect") {
+        const x = Math.min(startPos.current.x, pos.x);
+        const y = Math.min(startPos.current.y, pos.y);
+        const w = Math.abs(pos.x - startPos.current.x);
+        const h = Math.abs(pos.y - startPos.current.y);
+        ctx.strokeRect(x, y, w, h);
+      } else if (tool === "ellipse") {
+        const cx = (startPos.current.x + pos.x) / 2;
+        const cy = (startPos.current.y + pos.y) / 2;
+        const rx = Math.abs(pos.x - startPos.current.x) / 2;
+        const ry = Math.abs(pos.y - startPos.current.y) / 2;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
     }
+  };
+
+  const onMouseUp = () => {
+    setDrawing(false);
     lastPos.current = null;
     startPos.current = null;
+    snapshotRef.current = null;
   };
 
   return (
-    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: "#ECE9D8", fontSize: 11 }}>
-      <div style={{ display: "flex", gap: 1, padding: "2px 4px", borderBottom: "1px solid #C0BBA1", background: "#ECE9D8" }}>
-        {TOOLS.map((t) => (
-          <button key={t.id} onClick={() => setTool(t.id)} style={{ width: 24, height: 24, border: tool === t.id ? "2px inset #FFF" : "1px solid #808080", background: "#D4D0C8", cursor: "pointer", padding: 0, display: "flex", alignItems: "center", justifyContent: "center" }} title={t.label}>
-            <img src={t.icon} alt="" width="16" height="16" style={{ pointerEvents: "none" }} />
-          </button>
-        ))}
+    <div style={{ width: "100%", height: "100%", background: "#ECE9D8", display: "flex", flexDirection: "column", fontFamily: "Tahoma, sans-serif", fontSize: 11, userSelect: "none" }}>
+      <div style={{ display: "flex", gap: 12, padding: "3px 8px", background: "#ECE9D8", borderBottom: "1px solid #ACA899" }}>
+        <span style={{ cursor: "pointer" }} onClick={clearCanvas}>File &gt; New</span>
+        <span style={{ cursor: "pointer" }} onClick={clearCanvas}>Clear Image</span>
       </div>
-      <div style={{ display: "flex", gap: 2, padding: "2px 4px", borderBottom: "1px solid #C0BBA1", background: "#ECE9D8", alignItems: "center" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(8,1fr)", gap: 1 }}>
+
+      <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+        <div style={{ width: 56, background: "#ECE9D8", borderRight: "1px solid #ACA899", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2, padding: 4, alignContent: "start" }}>
+          {TOOLS.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setTool(t.id)}
+              title={t.label}
+              style={{
+                width: 24, height: 24, padding: 2,
+                background: tool === t.id ? "#FFF" : "#ECE9D8",
+                border: tool === t.id ? "2px inset #FFF" : "1px outset #FFF",
+                display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer"
+              }}
+            >
+              <img src={t.icon} alt={t.label} style={{ width: 16, height: 16 }} />
+            </button>
+          ))}
+          <div style={{ gridColumn: "1 / -1", marginTop: 8, display: "flex", flexDirection: "column", gap: 4, alignItems: "center" }}>
+            {[1, 2, 4, 6].map((w) => (
+              <div
+                key={w}
+                onClick={() => setLineWidth(w)}
+                style={{
+                  width: 38, height: 10, cursor: "pointer",
+                  background: lineWidth === w ? "#2B5FC4" : "transparent",
+                  display: "flex", alignItems: "center", justifyContent: "center"
+                }}
+              >
+                <div style={{ width: 30, height: w, background: lineWidth === w ? "#FFF" : "#000" }} />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ flex: 1, background: "#808080", overflow: "auto", padding: 8, display: "flex" }}>
+          <canvas
+            ref={canvasRef}
+            width={600}
+            height={400}
+            onMouseDown={onMouseDown}
+            onMouseMove={onMouseMove}
+            onMouseUp={onMouseUp}
+            onMouseLeave={onMouseUp}
+            onContextMenu={(e) => e.preventDefault()}
+            style={{ background: "#FFF", boxShadow: "2px 2px 4px rgba(0,0,0,0.4)", cursor: "crosshair" }}
+          />
+        </div>
+      </div>
+
+      <div style={{ background: "#ECE9D8", borderTop: "1px solid #ACA899", padding: "4px 8px", display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{ display: "flex", position: "relative", width: 28, height: 28 }}>
+          <div style={{ position: "absolute", right: 0, bottom: 0, width: 16, height: 16, background: secColor, border: "1px solid #000" }} />
+          <div style={{ position: "absolute", left: 0, top: 0, width: 16, height: 16, background: color, border: "1px solid #000", zIndex: 1 }} />
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(16, 14px)", gap: 2 }}>
           {COLORS.map((c) => (
-            <button key={c} onClick={() => setColor(c)} onContextMenu={(e) => { e.preventDefault(); setBgColor(c); }} style={{ width: 12, height: 12, background: c, border: color === c ? "1px inset #FFF" : "1px solid #808080", cursor: "pointer", padding: 0 }} />
+            <div
+              key={c}
+              onClick={() => setColor(c)}
+              onContextMenu={(e) => { e.preventDefault(); setSecColor(c); }}
+              style={{ width: 14, height: 14, background: c, border: "1px solid #808080", cursor: "pointer" }}
+            />
           ))}
         </div>
-        <div style={{ width: 20, height: 20, border: "1px solid #808080", background: color, marginLeft: 4 }} title="Current Color" />
-        <div style={{ width: 16, height: 16, border: "1px solid #808080", background: bgColor }} title="Background Color" />
-        <span style={{ flex: 1 }} />
-        <span style={{ fontSize: 11 }}>Width:</span>
-        <select value={lineWidth} onChange={(e) => setLineWidth(Number(e.target.value))} style={{ fontSize: 11, fontFamily: "inherit", border: "1px solid #7F9DB9" }}>
-          <option value={1}>1px</option>
-          <option value={2}>2px</option>
-          <option value={4}>4px</option>
-          <option value={8}>8px</option>
-        </select>
-      </div>
-      <div style={{ flex: 1, position: "relative", margin: 2, border: "1px inset #808080", background: "#FFF" }}>
-        <canvas ref={canvasRef} style={{ width: "100%", height: "100%", cursor: "crosshair" }} onMouseDown={onMouseDown} onMouseMove={onMouseMove} onMouseUp={onMouseUp} onMouseLeave={() => { if (drawing) { setDrawing(false); lastPos.current = null; } }} />
       </div>
     </div>
   );
