@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect, lazy, Suspense } from "react";
 import { useWindowStore } from "../../store/windowStore";
-import type { DesktopIcon, AppId } from "../../types";
+import { useLangStore } from "../../store/langStore";
+import type { AppId } from "../../types";
 import Taskbar from "./Taskbar";
 import StartMenu from "./StartMenu";
 import Window from "./Window";
-import { assetUrl } from "../../utils/assets"
+import { assetUrl } from "../../utils/assets";
 
 const Notepad = lazy(() => import("../apps/Notepad"));
 const Calculator = lazy(() => import("../apps/Calculator"));
@@ -35,14 +36,6 @@ const MyDocuments = lazy(() => import("../apps/MyDocuments"));
 const RecycleBin = lazy(() => import("../apps/RecycleBin"));
 const Solitaire = lazy(() => import("../games/Solitaire"));
 const Minesweeper = lazy(() => import("../games/Minesweeper"));
-
-const DESKTOP_ICONS: DesktopIcon[] = [
-  { id: "my-computer", label: "My Computer", icon: "MyComputer.png", defaultPosition: { x: 10, y: 10 } },
-  { id: "my-documents", label: "My Documents", icon: "MyDocuments.png", defaultPosition: { x: 10, y: 90 } },
-  { id: "network-places", label: "My Network Places", icon: "MyNetworkPlaces.png", defaultPosition: { x: 10, y: 170 } },
-  { id: "recycle-bin", label: "Recycle Bin", icon: "RecycleBinempty.png", defaultPosition: { x: 10, y: 250 } },
-  { id: "internet-explorer", label: "Internet Explorer", icon: "InternetExplorer6.png", defaultPosition: { x: 10, y: 330 } },
-];
 
 const APP_COMPONENTS: Record<string, React.FC<{ id: string }>> = {
   "notepad": Notepad,
@@ -85,6 +78,16 @@ export default function Desktop() {
   const { windows, openWindow, closeStartMenu, startMenuOpen } = useWindowStore();
   const desktopRef = useRef<HTMLDivElement>(null);
   const [ctxMenu, setCtxMenu] = useState<{ x: number; y: number } | null>(null);
+  const [activeSub, setActiveSub] = useState<string | null>(null);
+  const t = useLangStore((s) => s.t);
+
+  const desktopIcons = [
+    { id: "my-computer" as AppId, label: t("myComputer"), icon: "MyComputer.png" },
+    { id: "my-documents" as AppId, label: t("myDocuments"), icon: "MyDocuments.png" },
+    { id: "network-places" as AppId, label: t("myNetworkPlaces"), icon: "MyNetworkPlaces.png" },
+    { id: "recycle-bin" as AppId, label: t("recycleBin"), icon: "RecycleBinempty.png" },
+    { id: "internet-explorer" as AppId, label: t("internetExplorer"), icon: "InternetExplorer6.png" },
+  ];
 
   useEffect(() => {
     const handler = () => closeStartMenu();
@@ -106,12 +109,17 @@ export default function Desktop() {
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
-    setCtxMenu({ x: e.clientX, y: e.clientY });
+    setCtxMenu({
+      x: Math.min(e.clientX, window.innerWidth - 180),
+      y: Math.min(e.clientY, window.innerHeight - 240)
+    });
+    setActiveSub(null);
   };
 
   const openApp = (appId: AppId) => {
     openWindow(appId);
     closeStartMenu();
+    setCtxMenu(null);
   };
 
   return (
@@ -131,7 +139,7 @@ export default function Desktop() {
       }}
     >
       <div className="desktop-icons">
-        {DESKTOP_ICONS.map((icon) => (
+        {desktopIcons.map((icon) => (
           <button key={icon.id} className="desktop-icon" onDoubleClick={() => openApp(icon.id)}>
             <img src={assetUrl(`assets/icons/${icon.icon}`)} alt={icon.label} />
             <span>{icon.label}</span>
@@ -140,18 +148,65 @@ export default function Desktop() {
       </div>
 
       {ctxMenu && (
-        <div className="desktop-context-menu" style={{ left: ctxMenu.x, top: ctxMenu.y }}>
-          <div className="context-item" onClick={() => { openApp("my-computer"); setCtxMenu(null); }}>My Computer</div>
-          <div className="context-item" onClick={() => { openApp("explorer"); setCtxMenu(null); }}>Open</div>
-          <div className="context-separator" />
-          <div className="context-item" onClick={() => { openApp("display-properties"); setCtxMenu(null); }}>Properties</div>
-          <div className="context-separator" />
-          <div className="context-item" onClick={() => { openApp("control-panel"); setCtxMenu(null); }}>Control Panel</div>
-          <div className="context-separator" />
-          <div className="context-item context-disabled">Arrange Icons By</div>
-          <div className="context-item context-disabled">Refresh</div>
-          <div className="context-separator" />
-          <div className="context-item" onClick={() => { openApp("shutdown"); setCtxMenu(null); }}>Shut Down...</div>
+        <div
+          className="desktop-context-menu"
+          style={{
+            left: ctxMenu.x,
+            top: ctxMenu.y,
+            position: "absolute",
+            zIndex: 99999,
+            background: "#FFF",
+            border: "1px solid #ACA899",
+            padding: "2px",
+            boxShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+            fontSize: 11,
+            fontFamily: "Tahoma, sans-serif",
+            minWidth: 160
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div
+            className="context-item"
+            onMouseEnter={() => setActiveSub("arrange")}
+            style={{ padding: "3px 18px 3px 22px", position: "relative", cursor: "pointer", display: "flex", justifyContent: "space-between" }}
+          >
+            <span>{t("arrangeIconsBy")}</span>
+            <span style={{ fontSize: 9 }}>&#9658;</span>
+            {activeSub === "arrange" && (
+              <div style={{ position: "absolute", left: "100%", top: -2, background: "#FFF", border: "1px solid #ACA899", padding: 2, minWidth: 130, boxShadow: "2px 2px 4px rgba(0,0,0,0.3)" }}>
+                <div className="context-item" style={{ padding: "3px 12px", cursor: "pointer" }} onClick={() => setCtxMenu(null)}>{t("byName")}</div>
+                <div className="context-item" style={{ padding: "3px 12px", cursor: "pointer" }} onClick={() => setCtxMenu(null)}>{t("bySize")}</div>
+                <div className="context-item" style={{ padding: "3px 12px", cursor: "pointer" }} onClick={() => setCtxMenu(null)}>{t("byType")}</div>
+                <div className="context-item" style={{ padding: "3px 12px", cursor: "pointer" }} onClick={() => setCtxMenu(null)}>{t("byModified")}</div>
+                <div className="context-separator" style={{ height: 1, background: "#ACA899", margin: "2px 0" }} />
+                <div className="context-item" style={{ padding: "3px 12px", cursor: "pointer" }} onClick={() => setCtxMenu(null)}>{t("autoArrange")}</div>
+                <div className="context-item" style={{ padding: "3px 12px", cursor: "pointer" }} onClick={() => setCtxMenu(null)}>{t("alignToGrid")}</div>
+              </div>
+            )}
+          </div>
+          <div className="context-item" style={{ padding: "3px 18px 3px 22px", cursor: "pointer" }} onMouseEnter={() => setActiveSub(null)} onClick={() => setCtxMenu(null)}>{t("refresh")}</div>
+          <div className="context-separator" style={{ height: 1, background: "#ACA899", margin: "2px 0" }} />
+          <div className="context-item context-disabled" style={{ padding: "3px 18px 3px 22px", color: "#888" }} onMouseEnter={() => setActiveSub(null)}>{t("paste")}</div>
+          <div className="context-item context-disabled" style={{ padding: "3px 18px 3px 22px", color: "#888" }} onMouseEnter={() => setActiveSub(null)}>{t("pasteShortcut")}</div>
+          <div className="context-separator" style={{ height: 1, background: "#ACA899", margin: "2px 0" }} />
+          <div
+            className="context-item"
+            onMouseEnter={() => setActiveSub("new")}
+            style={{ padding: "3px 18px 3px 22px", position: "relative", cursor: "pointer", display: "flex", justifyContent: "space-between" }}
+          >
+            <span>{t("new")}</span>
+            <span style={{ fontSize: 9 }}>&#9658;</span>
+            {activeSub === "new" && (
+              <div style={{ position: "absolute", left: "100%", top: -2, background: "#FFF", border: "1px solid #ACA899", padding: 2, minWidth: 150, boxShadow: "2px 2px 4px rgba(0,0,0,0.3)" }}>
+                <div className="context-item" style={{ padding: "3px 12px", cursor: "pointer" }} onClick={() => openApp("explorer")}>{t("folder")}</div>
+                <div className="context-item" style={{ padding: "3px 12px", cursor: "pointer" }} onClick={() => openApp("notepad")}>{t("textDocument")}</div>
+                <div className="context-item" style={{ padding: "3px 12px", cursor: "pointer" }} onClick={() => openApp("paint")}>{t("bitmapImage")}</div>
+                <div className="context-item" style={{ padding: "3px 12px", cursor: "pointer" }} onClick={() => openApp("wordpad")}>{t("wordpadDocument")}</div>
+              </div>
+            )}
+          </div>
+          <div className="context-separator" style={{ height: 1, background: "#ACA899", margin: "2px 0" }} />
+          <div className="context-item" style={{ padding: "3px 18px 3px 22px", cursor: "pointer", fontWeight: "bold" }} onMouseEnter={() => setActiveSub(null)} onClick={() => openApp("display-properties")}>{t("properties")}</div>
         </div>
       )}
 
