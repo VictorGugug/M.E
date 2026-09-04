@@ -1,8 +1,8 @@
 # ZarXP
 
-Windows XP recreated for the web. Pixel perfect, functional, built with React + Vite.
+Windows XP recreated for the web. Pixel-perfect interface and functional components built with React and Vite.
 
-## Stack
+## Tech Stack
 
 React 19, TypeScript, Vite 8, Zustand, Oxlint
 
@@ -10,27 +10,27 @@ React 19, TypeScript, Vite 8, Zustand, Oxlint
 
 ```bash
 npm install
-npm run dev      # http://localhost:5173
-npm run build    # tsc -b && vite build
-npm run preview  # vite preview
-npm run lint     # oxlint
+npm run dev
+npm run build
+npm run preview
+npm run lint
 ```
 
 ## GitHub Pages
 
-Base is set to `/M.E/` in `vite.config.ts`. Build output is `dist/` with `404.html` and `.nojekyll` for SPA routing.
+Base path is set to `/M.E/` in `vite.config.ts`. Build output is generated in `dist/` with `404.html` and `.nojekyll` for single-page application routing.
 
-Workflow: `.github/workflows/deploy-zarxp.yml` builds `ZarXP` on push to `main` and deploys `ZarXP/dist` via `actions/deploy-pages`.
+The `.github/workflows/deploy-zarxp.yml` workflow builds `ZarXP` on pushes to `main` and publishes `ZarXP/dist` through GitHub Pages.
 
-Manual build for Pages:
+Build for Pages:
 
 ```bash
-npm run build:pages  # build + copy index.html to 404.html + .nojekyll
+npm run build:pages
 ```
 
 ## Structure
 
-- `src/components/shell` - Desktop, Taskbar, StartMenu, Window
-- `src/components/apps` - Explorer, Notepad, Paint, Calculator, etc.
-- `src/components/games` - Minesweeper, Solitaire
-- `public/assets` - icons, sounds, cursors, wallpapers from real XP
+- `src/components/shell`: Desktop, taskbar, Start menu, and window manager.
+- `src/components/apps`: Built-in applications (Explorer, Notepad, Paint, Calculator, etc.).
+- `src/components/games`: Minesweeper and Solitaire.
+- `public/assets`: Authentic Windows XP icons, sounds, cursors, and wallpapers.
