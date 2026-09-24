@@ -1,6 +1,6 @@
 # ZarXP
 
-A functional recreation of Windows XP for the web featuring pixel-perfect design based on the Luna visual style.
+A functional recreation of Windows XP for the web featuring "pixel-perfect" (kinda) design based on the Luna visual style.
 
 ## Features
 
