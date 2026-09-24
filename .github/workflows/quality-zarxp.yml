@@ -1,0 +1,205 @@
+name: ZarXP Quality
+
+on:
+  pull_request:
+    paths:
+      - "ZarXP/**"
+      - ".github/workflows/quality-zarxp.yml"
+  push:
+    branches:
+      - "**"
+    paths:
+      - "ZarXP/**"
+      - ".github/workflows/quality-zarxp.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: zarxp-quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    if: github.event_name != 'push' || github.event.after != '0000000000000000000000000000000000000000'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository history
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Resolve comparison range
+        id: comparison
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PUSH_BASE_SHA: ${{ github.event.before }}
+          PUSH_HEAD_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          empty_tree=$(git hash-object -t tree /dev/null)
+
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            head="$PR_HEAD_SHA"
+            base=$(git merge-base "$PR_BASE_SHA" "$head")
+          elif [[ "$EVENT_NAME" == "push" ]]; then
+            head="$PUSH_HEAD_SHA"
+            if [[ "$PUSH_BASE_SHA" =~ ^0+$ ]] || ! git cat-file -e "$PUSH_BASE_SHA^{commit}" 2>/dev/null; then
+              base="$empty_tree"
+            else
+              base="$PUSH_BASE_SHA"
+            fi
+          else
+            head="$(git rev-parse HEAD)"
+            if git rev-parse --verify --quiet HEAD^ >/dev/null; then
+              base="$(git rev-parse HEAD^)"
+            else
+              base="$empty_tree"
+            fi
+          fi
+
+          git cat-file -e "$head^{commit}"
+          if git cat-file -e "$base^{commit}" 2>/dev/null; then
+            log_range="$base..$head"
+          else
+            git cat-file -e "$base^{tree}"
+            log_range="$head"
+          fi
+
+          printf 'base=%s\n' "$base" >> "$GITHUB_OUTPUT"
+          printf 'head=%s\n' "$head" >> "$GITHUB_OUTPUT"
+          printf 'log_range=%s\n' "$log_range" >> "$GITHUB_OUTPUT"
+
+      - name: Validate commit subjects
+        shell: bash
+        env:
+          LOG_RANGE: ${{ steps.comparison.outputs.log_range }}
+        run: |
+          set -euo pipefail
+          pattern='^M\.E:(feat|fix|docs|test|ci|refactor|chore|perf|build|revert): .+$'
+          commit_count=$(git rev-list --count "$LOG_RANGE")
+          if (( commit_count == 0 )); then
+            exit 0
+          fi
+          subjects=$(git log --format='%s' "$LOG_RANGE")
+          invalid=0
+
+          while IFS= read -r subject; do
+            if [[ ! "$subject" =~ $pattern ]]; then
+              printf 'Invalid commit subject: %s\n' "$subject" >&2
+              invalid=1
+            fi
+          done <<< "$subjects"
+
+          exit "$invalid"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ZarXP/package-lock.json
+
+      - name: Write modified files summary
+        shell: bash
+        env:
+          BASE_SHA: ${{ steps.comparison.outputs.base }}
+          HEAD_SHA: ${{ steps.comparison.outputs.head }}
+        run: |
+          set -euo pipefail
+          git diff --name-only -z "$BASE_SHA" "$HEAD_SHA" |
+            node --input-type=module -e '
+              import { readFileSync } from "node:fs";
+
+              const escapeHtml = (value) => value
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll(String.fromCharCode(34), "&quot;")
+                .replaceAll(String.fromCharCode(39), "&#39;");
+
+              const files = [...new Set(readFileSync(0, "utf8").split("\0").filter(Boolean))]
+                .sort((left, right) => left < right ? -1 : left > right ? 1 : 0);
+              const body = files.length > 0
+                ? files.map((file) => `- <code>${escapeHtml(file)}</code>`).join("\n")
+                : "_No files changed._";
+
+              process.stdout.write(`<details>\n<summary>Modified files</summary>\n\n${body}\n\n</details>\n`);
+            ' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Install dependencies
+        working-directory: ZarXP
+        run: npm ci
+
+      - name: Lint
+        working-directory: ZarXP
+        run: npm run lint
+
+      - name: Test
+        working-directory: ZarXP
+        run: npm test
+
+      - name: Type-check application and Node
+        working-directory: ZarXP
+        run: npm exec -- tsc -b
+
+      - name: Build
+        working-directory: ZarXP
+        run: npm run build
+
+      - name: Smoke test production preview
+        working-directory: ZarXP
+        shell: bash
+        run: |
+          set -euo pipefail
+          log_file="$RUNNER_TEMP/zarxp-preview.log"
+          response_file="$RUNNER_TEMP/zarxp-index.html"
+          node ./node_modules/vite/bin/vite.js preview --base /M.E/ --host 127.0.0.1 --port 4173 --strictPort >"$log_file" 2>&1 &
+          preview_pid=$!
+
+          cleanup() {
+            kill "$preview_pid" 2>/dev/null || true
+            wait "$preview_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          ready=false
+          for _ in {1..30}; do
+            if ! kill -0 "$preview_pid" 2>/dev/null; then
+              cat "$log_file"
+              exit 1
+            fi
+            if curl --fail --silent --show-error "http://127.0.0.1:4173/M.E/" >"$response_file" 2>>"$log_file"; then
+              ready=true
+              break
+            fi
+            sleep 1
+          done
+
+          if [[ "$ready" != true ]]; then
+            cat "$log_file"
+            exit 1
+          fi
+
+          grep -Fq '<title>ZarXP</title>' "$response_file"
+          grep -Fq '<div id="root"></div>' "$response_file"
+
+          asset_path=$(grep -o 'src="[^"]*\.js"' "$response_file" | head -n 1 | cut -d '"' -f 2)
+          if [[ "$asset_path" != /M.E/assets/*.js ]]; then
+            cat "$response_file"
+            exit 1
+          fi
+          if ! asset_response_headers=$(curl --fail --silent --show-error --head --header "Accept: application/javascript" --dump-header - "http://127.0.0.1:4173$asset_path" 2>>"$log_file"); then
+            cat "$log_file"
+            exit 1
+          fi
+          if ! grep -Eiq '^content-type: (text|application)/javascript' <<< "$asset_response_headers"; then
+            printf '%s\n' "$asset_response_headers"
+            exit 1
+          fi
