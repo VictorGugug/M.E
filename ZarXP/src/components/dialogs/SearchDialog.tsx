@@ -1,36 +1,42 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useWindowStore } from "../../store/windowStore";
 import { useLangStore } from "../../store/langStore";
+import { getFileAppId, getNodePath, searchByCategory, type VirtualFileNode } from "../../store/fileSystem";
+import { useFileSystemStore } from "../../store/fileSystemStore";
 import { assetUrl } from "../../utils/assets";
 
 const OL = assetUrl("assets/xpui");
 
 export default function SearchDialog({ id }: { id: string }) {
-  const closeWindow = useWindowStore((s) => s.closeWindow);
+  const closeWindow = useWindowStore((state) => state.closeWindow);
+  const openWindow = useWindowStore((state) => state.openWindow);
+  const fileSystem = useFileSystemStore((state) => state.fileSystem);
   const [type, setType] = useState<string | null>(null);
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<string[] | null>(null);
+  const [results, setResults] = useState<VirtualFileNode[] | null>(null);
   const [searching, setSearching] = useState(false);
   const [roverPose, setRoverPose] = useState<"idle" | "read" | "think">("idle");
   const [wagFrame, setWagFrame] = useState(0);
-  const t = useLangStore((s) => s.t);
+  const t = useLangStore((state) => state.t);
+  const searchTimeoutRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    const iv = setInterval(() => {
-      setWagFrame((f) => (f + 1) % 4);
-    }, 450);
-    return () => clearInterval(iv);
+  useEffect(() => () => {
+    if (searchTimeoutRef.current !== null) window.clearTimeout(searchTimeoutRef.current);
   }, []);
 
   useEffect(() => {
-    if (searching) {
-      setRoverPose("read");
-      const t = setTimeout(() => {
-        setSearching(false);
-        setRoverPose("idle");
-      }, 1200);
-      return () => clearTimeout(t);
-    }
+    const interval = setInterval(() => setWagFrame((frame) => (frame + 1) % 4), 450);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (!searching) return;
+    setRoverPose("read");
+    const timeout = setTimeout(() => {
+      setSearching(false);
+      setRoverPose("idle");
+    }, 1200);
+    return () => clearTimeout(timeout);
   }, [searching]);
 
   const searchTypes = [
@@ -42,16 +48,39 @@ export default function SearchDialog({ id }: { id: string }) {
     { value: "internet", label: t("infoOnInternet"), icon: `${OL}/icon/internet.png` },
   ];
 
+  const clearSearchTimeout = () => {
+    if (searchTimeoutRef.current !== null) {
+      window.clearTimeout(searchTimeoutRef.current);
+      searchTimeoutRef.current = null;
+    }
+  };
+
+  const resetSearch = () => {
+    clearSearchTimeout();
+    setType(null);
+    setResults(null);
+    setQuery("");
+    setSearching(false);
+    setRoverPose("idle");
+  };
+
+  const selectType = (nextType: string) => {
+    clearSearchTimeout();
+    setType(nextType);
+    setQuery("");
+    setResults(null);
+    setSearching(false);
+    setRoverPose("think");
+  };
+
   const run = () => {
     if (!query.trim()) return;
     setSearching(true);
     setRoverPose("read");
-    setTimeout(() => {
-      setResults([
-        t("searchResults"),
-        "There are no matching items in this directory.",
-        `${t("searchBtn")}: "${query}"`,
-      ]);
+    clearSearchTimeout();
+    searchTimeoutRef.current = window.setTimeout(() => {
+      setResults(searchByCategory(fileSystem, type ?? "all", query));
+      searchTimeoutRef.current = null;
     }, 1000);
   };
 
@@ -61,107 +90,39 @@ export default function SearchDialog({ id }: { id: string }) {
     return `${OL}/search/rover.png`;
   };
 
+  const openResult = (result: VirtualFileNode) => {
+    openWindow(result.kind === "folder" ? "explorer" : getFileAppId(result), result.id);
+    closeWindow(id);
+  };
+
   return (
-    <div style={{ display: "flex", height: "100%", fontFamily: "Tahoma, sans-serif", fontSize: 11, userSelect: "none", overflow: "hidden" }}>
-      <div style={{ width: 190, flexShrink: 0, background: "linear-gradient(180deg,#7BA2D9 0%,#6D95D6 100%)", display: "flex", flexDirection: "column", padding: 6 }}>
-        <div style={{ background: "rgba(255,255,255,0.75)", borderRadius: "4px 4px 0 0", flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
-          <div style={{ padding: "4px 8px", color: "#215DC6", fontWeight: "bold", background: "linear-gradient(to right,#FFF 0%,#FFF 50%,rgba(255,255,255,0) 100%)", fontSize: 11 }}>
-            {t("searchCompanion")}
-          </div>
-          <div style={{ padding: "4px 8px", flex: 1, overflowY: "auto" }}>
-            {type === null && (
-              <>
-                <div style={{ fontWeight: "bold", marginBottom: 6, fontSize: 11 }}>{t("whatSearchFor")}</div>
-                {searchTypes.map((st) => (
-                  <div
-                    key={st.value}
-                    onClick={() => { setType(st.value); setRoverPose("think"); }}
-                    style={{ display: "flex", alignItems: "center", gap: 6, padding: "3px 2px", color: "#215DC6", cursor: "pointer", fontSize: 11 }}
-                    onMouseEnter={(e) => { e.currentTarget.style.textDecoration = "underline"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.textDecoration = "none"; }}
-                  >
-                    <img src={st.icon} alt="" style={{ width: 16, height: 16, flexShrink: 0 }} />
-                    <span>{st.label}</span>
-                  </div>
-                ))}
-              </>
-            )}
-            {type !== null && (
-              <>
-                <div style={{ fontWeight: "bold", marginBottom: 6, fontSize: 11 }}>{searchTypes.find((s) => s.value === type)?.label}</div>
-                <div style={{ marginBottom: 3, fontSize: 10 }}>{t("partOfFileName")}</div>
-                <input
-                  value={query}
-                  onChange={(e) => { setQuery(e.target.value); if (roverPose === "idle") setRoverPose("think"); }}
-                  onKeyDown={(e) => { if (e.key === "Enter") run(); }}
-                  style={{ width: "100%", border: "1px solid #7F9DB9", padding: "2px 4px", fontSize: 11, marginBottom: 6, outline: "none", boxSizing: "border-box" }}
-                />
-                <div style={{ display: "flex", gap: 4, marginBottom: 8 }}>
-                  <button onClick={run} style={{ minWidth: 54, height: 21, background: "linear-gradient(180deg,#FDFDFB,#E4E2D0)", border: "1px solid #ACA899", borderRadius: 3, cursor: "pointer", fontSize: 11 }}>{t("searchBtn")}</button>
-                  <button onClick={() => { setType(null); setResults(null); setQuery(""); setRoverPose("idle"); }} style={{ minWidth: 54, height: 21, background: "linear-gradient(180deg,#FDFDFB,#E4E2D0)", border: "1px solid #ACA899", borderRadius: 3, cursor: "pointer", fontSize: 11 }}>{t("cancelBtn")}</button>
-                </div>
-                {searching && (
-                  <div style={{ fontSize: 10, color: "#215DC6", fontStyle: "italic", marginBottom: 4 }}>Searching...</div>
-                )}
-                {results && (
-                  <div style={{ borderTop: "1px solid #B8CFEC", paddingTop: 4 }}>
-                    {results.map((r, i) => <div key={i} style={{ marginBottom: 2, color: i === 0 ? "#215DC6" : "#333", fontSize: 10 }}>{r}</div>)}
-                  </div>
-                )}
-              </>
-            )}
+    <div className="xp-app-surface" style={{ flexDirection: "row" }}>
+      <div className="xp-search-side">
+        <div className="xp-search-pane">
+          <div className="xp-task-pane-title">{t("searchCompanion")}</div>
+          <div className="xp-search-pane-body">
+            {type === null ? <>
+              <div style={{ fontWeight: "bold", marginBottom: 6 }}>{t("whatSearchFor")}</div>
+              {searchTypes.map((item) => <button key={item.value} className="xp-search-choice" onClick={() => selectType(item.value)}><img src={item.icon} alt="" />{item.label}</button>)}
+            </> : <>
+              <div style={{ fontWeight: "bold", marginBottom: 6 }}>{searchTypes.find((item) => item.value === type)?.label}</div>
+              <div className="xp-small" style={{ marginBottom: 3 }}>{t("partOfFileName")}</div>
+               <input aria-label={t("partOfFileName")} className="xp-input" style={{ width: "100%", marginBottom: 6 }} value={query} onChange={(event) => { clearSearchTimeout(); setSearching(false); setResults(null); setQuery(event.target.value); setRoverPose("think"); }} onKeyDown={(event) => { if (event.key === "Enter") run(); }} />
+              <div style={{ display: "flex", gap: 4, marginBottom: 8 }}><button className="xp-button" style={{ minWidth: 54 }} onClick={run}>{t("searchBtn")}</button><button className="xp-button" style={{ minWidth: 54 }} onClick={resetSearch}>{t("cancelBtn")}</button></div>
+              {searching && <div style={{ color: "#215DC6", fontStyle: "italic", marginBottom: 4 }}>{t("searching")}</div>}
+              {results && <div style={{ borderTop: "1px solid #B8CFEC", paddingTop: 4 }}>{results.length === 0 ? <div>{t("noMatching")}</div> : results.map((result) => <div key={result.id} className="xp-search-result" role="button" tabIndex={0} onDoubleClick={() => openResult(result)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") openResult(result); }}><div>{result.name}</div><div className="xp-search-result-path">{getNodePath(fileSystem, result.id)}</div></div>)}</div>}
+            </>}
           </div>
         </div>
-
-        <div style={{ position: "relative", height: 86, flexShrink: 0 }}>
-          <div style={{ position: "absolute", bottom: 78, left: 6, right: 2, background: "#FFFFE1", border: "1px solid #000", borderRadius: 5, padding: "4px 6px", fontSize: 10, fontWeight: "bold", filter: "drop-shadow(rgba(0,0,0,0.3) 1px 1px 2px)" }}>
-            {searching ? "Searching files..." : t("whatFind")}
-            <div style={{ position: "absolute", bottom: -7, left: 20, width: 0, height: 0, borderLeft: "6px solid transparent", borderRight: "6px solid transparent", borderTop: "7px solid #000" }} />
-            <div style={{ position: "absolute", bottom: -6, left: 20, width: 0, height: 0, borderLeft: "6px solid transparent", borderRight: "6px solid transparent", borderTop: "6px solid #FFFFE1" }} />
-          </div>
-
-          <div
-            onClick={() => setRoverPose((p) => (p === "idle" ? "read" : p === "read" ? "think" : "idle"))}
-            title="Rover"
-            style={{
-              position: "absolute",
-              bottom: 0,
-              left: 10,
-              cursor: "pointer",
-              transform: roverPose === "idle"
-                ? `scale(${1 + (wagFrame % 2) * 0.03}) rotate(${(wagFrame - 1.5) * 1.5}deg)`
-                : "none",
-              transition: "transform 0.3s ease-in-out"
-            }}
-          >
-            <img
-              src={getRoverImg()}
-              alt="Rover"
-              style={{
-                height: 72,
-                width: "auto",
-                filter: "drop-shadow(1px 2px 2px rgba(0,0,0,0.35))",
-                imageRendering: "crisp-edges"
-              }}
-            />
-          </div>
+        <div className="xp-search-rover">
+           <div className="xp-search-bubble">{searching ? t("searchingFiles") : t("whatFind")}</div>
+          <div className="xp-search-rover-image" onClick={() => setRoverPose((pose) => pose === "idle" ? "read" : pose === "read" ? "think" : "idle")} title="Rover" style={{ transform: roverPose === "idle" ? `scale(${1 + (wagFrame % 2) * .03}) rotate(${(wagFrame - 1.5) * 1.5}deg)` : "none", transition: "transform .3s ease-in-out" }}><img src={getRoverImg()} alt="Rover" style={{ height: 74, imageRendering: "crisp-edges", filter: "drop-shadow(1px 2px 2px rgba(0,0,0,.35))" }} /></div>
         </div>
       </div>
-
-      <div style={{ flex: 1, background: "#FFF", borderLeft: "4px solid #ECE9D8", padding: 8, overflowY: "auto", display: "flex", flexDirection: "column" }}>
-        <div style={{ fontWeight: "bold", color: "#215DC6", borderBottom: "1px solid #C9C7B4", paddingBottom: 2, marginBottom: 6, fontSize: 11 }}>
-          {t("searchResults")}
-        </div>
-        {results ? (
-          <div style={{ fontSize: 11, color: "#333", lineHeight: 1.5 }}>{results.slice(1).map((r, i) => <div key={i}>{r}</div>)}</div>
-        ) : (
-          <div style={{ color: "#888", display: "flex", alignItems: "center", justifyContent: "center", flex: 1, textAlign: "center", padding: 16, fontSize: 11 }}>
-            {t("toStartSearch")}
-          </div>
-        )}
-        <div style={{ marginTop: "auto", paddingTop: 6 }}>
-          <button onClick={() => closeWindow(id)} style={{ minWidth: 58, height: 21, background: "linear-gradient(180deg,#FDFDFB,#E4E2D0)", border: "1px solid #ACA899", borderRadius: 3, cursor: "pointer", fontSize: 11 }}>{t("closeBtn")}</button>
-        </div>
+      <div className="xp-search-results">
+        <div className="xp-folder-group-title">{t("searchResults")}</div>
+        {results ? results.length === 0 ? <div style={{ padding: 12, color: "#333" }}>{t("noMatching")}</div> : results.map((result) => <div key={result.id} className="xp-search-result" role="button" tabIndex={0} onDoubleClick={() => openResult(result)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") openResult(result); }}><div>{result.name}</div><div className="xp-search-result-path">{getNodePath(fileSystem, result.id)}</div></div>) : <div style={{ color: "#888", display: "flex", alignItems: "center", justifyContent: "center", flex: 1, textAlign: "center", padding: 16 }}>{t("toStartSearch")}</div>}
+        <div style={{ marginTop: "auto", paddingTop: 8 }}><button className="xp-button" onClick={() => closeWindow(id)}>{t("closeBtn")}</button></div>
       </div>
     </div>
   );

@@ -157,25 +157,20 @@ export default function Paint(_: { id: string }) {
   };
 
   return (
-    <div style={{ width: "100%", height: "100%", background: "#ECE9D8", display: "flex", flexDirection: "column", fontFamily: "Tahoma, sans-serif", fontSize: 11, userSelect: "none" }}>
-      <div style={{ display: "flex", gap: 12, padding: "3px 8px", background: "#ECE9D8", borderBottom: "1px solid #ACA899" }}>
-        <span style={{ cursor: "pointer" }} onClick={clearCanvas}>File &gt; New</span>
-        <span style={{ cursor: "pointer" }} onClick={clearCanvas}>Clear Image</span>
+    <div className="xp-app-surface">
+      <div className="xp-toolbar">
+        <button className="xp-toolbar-button" onClick={clearCanvas}>File &gt; New</button>
+        <button className="xp-toolbar-button" onClick={clearCanvas}>Clear Image</button>
       </div>
 
       <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
-        <div style={{ width: 56, background: "#ECE9D8", borderRight: "1px solid #ACA899", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2, padding: 4, alignContent: "start" }}>
+        <div className="xp-paint-surface">
           {TOOLS.map((t) => (
             <button
               key={t.id}
               onClick={() => setTool(t.id)}
               title={t.label}
-              style={{
-                width: 24, height: 24, padding: 2,
-                background: tool === t.id ? "#FFF" : "#ECE9D8",
-                border: tool === t.id ? "2px inset #FFF" : "1px outset #FFF",
-                display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer"
-              }}
+              className={`xp-paint-tool ${tool === t.id ? "active" : ""}`}
             >
               <img src={t.icon} alt={t.label} style={{ width: 16, height: 16 }} />
             </button>
@@ -197,7 +192,7 @@ export default function Paint(_: { id: string }) {
           </div>
         </div>
 
-        <div style={{ flex: 1, background: "#808080", overflow: "auto", padding: 8, display: "flex" }}>
+        <div className="xp-paint-workspace">
           <canvas
             ref={canvasRef}
             width={600}
@@ -212,7 +207,7 @@ export default function Paint(_: { id: string }) {
         </div>
       </div>
 
-      <div style={{ background: "#ECE9D8", borderTop: "1px solid #ACA899", padding: "4px 8px", display: "flex", alignItems: "center", gap: 10 }}>
+      <div className="xp-paint-palette">
         <div style={{ display: "flex", position: "relative", width: 28, height: 28 }}>
           <div style={{ position: "absolute", right: 0, bottom: 0, width: 16, height: 16, background: secColor, border: "1px solid #000" }} />
           <div style={{ position: "absolute", left: 0, top: 0, width: 16, height: 16, background: color, border: "1px solid #000", zIndex: 1 }} />
@@ -223,7 +218,7 @@ export default function Paint(_: { id: string }) {
               key={c}
               onClick={() => setColor(c)}
               onContextMenu={(e) => { e.preventDefault(); setSecColor(c); }}
-              style={{ width: 14, height: 14, background: c, border: "1px solid #808080", cursor: "pointer" }}
+              className="xp-paint-swatch" style={{ background: c }}
             />
           ))}
         </div>

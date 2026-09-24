@@ -1,53 +1,18 @@
-import { assetUrl } from "../../utils/assets"
+import { useSecurityStore } from "../../store/securityStore";
+import { assetUrl } from "../../utils/assets";
 
 const IC = assetUrl("assets/icons");
 
-const SECTIONS = [
-  { id: "firewall", label: "Firewall", icon: "Security-Ok.png", on: true, good: "ON", help: "Windows Firewall is helping protect your computer." },
-  { id: "updates", label: "Automatic Updates", icon: "Security-Ok.png", on: true, good: "ON", help: "Windows can regularly check for important updates and install them for you." },
-  { id: "virus", label: "Virus Protection", icon: "SecurityAlert.png", on: false, good: "NOT FOUND", help: "Antivirus software might not be installed. Click Recommendations to learn more." },
-];
-
 export default function SecurityCenter(_: { id: string }) {
-  return (
-    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: "#FFF", fontFamily: "Tahoma, sans-serif", fontSize: 11, overflow: "hidden" }}>
-      <div style={{ display: "flex", flex: 1, minHeight: 0 }}>
-        <div style={{ width: 200, flexShrink: 0, background: "linear-gradient(180deg,#7BA2D9 0%,#6D95D6 100%)", padding: 8 }}>
-          <div style={{ background: "rgba(255,255,255,0.7)", borderRadius: "4px 4px 0 0" }}>
-            <div style={{ padding: "4px 8px", color: "#215DC6", fontWeight: "bold", background: "linear-gradient(to right,#FFF 0%,#FFF 50%,rgba(255,255,255,0) 100%)" }}>Resources</div>
-            <div style={{ padding: "4px 10px 10px" }}>
-              {["Windows Firewall settings", "Automatic Updates settings", "Check for the latest updates from Windows Update", "Restore all security settings to recommended levels"].map((r) => (
-                <div key={r} style={{ color: "#215DC6", padding: "3px 0" }}>&#8226; {r}</div>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div style={{ flex: 1, padding: 12, overflowY: "auto" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-            <img src={`${IC}/SecurityCenter.png`} alt="" style={{ width: 40, height: 40 }} />
-            <div>
-              <div style={{ fontSize: 15, color: "#0A246A", fontWeight: "bold" }}>Security Center</div>
-              <div style={{ color: "#555" }}>Helping to Protect Your PC</div>
-            </div>
-          </div>
-          <div style={{ background: "linear-gradient(180deg,#D6E5F7,#C3D9F2)", border: "1px solid #B0C4E0", borderRadius: 4, padding: 12 }}>
-            <div style={{ fontWeight: "bold", color: "#0A246A", marginBottom: 8 }}>Security Essentials</div>
-            {SECTIONS.map((sec) => (
-              <div key={sec.id} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "7px 4px", borderBottom: "1px solid #B8CFEC" }}>
-                <img src={`${IC}/${sec.icon}`} alt="" style={{ width: 28, height: 28, flexShrink: 0 }} />
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: "bold" }}>{sec.label}</div>
-                  <div style={{ color: "#333" }}>{sec.help}</div>
-                </div>
-                <span style={{ fontWeight: "bold", color: sec.on ? "#1E7A1E" : "#C43B1E", flexShrink: 0 }}>{sec.good}</span>
-              </div>
-            ))}
-          </div>
-          <div style={{ marginTop: 10, color: "#555" }}>
-            Quick links: Why should I use a firewall? - How can I tell if my computer is infected? - What are Automatic Updates?
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  const settings = useSecurityStore((state) => state.settings);
+  const setFirewall = useSecurityStore((state) => state.setFirewall);
+  const setAutomaticUpdates = useSecurityStore((state) => state.setAutomaticUpdates);
+  const setAntivirus = useSecurityStore((state) => state.setAntivirus);
+  const sections = [
+    { id: "firewall", label: "Firewall", icon: "Security-Ok.png", enabled: settings.firewall, help: "Windows Firewall is helping protect your computer.", setEnabled: setFirewall },
+    { id: "updates", label: "Automatic Updates", icon: "Security-Ok.png", enabled: settings.automaticUpdates, help: "Windows can regularly check for important updates and install them for you.", setEnabled: setAutomaticUpdates },
+    { id: "virus", label: "Virus Protection", icon: settings.antivirus ? "Security-Ok.png" : "SecurityAlert.png", enabled: settings.antivirus, help: settings.antivirus ? "Antivirus protection is active." : "Antivirus software might not be installed. Click Recommendations to learn more.", setEnabled: setAntivirus },
+  ];
+
+  return <div className="xp-app-surface"><div style={{ display: "flex", flex: 1, minHeight: 0 }}><div className="xp-side-panel"><div className="xp-task-pane"><div className="xp-task-pane-title">Resources</div><div className="xp-task-pane-body">{["Windows Firewall settings", "Automatic Updates settings", "Check for the latest updates from Windows Update", "Restore all security settings to recommended levels"].map((resource) => <div className="xp-task-link" key={resource}><img src={`${IC}/Question.png`} alt="" />{resource}</div>)}</div></div></div><div className="xp-content-panel" style={{ padding: 14 }}><div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}><img src={`${IC}/SecurityCenter.png`} alt="" style={{ width: 40, height: 40 }} /><div><div className="xp-panel-title" style={{ margin: 0 }}>Security Center</div><div className="xp-small">Helping to Protect Your PC</div></div></div><div className="xp-group-box" style={{ background: "linear-gradient(180deg,#D6E5F7,#C3D9F2)" }}><div style={{ fontWeight: "bold", color: "#0A246A", marginBottom: 6 }}>Security Essentials</div>{sections.map((section) => <div key={section.id} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "8px 4px", borderBottom: "1px solid #B8CFEC" }}><img src={`${IC}/${section.icon}`} alt="" style={{ width: 28, height: 28 }} /><div style={{ flex: 1 }}><div style={{ fontWeight: "bold" }}>{section.label}</div><div>{section.help}</div></div><strong style={{ color: section.enabled ? "#1E7A1E" : "#C43B1E" }}>{section.id === "virus" && !section.enabled ? "NOT FOUND" : section.enabled ? "ON" : "OFF"}</strong><button className="xp-button" style={{ minWidth: 58, height: 21, padding: "1px 6px" }} onClick={() => section.setEnabled(!section.enabled)} aria-pressed={section.enabled}>{section.enabled ? "Disable" : "Enable"}</button></div>)}</div><div className="xp-small" style={{ marginTop: 12 }}>Why should I use a firewall? How can I tell if my computer is infected? What are Automatic Updates?</div></div></div></div>;
 }

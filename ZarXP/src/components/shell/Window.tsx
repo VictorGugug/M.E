@@ -1,5 +1,7 @@
 ﻿import type { ReactNode } from "react";
 import { useWindowStore } from "../../store/windowStore";
+import { useFileSystemStore } from "../../store/fileSystemStore";
+import { useLangStore } from "../../store/langStore";
 import type { WindowConfig } from "../../types";
 import { playSound } from "../../utils/sound";
 import { assetUrl } from "../../utils/assets"
@@ -8,8 +10,11 @@ const UI = assetUrl("assets/xpui/interface");
 
 export default function Window({ config, children }: { config: WindowConfig; children: ReactNode }) {
   const { focusWindow, closeWindow, minimizeWindow, maximizeWindow, restoreWindow, updatePosition, updateSize } = useWindowStore();
+  const resourceName = useFileSystemStore((state) => config.resourceId ? state.fileSystem[config.resourceId]?.name : undefined);
+  const t = useLangStore((state) => state.t);
   const zMax = Math.max(...useWindowStore.getState().windows.map((w) => w.zIndex));
   const isActive = config.zIndex === zMax;
+  const title = resourceName ?? config.title;
 
   const doFocus = () => focusWindow(config.id);
 
@@ -86,20 +91,20 @@ export default function Window({ config, children }: { config: WindowConfig; chi
   };
 
   return (
-    <div className={isActive ? "xp-win active" : "xp-win"} style={style} onMouseDown={doFocus}>
+    <div className={isActive ? "xp-win active" : "xp-win"} style={style} onMouseDown={doFocus} onKeyDown={(event) => { if (event.key !== "Escape") return; const target = event.target; if (target instanceof HTMLElement && (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName))) return; closeWindow(config.id); }} role="dialog" aria-label={title}>
       <div className="xp-titlebar" onMouseDown={startDrag}>
         <div className="xp-win-title">
           {config.icon && <img src={assetUrl(`assets/icons/${config.icon}`)} alt="" />}
-          <span className="label">{config.title}</span>
+          <span className="label">{title}</span>
         </div>
         <div className="xp-win-buttons">
-          <button onClick={doMinimize} aria-label="Minimize" tabIndex={-1}>
+           <button onClick={doMinimize} aria-label={t("minimize")} tabIndex={0}>
             <img src={`${UI}/minimize.png`} alt="" />
           </button>
-          <button onClick={doMaxRestore} aria-label={maxd ? "Restore" : "Maximize"} tabIndex={-1}>
+           <button onClick={doMaxRestore} aria-label={maxd ? t("restore") : t("maximize")} tabIndex={0}>
             <img src={`${UI}/maximize.png`} alt="" />
           </button>
-          <button onClick={doClose} aria-label="Close" tabIndex={-1}>
+           <button onClick={doClose} aria-label={t("close")} tabIndex={0}>
             <img src={`${UI}/close.png`} alt="" />
           </button>
         </div>
@@ -107,10 +112,10 @@ export default function Window({ config, children }: { config: WindowConfig; chi
       <div className="xp-win-inner">
         {config.menuBar && (
           <div className="window-menu">
-            <span className="window-menu-item">File</span>
-            <span className="window-menu-item">Edit</span>
-            <span className="window-menu-item">View</span>
-            <span className="window-menu-item">Help</span>
+             <span className="window-menu-item">{t("file")}</span>
+             <span className="window-menu-item">{t("edit")}</span>
+             <span className="window-menu-item">{t("view")}</span>
+             <span className="window-menu-item">{t("help")}</span>
           </div>
         )}
         <div className="window-body">

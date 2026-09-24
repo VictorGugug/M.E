@@ -4,20 +4,6 @@ import { assetUrl } from "../../utils/assets";
 const IC = assetUrl("assets/icons");
 const OL = assetUrl("assets/xpui");
 
-const tbBtn: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  gap: 3,
-  background: "transparent",
-  border: "1px solid transparent",
-  borderRadius: 3,
-  padding: "2px 5px",
-  cursor: "pointer",
-  fontSize: 11,
-  color: "#000",
-  fontFamily: "Tahoma, sans-serif",
-};
-
 export default function InternetExplorer(_: { id: string }) {
   const [currentUrl, setCurrentUrl] = useState("http://www.google.com");
   const [addressInput, setAddressInput] = useState("http://www.google.com");
@@ -94,20 +80,14 @@ export default function InternetExplorer(_: { id: string }) {
   };
 
   return (
-    <div ref={containerRef} style={{ width: "100%", height: "100%", background: "#ECE9D8", display: "flex", flexDirection: "column", fontFamily: "Tahoma, Arial, sans-serif", fontSize: 11, userSelect: "none", overflow: "hidden" }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "#ECE9D8", borderBottom: "1px solid #D4D0C8", padding: "1px 4px", position: "relative" }}>
+    <div ref={containerRef} className="xp-app-surface">
+      <div className="xp-menubar" style={{ position: "relative" }}>
         <div style={{ display: "flex", alignItems: "center" }}>
           {(["File", "Edit", "View", "Favorites", "Tools", "Help"] as const).map((m) => (
             <div
               key={m}
               onClick={(e) => { e.stopPropagation(); setMenuOpen(menuOpen === m ? null : m); }}
-              style={{
-                padding: "2px 6px",
-                cursor: "pointer",
-                background: menuOpen === m ? "#316AC5" : "transparent",
-                color: menuOpen === m ? "#FFF" : "#000",
-                borderRadius: 2
-              }}
+              className="xp-toolbar-button"
             >
               {m}
             </div>
@@ -128,9 +108,9 @@ export default function InternetExplorer(_: { id: string }) {
         )}
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 3, padding: "2px 4px", background: "linear-gradient(180deg,#FFFFFF 0%,#ECE9D8 100%)", borderBottom: "1px solid #D4D0C8", flexWrap: "nowrap" }}>
+      <div className="xp-toolbar">
         <button
-          style={{ ...tbBtn, opacity: historyIdx > 0 ? 1 : 0.4 }}
+          className="xp-toolbar-button" style={{ opacity: historyIdx > 0 ? 1 : .4 }}
           onClick={goBack}
           disabled={historyIdx === 0}
           title="Back"
@@ -141,7 +121,7 @@ export default function InternetExplorer(_: { id: string }) {
           <span>Back</span>
         </button>
         <button
-          style={{ ...tbBtn, opacity: historyIdx < history.length - 1 ? 1 : 0.4 }}
+          className="xp-toolbar-button" style={{ opacity: historyIdx < history.length - 1 ? 1 : .4 }}
           onClick={goForward}
           disabled={historyIdx >= history.length - 1}
           title="Forward"
@@ -151,7 +131,7 @@ export default function InternetExplorer(_: { id: string }) {
           <img src={`${IC}/Forward.png`} alt="Forward" style={{ width: 22, height: 22 }} />
         </button>
         <button
-          style={tbBtn}
+          className="xp-toolbar-button"
           onClick={() => setPageState("error")}
           title="Stop"
           onMouseEnter={(e) => { e.currentTarget.style.border = "1px solid #B8D6FB"; }}
@@ -160,7 +140,7 @@ export default function InternetExplorer(_: { id: string }) {
           <img src={`${IC}/IEStop.png`} alt="Stop" style={{ width: 20, height: 20 }} />
         </button>
         <button
-          style={tbBtn}
+          className="xp-toolbar-button"
           onClick={() => navigateTo(currentUrl)}
           title="Refresh"
           onMouseEnter={(e) => { e.currentTarget.style.border = "1px solid #B8D6FB"; }}
@@ -169,7 +149,7 @@ export default function InternetExplorer(_: { id: string }) {
           <img src={`${IC}/IERefresh.png`} alt="Refresh" style={{ width: 20, height: 20 }} />
         </button>
         <button
-          style={tbBtn}
+          className="xp-toolbar-button"
           onClick={() => navigateTo("http://www.google.com")}
           title="Home"
           onMouseEnter={(e) => { e.currentTarget.style.border = "1px solid #B8D6FB"; }}
@@ -179,7 +159,7 @@ export default function InternetExplorer(_: { id: string }) {
         </button>
         <div style={{ width: 1, height: 22, background: "#D4D0C8", margin: "0 2px" }} />
         <button
-          style={tbBtn}
+          className="xp-toolbar-button"
           onClick={() => navigateTo("http://www.google.com")}
           title="Search"
           onMouseEnter={(e) => { e.currentTarget.style.border = "1px solid #B8D6FB"; }}
@@ -189,7 +169,7 @@ export default function InternetExplorer(_: { id: string }) {
           <span>Search</span>
         </button>
         <button
-          style={tbBtn}
+          className="xp-toolbar-button"
           onClick={() => navigateTo("http://www.google.com")}
           title="Favorites"
           onMouseEnter={(e) => { e.currentTarget.style.border = "1px solid #B8D6FB"; }}
@@ -199,7 +179,7 @@ export default function InternetExplorer(_: { id: string }) {
           <span>Favorites</span>
         </button>
         <button
-          style={tbBtn}
+          className="xp-toolbar-button"
           onClick={() => {}}
           title="History"
           onMouseEnter={(e) => { e.currentTarget.style.border = "1px solid #B8D6FB"; }}
@@ -209,7 +189,7 @@ export default function InternetExplorer(_: { id: string }) {
         </button>
         <div style={{ width: 1, height: 22, background: "#D4D0C8", margin: "0 2px" }} />
         <button
-          style={tbBtn}
+          className="xp-toolbar-button"
           onClick={() => navigateTo("http://www.msn.com")}
           title="Mail"
           onMouseEnter={(e) => { e.currentTarget.style.border = "1px solid #B8D6FB"; }}
@@ -218,7 +198,7 @@ export default function InternetExplorer(_: { id: string }) {
           <img src={`${IC}/Email.png`} alt="Mail" style={{ width: 20, height: 20 }} />
         </button>
         <button
-          style={tbBtn}
+          className="xp-toolbar-button"
           onClick={() => window.print()}
           title="Print"
           onMouseEnter={(e) => { e.currentTarget.style.border = "1px solid #B8D6FB"; }}
@@ -227,7 +207,7 @@ export default function InternetExplorer(_: { id: string }) {
           <img src={`${IC}/Printer.png`} alt="Print" style={{ width: 20, height: 20 }} />
         </button>
         <button
-          style={tbBtn}
+          className="xp-toolbar-button"
           onClick={() => {}}
           title="Messenger"
           onMouseEnter={(e) => { e.currentTarget.style.border = "1px solid #B8D6FB"; }}
@@ -237,9 +217,9 @@ export default function InternetExplorer(_: { id: string }) {
         </button>
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "3px 6px", background: "#ECE9D8", borderBottom: "1px solid #999" }}>
+      <div className="xp-address">
         <span style={{ color: "#444", fontSize: 11 }}>Address</span>
-        <div style={{ flex: 1, display: "flex", background: "#FFF", border: "1px solid #7F9DB9", alignItems: "center", padding: "1px 4px" }}>
+        <div className="xp-input" style={{ flex: 1, display: "flex", alignItems: "center" }}>
           <img src={`${IC}/InternetExplorer6.png`} alt="" style={{ width: 14, height: 14, marginRight: 4 }} />
           <input
             value={addressInput}
@@ -250,7 +230,7 @@ export default function InternetExplorer(_: { id: string }) {
         </div>
         <button
           onClick={() => navigateTo(addressInput)}
-          style={{ display: "flex", alignItems: "center", gap: 3, padding: "1px 6px", background: "linear-gradient(180deg,#FDFDFB,#E4E2D0)", border: "1px solid #ACA899", borderRadius: 3, cursor: "pointer", fontSize: 11 }}
+          className="xp-toolbar-button"
         >
           <img src={`${IC}/Go.png`} alt="Go" style={{ width: 14, height: 14 }} />
           <span>Go</span>
@@ -437,7 +417,7 @@ export default function InternetExplorer(_: { id: string }) {
         )}
       </div>
 
-      <div style={{ padding: "2px 8px", background: "#ECE9D8", borderTop: "1px solid #D4D0C8", fontSize: 10, color: "#555", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <div className="xp-status-strip">
         <span>Done</span>
         <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
           <img src={`${IC}/InternetExplorer6.png`} alt="" style={{ width: 12, height: 12 }} />

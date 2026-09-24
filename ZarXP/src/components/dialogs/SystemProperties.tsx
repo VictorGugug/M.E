@@ -1,71 +1,20 @@
 import { useState } from "react";
 import { useWindowStore } from "../../store/windowStore";
-import { assetUrl } from "../../utils/assets"
+import { assetUrl } from "../../utils/assets";
 
 const tabs = ["General", "Computer Name", "Hardware", "Advanced"] as const;
 type Tab = (typeof tabs)[number];
 
-const s: Record<string, React.CSSProperties> = {
-  container: { display: "flex", flexDirection: "column", height: "100%", fontFamily: "Tahoma, sans-serif", fontSize: 12, userSelect: "none" },
-  tabBar: { display: "flex", gap: 0, padding: "6px 6px 0", background: "#ece9d8", borderBottom: "1px solid #7f9db9" },
-  tab: { padding: "4px 10px", cursor: "pointer", border: "1px solid transparent", borderBottom: "none", borderRadius: "3px 3px 0 0", fontSize: 11, background: "transparent" },
-  tabActive: { padding: "4px 10px", cursor: "pointer", border: "1px solid #7f9db9", borderBottom: "1px solid #ece9d8", borderRadius: "3px 3px 0 0", fontSize: 11, background: "#ece9d8", fontWeight: 700 },
-  body: { flex: 1, padding: 20, background: "#ece9d8", display: "flex", flexDirection: "column", gap: 14 },
-  logo: { width: 64, height: 64, alignSelf: "center" },
-  line: { fontSize: 11, color: "#333" },
-  title: { fontWeight: 700, fontSize: 12 },
-  buttons: { display: "flex", justifyContent: "flex-end", gap: 6, padding: "6px 12px", borderTop: "1px solid #d4d0c8", background: "#ece9d8" },
-  btn: { minWidth: 70, height: 24, fontSize: 12, cursor: "pointer", background: "#ece9d8", border: "1px solid #7f9db9", borderTopColor: "#fff", borderLeftColor: "#fff" },
-};
-
 function TabContent({ tab }: { tab: Tab }) {
-  switch (tab) {
-    case "General":
-      return (
-        <>
-          <img src={assetUrl("assets/images/xp-logo.png")} alt="" style={s.logo} />
-          <div style={s.title}>System:</div>
-          <div style={s.line}>Microsoft Windows XP Professional</div>
-          <div style={s.line}>Version 2002</div>
-          <div style={{ ...s.title, marginTop: 8 }}>Computer:</div>
-          <div style={s.line}>Intel Pentium 4 2.40GHz</div>
-          <div style={s.line}>512 MB RAM</div>
-          <div style={{ ...s.line, marginTop: 8, fontSize: 10, color: "#999" }}>Copyright 1985-2001 Microsoft Corporation</div>
-        </>
-      );
-    case "Computer Name":
-      return (
-        <>
-          <div style={s.line}>Computer name: ZAR-XP</div>
-          <div style={s.line}>Full computer name: zar-xp</div>
-          <div style={s.line}>Workgroup: WORKGROUP</div>
-        </>
-      );
-    case "Hardware":
-      return <div style={s.line}>Device Manager & Hardware Profiles</div>;
-    case "Advanced":
-      return <div style={s.line}>Performance, User Profiles, Startup and Recovery</div>;
-  }
+  if (tab === "General") return <div className="xp-group-box" style={{ textAlign: "center" }}><img src={assetUrl("assets/images/xp-logo.png")} alt="" style={{ width: 64, height: 64 }} /><div style={{ fontWeight: "bold", marginTop: 8 }}>Microsoft Windows XP</div><div>Professional</div><div>Version 2002, Service Pack 2</div><div style={{ marginTop: 12, borderTop: "1px solid #C9C7B4", paddingTop: 8 }}>Intel Pentium 4 2.40GHz<br />512 MB RAM</div><div className="xp-small" style={{ marginTop: 12 }}>Copyright 1985-2001 Microsoft Corporation</div></div>;
+  if (tab === "Computer Name") return <div className="xp-group-box"><div className="xp-form-row"><span className="xp-form-label">Computer name:</span><strong>ZAR-XP</strong></div><div className="xp-form-row"><span className="xp-form-label">Full computer name:</span><span>zar-xp</span></div><div className="xp-form-row"><span className="xp-form-label">Workgroup:</span><span>WORKGROUP</span></div></div>;
+  if (tab === "Hardware") return <div className="xp-group-box"><div style={{ fontWeight: "bold", color: "#003399", marginBottom: 8 }}>Device Manager</div><div>Display adapters, drives, input and sound devices</div></div>;
+  return <div className="xp-group-box"><div style={{ fontWeight: "bold", color: "#003399", marginBottom: 8 }}>Advanced</div><div>Performance, user profiles, startup and recovery</div></div>;
 }
 
 export default function SystemProperties({ id }: { id: string }) {
   const [activeTab, setActiveTab] = useState<Tab>("General");
-  const closeWindow = useWindowStore((s) => s.closeWindow);
+  const closeWindow = useWindowStore((state) => state.closeWindow);
 
-  return (
-    <div style={s.container}>
-      <div style={s.tabBar}>
-        {tabs.map((t) => (
-          <div key={t} style={activeTab === t ? s.tabActive : s.tab} onClick={() => setActiveTab(t)}>{t}</div>
-        ))}
-      </div>
-      <div style={s.body}>
-        <TabContent tab={activeTab} />
-      </div>
-      <div style={s.buttons}>
-        <button style={s.btn}>OK</button>
-        <button style={s.btn} onClick={() => closeWindow(id)}>Cancel</button>
-      </div>
-    </div>
-  );
+  return <div className="xp-dialog-surface"><div className="xp-tabbar">{tabs.map((tab) => <button key={tab} className={`xp-tab ${activeTab === tab ? "active" : ""}`} onClick={() => setActiveTab(tab)} role="tab" aria-selected={activeTab === tab}>{tab}</button>)}</div><div className="xp-tabpanel"><TabContent tab={activeTab} /></div><div className="xp-dialog-footer"><button className="xp-button">OK</button><button className="xp-button" onClick={() => closeWindow(id)}>Cancel</button></div></div>;
 }

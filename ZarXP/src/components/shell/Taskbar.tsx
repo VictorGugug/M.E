@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useWindowStore } from "../../store/windowStore";
+import { useFileSystemStore } from "../../store/fileSystemStore";
 import { useLangStore } from "../../store/langStore";
 import type { AppId } from "../../types";
 import { assetUrl } from "../../utils/assets";
@@ -21,6 +22,13 @@ export default function Taskbar({ onOpen }: { onOpen: (id: AppId) => void }) {
 
   const zMax = Math.max(0, ...windows.map((w) => w.zIndex));
   const t = useLangStore((s) => s.t);
+  const fileSystem = useFileSystemStore((state) => state.fileSystem);
+  const windowTitle = (win: typeof windows[0]) => win.resourceId ? fileSystem[win.resourceId]?.name ?? win.title : win.title;
+  const handleIconKey = (event: React.KeyboardEvent, action: () => void) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    action();
+  };
 
   const tourIconRef = useRef<HTMLImageElement>(null);
   const removeIconRef = useRef<HTMLImageElement>(null);
@@ -73,17 +81,17 @@ export default function Taskbar({ onOpen }: { onOpen: (id: AppId) => void }) {
       </button>
 
       <div className="xp-taskband">
-        <button className="xp-ql-btn" onClick={(e) => { e.stopPropagation(); onOpen("internet-explorer"); }} title="Internet Explorer">
+        <button className="xp-ql-btn" onClick={(e) => { e.stopPropagation(); onOpen("internet-explorer"); }} title={t("internetExplorer")} aria-label={t("internetExplorer")}>
           <img src={`${OL}/icon/internet.png`} alt="" />
         </button>
-        <button className="xp-ql-btn" onClick={(e) => { e.stopPropagation(); minimizeAll(); }} title="Show Desktop">
+        <button className="xp-ql-btn" onClick={(e) => { e.stopPropagation(); minimizeAll(); }} title={t("showDesktop")} aria-label={t("showDesktop")}>
           <img src={`${OL}/icon/desktop.png`} alt="" />
         </button>
         <div className="xp-taskbar-divider" />
-        <button className="xp-ql-btn" onClick={(e) => { e.stopPropagation(); onOpen("media-player"); }} title="Windows Media Player">
+        <button className="xp-ql-btn" onClick={(e) => { e.stopPropagation(); onOpen("media-player"); }} title={t("mediaPlayer")} aria-label={t("mediaPlayer")}>
           <img src={`${OL}/icon/player.png`} alt="" />
         </button>
-        <button className="xp-ql-btn" onClick={(e) => { e.stopPropagation(); onOpen("tour-xp"); }} title="Tour Windows XP">
+        <button className="xp-ql-btn" onClick={(e) => { e.stopPropagation(); onOpen("tour-xp"); }} title={t("tour")} aria-label={t("tour")}>
           <img src={`${OL}/icon/tour.png`} alt="" />
         </button>
       </div>
@@ -96,18 +104,22 @@ export default function Taskbar({ onOpen }: { onOpen: (id: AppId) => void }) {
             className={win.state !== "minimized" && win.zIndex === zMax ? "xp-task-btn xp-task-btn-active" : "xp-task-btn"}
           >
             {win.icon && <img src={assetUrl(`assets/icons/${win.icon}`)} alt="" />}
-            <span>{win.title}</span>
+            <span>{windowTitle(win)}</span>
           </button>
         ))}
       </div>
 
-      <div className="xp-tray" style={{ position: "relative", display: "flex", alignItems: "center", gap: 6, padding: "0 8px" }}>
+      <div className="xp-tray">
         <img
           src={`${OL}/icon/messenger.png`}
           alt=""
           className="xp-tray-icon"
-          title="Windows Messenger"
-          onClick={(e) => { e.stopPropagation(); onOpen("msn-messenger"); }}
+           title={t("messenger")}
+           aria-label={t("messenger")}
+           role="button"
+           tabIndex={0}
+           onKeyDown={(event) => handleIconKey(event, () => onOpen("msn-messenger"))}
+           onClick={(e) => { e.stopPropagation(); onOpen("msn-messenger"); }}
         />
         {balloon === "tour" ? (
           <img
@@ -115,225 +127,143 @@ export default function Taskbar({ onOpen }: { onOpen: (id: AppId) => void }) {
             src={`${OL}/icon/tour.png`}
             alt=""
             className="xp-tray-icon"
-            title="Tour Windows XP"
-            onClick={(e) => { e.stopPropagation(); setBalloon(null); onOpen("tour-xp"); }}
+             title={t("tour")}
+             aria-label={t("tour")}
+             role="button"
+             tabIndex={0}
+             onKeyDown={(event) => handleIconKey(event, () => { setBalloon(null); onOpen("tour-xp"); })}
+             onClick={(e) => { e.stopPropagation(); setBalloon(null); onOpen("tour-xp"); }}
           />
         ) : (
           <img
             src={`${OL}/icon/security.png`}
             alt=""
             className="xp-tray-icon"
-            title="Windows Security Center"
-            onClick={(e) => { e.stopPropagation(); onOpen("security-center"); }}
+             title={t("securityCenterCat")}
+             aria-label={t("securityCenterCat")}
+             role="button"
+             tabIndex={0}
+             onKeyDown={(event) => handleIconKey(event, () => onOpen("security-center"))}
+             onClick={(e) => { e.stopPropagation(); onOpen("security-center"); }}
           />
         )}
         <img
           src={`${OL}/icon/speaker.png`}
           alt=""
           className="xp-tray-icon"
-          title="Volume"
-          onClick={(e) => { e.stopPropagation(); setVolOpen((v) => !v); }}
+           title={t("volume")}
+           aria-label={t("volume")}
+           role="button"
+           tabIndex={0}
+           onKeyDown={(event) => handleIconKey(event, () => setVolOpen((v) => !v))}
+           onClick={(e) => { e.stopPropagation(); setVolOpen((v) => !v); }}
         />
         <img
           ref={removeIconRef}
           src={`${IC}/SafelyRemoveHardware.png`}
           alt=""
           className="xp-tray-icon"
-          title="Safely Remove Hardware"
-          onClick={(e) => { e.stopPropagation(); setBalloon((b) => (b === "remove" ? null : "remove")); }}
+           title={t("safelyRemoveHardware")}
+           aria-label={t("safelyRemoveHardware")}
+           role="button"
+           tabIndex={0}
+           onKeyDown={(event) => handleIconKey(event, () => setBalloon((b) => (b === "remove" ? null : "remove")))}
+           onClick={(e) => { e.stopPropagation(); setBalloon((b) => (b === "remove" ? null : "remove")); }}
         />
         <span
           className="xp-tray-clock"
-          title="Date and Time Properties"
-          onClick={(e) => { e.stopPropagation(); onOpen("date-time"); }}
+           title={t("dateTimeProperties")}
+           aria-label={t("dateTimeProperties")}
+           role="button"
+           tabIndex={0}
+           onKeyDown={(event) => handleIconKey(event, () => onOpen("date-time"))}
+           onClick={(e) => { e.stopPropagation(); onOpen("date-time"); }}
         >
           {clock}
         </span>
 
         {volOpen && (
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{ position: "absolute", bottom: 32, right: 60, width: 68, background: "#ECE9D8", border: "1px solid #0831D9", boxShadow: "2px 2px 4px rgba(0,0,0,0.35)", padding: "6px 4px 8px", display: "flex", flexDirection: "column", alignItems: "center", gap: 4, zIndex: 870 }}
-          >
-            <span style={{ fontSize: 11 }}>{t("volume")}</span>
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={volume}
-              onChange={(e) => setVolume(Number(e.target.value))}
-              style={{ writingMode: "vertical-lr" as React.CSSProperties["writingMode"], direction: "rtl", width: 24, height: 90, accentColor: "#2E71DC", cursor: "pointer" }}
-            />
-            <label style={{ display: "flex", alignItems: "center", gap: 3, fontSize: 11 }}>
+          <div className="xp-volume-popup" onClick={(e) => e.stopPropagation()}>
+            <span className="xp-volume-title">{t("volume")}</span>
+            <input className="xp-volume-slider" type="range" min="0" max="100" value={volume} onChange={(e) => setVolume(Number(e.target.value))} />
+            <label className="xp-volume-label">
               <span className={`xp-checkbox${volMute ? " xp-checkbox-checked" : ""}`} />
-              <input type="checkbox" style={{ display: "none" }} checked={volMute} onChange={() => setVolMute(!volMute)} />
+              <input type="checkbox" checked={volMute} onChange={() => setVolMute(!volMute)} />
               {t("mute")}
             </label>
           </div>
         )}
 
         {balloon && (
-          <div
-            className="xp-balloon"
-            style={{
-              position: "absolute",
-              bottom: 34,
-              right: balloon === "tour" ? 92 : 54,
-              background: "#FFFFE1",
-              border: "1px solid #000",
-              borderRadius: 6,
-              padding: "8px 12px",
-              width: 250,
-              boxShadow: "2px 2px 5px rgba(0,0,0,0.4)",
-              zIndex: 9999,
-              fontFamily: "Tahoma, sans-serif",
-              fontSize: 11,
-              lineHeight: 1.35,
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setBalloon(null)}
-              aria-label="Close"
-              style={{
-                position: "absolute",
-                top: 4,
-                right: 4,
-                width: 14,
-                height: 14,
-                background: "transparent",
-                border: "1px solid transparent",
-                borderRadius: 2,
-                cursor: "pointer",
-                padding: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#666",
-                fontSize: 10,
-                fontWeight: "bold"
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#999"; e.currentTarget.style.background = "#FFF"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "transparent"; e.currentTarget.style.background = "transparent"; }}
-            >
-              ✕
-            </button>
+          <div className="xp-balloon" style={{ right: balloon === "tour" ? 92 : 54 }} onClick={(e) => e.stopPropagation()}>
+             <button className="balloon-close" onClick={() => setBalloon(null)} aria-label={t("close")}><img src={assetUrl("assets/xpui/interface/balloon/close.png")} alt="" /></button>
 
             {balloon === "tour" ? (
               <>
-                <div style={{ display: "flex", alignItems: "center", gap: 6, fontWeight: "bold", marginBottom: 6, fontSize: 11 }}>
-                  <img src={`${OL}/icon/info.png`} alt="" style={{ width: 16, height: 16 }} />
+                <div className="balloon-title">
+                  <img className="balloon-icon" src={`${OL}/icon/info.png`} alt="" />
                   <span>{t("balloonTourTitle")}</span>
                 </div>
-                <div
-                  style={{ cursor: "pointer" }}
-                  onClick={() => { setBalloon(null); onOpen("tour-xp"); }}
-                >
+                 <div className="xp-balloon-link balloon-text" role="button" tabIndex={0} aria-label={t("tour")} onKeyDown={(event) => handleIconKey(event, () => { setBalloon(null); onOpen("tour-xp"); })} onClick={() => { setBalloon(null); onOpen("tour-xp"); }}>
                   {(() => {
                     const parts = t("balloonTourBody").split("|");
-                    return (
-                      <span>
-                        {parts[0]}
-                        <span style={{ color: "#0000CC", textDecoration: "underline" }}>{parts[1]}</span>
-                        {parts[2]}
-                      </span>
-                    );
+                    return <span>{parts[0]}<span>{parts[1]}</span>{parts[2]}</span>;
                   })()}
                 </div>
               </>
             ) : (
               <>
-                <div style={{ display: "flex", alignItems: "center", gap: 6, fontWeight: "bold", marginBottom: 6, fontSize: 11 }}>
-                  <img src={`${IC}/SafelyRemoveHardware.png`} alt="" style={{ width: 16, height: 16 }} />
+                <div className="balloon-title">
+                  <img className="balloon-icon" src={`${IC}/SafelyRemoveHardware.png`} alt="" />
                   <span>{t("balloonRemoveTitle")}</span>
                 </div>
-                <div>{t("balloonRemoveBody")}</div>
+                <div className="balloon-text">{t("balloonRemoveBody")}</div>
               </>
             )}
-
-            <div
-              style={{
-                position: "absolute",
-                bottom: -8,
-                right: 18,
-                width: 0,
-                height: 0,
-                borderLeft: "8px solid transparent",
-                borderRight: "8px solid transparent",
-                borderTop: "8px solid #000",
-              }}
-            />
-            <div
-              style={{
-                position: "absolute",
-                bottom: -6,
-                right: 19,
-                width: 0,
-                height: 0,
-                borderLeft: "7px solid transparent",
-                borderRight: "7px solid transparent",
-                borderTop: "7px solid #FFFFE1",
-              }}
-            />
           </div>
         )}
       </div>
 
       {taskbarCtx && (
         <div
-          className="desktop-context-menu"
-          style={{
-            left: taskbarCtx.x,
-            top: taskbarCtx.y,
-            position: "fixed",
-            zIndex: 99999,
-            background: "#FFF",
-            border: "1px solid #ACA899",
-            padding: "2px",
-            boxShadow: "2px 2px 4px rgba(0,0,0,0.3)",
-            fontSize: 11,
-            fontFamily: "Tahoma, sans-serif",
-            minWidth: 160
-          }}
+          className="desktop-context-menu xp-taskbar-context"
+          style={{ left: taskbarCtx.x, top: taskbarCtx.y }}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="context-item context-disabled" style={{ padding: "3px 18px", color: "#888" }}>
+          <div className="context-item context-disabled">
             {t("toolbars")}
           </div>
-          <div className="context-separator" style={{ height: 1, background: "#ACA899", margin: "2px 0" }} />
+          <div className="context-separator" />
           <div
             className="context-item"
-            style={{ padding: "3px 18px", cursor: "pointer" }}
             onClick={() => { cascadeWindows(); setTaskbarCtx(null); }}
           >
             {t("cascadeWindows")}
           </div>
-          <div className="context-item" style={{ padding: "3px 18px", cursor: "pointer" }} onClick={() => setTaskbarCtx(null)}>
+          <div className="context-item" onClick={() => setTaskbarCtx(null)}>
             {t("tileHorizontally")}
           </div>
-          <div className="context-item" style={{ padding: "3px 18px", cursor: "pointer" }} onClick={() => setTaskbarCtx(null)}>
+          <div className="context-item" onClick={() => setTaskbarCtx(null)}>
             {t("tileVertically")}
           </div>
           <div
             className="context-item"
-            style={{ padding: "3px 18px", cursor: "pointer" }}
             onClick={() => { minimizeAll(); setTaskbarCtx(null); }}
           >
             {t("showDesktop")}
           </div>
-          <div className="context-separator" style={{ height: 1, background: "#ACA899", margin: "2px 0" }} />
+          <div className="context-separator" />
           <div
-            className="context-item"
-            style={{ padding: "3px 18px", cursor: "pointer", fontWeight: "bold" }}
+            className="context-item xp-taskbar-bold"
             onClick={() => { onOpen("task-manager"); setTaskbarCtx(null); }}
           >
             {t("taskManager")}
           </div>
-          <div className="context-separator" style={{ height: 1, background: "#ACA899", margin: "2px 0" }} />
-          <div className="context-item" style={{ padding: "3px 18px", cursor: "pointer" }} onClick={() => setTaskbarCtx(null)}>
+          <div className="context-separator" />
+          <div className="context-item" onClick={() => setTaskbarCtx(null)}>
             {t("lockTaskbar")}
           </div>
-          <div className="context-item" style={{ padding: "3px 18px", cursor: "pointer" }} onClick={() => { onOpen("display-properties"); setTaskbarCtx(null); }}>
+          <div className="context-item" onClick={() => { onOpen("display-properties"); setTaskbarCtx(null); }}>
             {t("taskbarProperties")}
           </div>
         </div>

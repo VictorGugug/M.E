@@ -1,122 +1,138 @@
-import { useState } from "react";
-import { assetUrl } from "../../utils/assets"
+import { useEffect, useState } from "react";
+import { getChildren, getFileAppId, getNodePath, getTrashItems, type FileSystemState, type VirtualFileNode } from "../../store/fileSystem";
+import { useFileSystemStore } from "../../store/fileSystemStore";
+import { useLangStore, type StringKey } from "../../store/langStore";
+import { useWindowStore } from "../../store/windowStore";
+import { assetUrl } from "../../utils/assets";
 
-interface TreeNode {
-  name: string;
-  icon: string;
-  children?: TreeNode[];
-  files?: { name: string; icon: string; type: string; size: string }[];
+const OL = assetUrl("assets/xpui");
+const IC = assetUrl("assets/icons");
+
+function iconFor(node: VirtualFileNode, fileSystem?: FileSystemState): string {
+  if (node.id === "recycle-bin") return `${IC}/${fileSystem && getTrashItems(fileSystem).length > 0 ? "RecycleBinfull.png" : "RecycleBinempty.png"}`;
+  if (node.kind === "folder") return `${OL}/icon/folder/closed.png`;
+  const extension = node.name.split(".").pop()?.toLowerCase();
+  if (extension === "txt") return `${IC}/TXT.png`;
+  if (extension === "doc") return `${IC}/DOC.png`;
+  if (extension === "jpg" || extension === "jpeg") return `${IC}/JPG.png`;
+  if (extension === "png") return `${IC}/Bitmap.png`;
+  return `${IC}/GenericDocument.png`;
 }
 
-const treeData: TreeNode[] = [
-  {
-    name: "Desktop", icon: "Desktop.png",
-    files: [
-      { name: "My Documents", icon: "FolderClosed.png", type: "File Folder", size: "" },
-      { name: "My Computer", icon: "MyComputer.png", type: "File Folder", size: "" },
-      { name: "Recycle Bin", icon: "RecycleBinempty.png", type: "File Folder", size: "" },
-      { name: "Internet Explorer", icon: "InternetExplorer6.png", type: "Shortcut", size: "1 KB" },
-      { name: "Work Notes.txt", icon: "TXT.png", type: "Text Document", size: "2 KB" },
-    ],
-    children: [],
-  },
-  {
-    name: "My Computer", icon: "MyComputer.png",
-    children: [
-      { name: "Local Disk (C:)", icon: "LocalDisk.png", children: [], files: [
-        { name: "Documents and Settings", icon: "FolderClosed.png", type: "File Folder", size: "" },
-        { name: "Program Files", icon: "FolderClosed.png", type: "File Folder", size: "" },
-        { name: "Windows", icon: "FolderClosed.png", type: "File Folder", size: "" },
-        { name: "AUTOEXEC.BAT", icon: "BAT.png", type: "MS-DOS Batch File", size: "1 KB" },
-        { name: "boot.ini", icon: "SettingsAlert.png", type: "Configuration Settings", size: "1 KB" },
-      ] },
-      { name: "Local Disk (D:)", icon: "LocalDisk.png", children: [], files: [
-        { name: "Backups", icon: "FolderClosed.png", type: "File Folder", size: "" },
-        { name: "Software", icon: "FolderClosed.png", type: "File Folder", size: "" },
-      ] },
-    ],
-    files: [
-      { name: "Local Disk (C:)", icon: "LocalDisk.png", type: "Local Disk", size: "38.2 GB" },
-      { name: "Local Disk (D:)", icon: "LocalDisk.png", type: "Local Disk", size: "52.8 GB" },
-    ],
-  },
-  {
-    name: "Control Panel", icon: "ControlPanel.png",
-    files: [
-      { name: "System", icon: "SystemProperties.png", type: "System Properties", size: "" },
-      { name: "Display", icon: "DisplayProperties.png", type: "Display Properties", size: "" },
-      { name: "Date and Time", icon: "DateandTime.png", type: "Date and Time Properties", size: "" },
-    ],
-    children: [],
-  },
-];
+function typeFor(node: VirtualFileNode, t: (key: StringKey) => string): string {
+  if (node.kind === "folder") return t("fileFolder");
+  const extension = node.name.split(".").pop()?.toLowerCase();
+  if (extension === "txt") return t("textDocumentType");
+  if (extension === "doc") return t("microsoftWordDocument");
+  if (extension === "jpg" || extension === "jpeg") return t("jpegImage");
+  if (extension === "png") return t("pngImage");
+  return t("document");
+}
 
-export default function Explorer(_: { id: string }) {
-  const [selected, setSelected] = useState<TreeNode>(treeData[0]);
-  const [expanded, setExpanded] = useState<Set<string>>(new Set(["Desktop"]));
+export default function Explorer({ id }: { id: string }) {
+  const fileSystem = useFileSystemStore((state) => state.fileSystem);
+  const deleteItem = useFileSystemStore((state) => state.deleteItem);
+  const openWindow = useWindowStore((state) => state.openWindow);
+  const t = useLangStore((state) => state.t);
+  const resourceId = useWindowStore((state) => state.windows.find((window) => window.id === id)?.resourceId);
+  const resourceIsFolder = Boolean(resourceId && fileSystem[resourceId]?.kind === "folder");
+  const initialId = resourceId && resourceIsFolder ? resourceId : "root";
+  const [currentId, setCurrentId] = useState(initialId);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<Set<string>>(new Set(["root"]));
+  useEffect(() => {
+    if (resourceId && resourceIsFolder) setCurrentId(resourceId);
+  }, [resourceId, resourceIsFolder]);
+  const current = fileSystem[currentId] ?? fileSystem.root;
+  const listedItems = currentId === "recycle-bin" ? getTrashItems(fileSystem) : getChildren(fileSystem, currentId);
+  const selected = listedItems.find((item) => item.id === selectedId);
 
-  const toggleExpand = (name: string) => {
-    setExpanded((prev) => {
-      const next = new Set(prev);
-      if (next.has(name)) next.delete(name);
-      else next.add(name);
+  const treeChildren = (parentId: string) => {
+    if (parentId === "recycle-bin") return getTrashItems(fileSystem);
+    return getChildren(fileSystem, parentId);
+  };
+
+  const toggleExpand = (id: string) => {
+    setExpanded((previous) => {
+      const next = new Set(previous);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return next;
     });
   };
 
-  const renderTree = (nodes: TreeNode[], depth: number = 0): React.ReactNode[] => {
-    return nodes.flatMap((node) => {
-      const isExpanded = expanded.has(node.name);
-      const isSelected = selected.name === node.name;
-      const hasChildren = node.children && node.children.length > 0;
-      return [
-        <div key={node.name} style={{ paddingLeft: depth * 14, display: "flex", alignItems: "center", cursor: "pointer", background: isSelected ? "#000080" : "transparent", color: isSelected ? "#FFF" : "#000", fontSize: 11, fontFamily: "Tahoma, sans-serif" }} onClick={() => { setSelected(node); }}>
-          {hasChildren ? (
-            <span onClick={(e) => { e.stopPropagation(); toggleExpand(node.name); }} style={{ width: 12, fontSize: 9, cursor: "pointer" }}>{isExpanded ? "▾" : "▸"}</span>
-          ) : <span style={{ width: 12 }} />}
-          <img src={assetUrl(`assets/icons/${node.icon}`)} alt="" style={{ width: 16, height: 16, marginRight: 3 }} />
-          <span>{node.name}</span>
-        </div>,
-        ...(isExpanded && hasChildren ? renderTree(node.children!, depth + 1) : []),
-      ];
-    });
+  const selectNode = (node: VirtualFileNode) => {
+    if (node.kind === "folder" || node.id === "recycle-bin") {
+      setCurrentId(node.id);
+      setSelectedId(null);
+      setExpanded((previous) => new Set(previous).add(node.id));
+    }
+  };
+
+  const openNode = (node: VirtualFileNode) => {
+    if (node.kind === "folder" || node.id === "recycle-bin") selectNode(node);
+    else openWindow(getFileAppId(node), node.id);
+  };
+
+  const renderTree = (nodes: VirtualFileNode[], depth = 0): React.ReactNode[] => nodes.flatMap((node) => {
+    const children = treeChildren(node.id);
+    const hasChildren = children.length > 0;
+    const isExpanded = expanded.has(node.id);
+    const isSelected = currentId === node.id;
+    return [
+       <button key={node.id} className={`xp-tree-item ${isSelected ? "selected" : ""}`} style={{ paddingLeft: depth * 14 + 4 }} onClick={() => selectNode(node)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); if (hasChildren) { setCurrentId(node.id); setSelectedId(null); toggleExpand(node.id); } else selectNode(node); } }} role="treeitem" aria-level={depth + 1} aria-selected={isSelected} aria-expanded={hasChildren ? isExpanded : undefined}>
+        <span className="tree-arrow" onClick={(event) => { event.stopPropagation(); if (hasChildren) toggleExpand(node.id); }}>{hasChildren ? (isExpanded ? "\u25be" : "\u25b8") : ""}</span>
+        <img src={iconFor(node, fileSystem)} alt="" />
+        <span>{node.name}</span>
+      </button>,
+      ...(isExpanded && hasChildren ? renderTree(children, depth + 1) : []),
+    ];
+  });
+
+  const handleDelete = () => {
+    if (!selected) return;
+    deleteItem(selected.id);
+    setSelectedId(null);
   };
 
   return (
-    <div style={{ width: "100%", height: "100%", background: "#FFF", fontFamily: "Tahoma, sans-serif", fontSize: 11, display: "flex", flexDirection: "column", userSelect: "none" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 2, padding: "2px 4px", background: "#ECE9D8", borderBottom: "1px solid #ACA899" }}>
-        <span style={{ fontSize: 10, color: "#555" }}>Address</span>
-        <input style={{ flex: 1, border: "1px inset #ACA899", padding: "1px 3px", fontSize: 11, fontFamily: "Tahoma, sans-serif" }} value={selected.name} readOnly />
-      </div>
-      <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
-        <div style={{ width: 180, background: "#FFF", borderRight: "1px solid #808080", overflow: "auto", padding: "2px 0" }}>
-          {renderTree(treeData)}
+    <div className="xp-app-surface">
+      <div className="xp-explorer-head">
+        <div className="xp-menubar">
+          {[t("file"), t("edit"), t("view"), t("favorites"), t("tools"), t("help")].map((item) => <button className="xp-toolbar-button" key={item}>{item}</button>)}
+          <img src={`${OL}/logo/flag.png`} alt="" style={{ width: 18, height: 18, marginLeft: "auto" }} />
         </div>
-        <div style={{ flex: 1, overflow: "auto" }}>
-          <div style={{ padding: "2px 4px", background: "#D4D0C8", borderBottom: "1px solid #808080", fontSize: 10, color: "#000" }}>{selected.name}</div>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr style={{ background: "#ECE9D8" }}>
-                <th style={thStyle}>Name</th>
-                <th style={thStyle}>Type</th>
-                <th style={thStyle}>Size</th>
-              </tr>
-            </thead>
+        <div className="xp-toolbar">
+          <button className="xp-toolbar-button" onClick={() => { if (current.parentId && fileSystem[current.parentId]) { setCurrentId(current.parentId); setSelectedId(null); } }} disabled={!current.parentId}><img src={`${OL}/interface/explorer/up.png`} alt="" style={{ height: 22 }} />{t("up")}</button>
+          <button className="xp-toolbar-button" onClick={handleDelete} disabled={!selected}><img src={`${IC}/Delete.png`} alt="" style={{ height: 20 }} />{t("delete")}</button>
+          <div className="xp-toolbar-separator" />
+          <button className="xp-toolbar-button" onClick={() => openWindow("search")}><img src={`${OL}/interface/explorer/search.png`} alt="" style={{ height: 22 }} />{t("search")}</button>
+          <button className="xp-toolbar-button" onClick={() => openWindow("explorer")}><img src={`${OL}/interface/explorer/folders.png`} alt="" style={{ height: 22 }} />{t("folders")}</button>
+          <div className="xp-toolbar-separator" />
+          <button className="xp-toolbar-button"><img src={`${OL}/interface/explorer/views.png`} alt="" style={{ height: 22 }} />{t("views")}</button>
+        </div>
+        <div className="xp-address">
+          <span className="addr-label">{t("address")}</span>
+          <div className="xp-input" style={{ display: "flex", alignItems: "center", gap: 5, flex: 1, minHeight: 22 }}><img src={iconFor(current, fileSystem)} alt="" style={{ width: 14, height: 14 }} />{getNodePath(fileSystem, current.id)}</div>
+          <button className="xp-toolbar-button"><img src={`${OL}/interface/explorer/go.png`} alt="" style={{ height: 18 }} />{t("go")}</button>
+        </div>
+      </div>
+      <div className="xp-explorer-middle">
+        <div className="xp-tree" role="tree">{renderTree(fileSystem.root ? [fileSystem.root] : [])}</div>
+        <div className="xp-content-panel">
+          <table className="xp-data-table">
+            <thead><tr><th style={{ width: "48%" }}>{t("name")}</th><th style={{ width: "30%" }}>{t("typeLabel")}</th><th>{t("sizeLabel")}</th></tr></thead>
             <tbody>
-              {(selected.files || []).map((f) => (
-                <tr key={f.name}>
-                  <td style={tdStyle}><img src={assetUrl(`assets/icons/${f.icon}`)} alt="" style={{ width: 16, height: 16, marginRight: 4, verticalAlign: "middle" }} />{f.name}</td>
-                  <td style={tdStyle}>{f.type}</td>
-                  <td style={tdStyle}>{f.size || ""}</td>
+              {listedItems.length === 0 ? <tr><td colSpan={3} style={{ padding: 16, textAlign: "center" }}>{currentId === "recycle-bin" ? t("recycleBinEmpty") : t("folderEmpty")}</td></tr> : listedItems.map((item) => (
+                 <tr key={item.id} className={selectedId === item.id ? "selected" : ""} onClick={() => setSelectedId(item.id)} onDoubleClick={() => openNode(item)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") openNode(item); }} tabIndex={0}>
+                  <td><img src={iconFor(item, fileSystem)} alt="" />{item.name}</td><td>{typeFor(item, t)}</td><td></td>
                 </tr>
               ))}
             </tbody>
           </table>
+          <div className="xp-status-strip"><span>{listedItems.length} {t("objects")}</span><span>{current.name}</span></div>
         </div>
       </div>
     </div>
   );
 }
-
-const thStyle: React.CSSProperties = { borderBottom: "1px solid #808080", padding: "2px 4px", textAlign: "left", fontSize: 11, fontWeight: "bold" };
-const tdStyle: React.CSSProperties = { padding: "2px 4px", fontSize: 11, borderBottom: "1px solid #D4D0C8" };

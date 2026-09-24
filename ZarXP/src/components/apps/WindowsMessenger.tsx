@@ -150,14 +150,9 @@ export default function WindowsMessenger(_: { id: string }) {
 
   return (
     <div
-      style={{
-        width: "100%", height: "100%", background: "#ECE9D8", display: "flex", flexDirection: "column",
-        fontFamily: "Tahoma, sans-serif", fontSize: 11, overflow: "hidden",
-        transform: shaking ? "translate(3px, 2px)" : "none",
-        transition: "transform 0.05s"
-      }}
+      className="xp-app-surface" style={{ transform: shaking ? "translate(3px, 2px)" : "none", transition: "transform 0.05s" }}
     >
-      <div style={{ padding: "6px 8px", background: "linear-gradient(180deg,#5AA0E8 0%,#2E71C8 100%)", color: "#FFF", display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+      <div className="xp-messenger-header">
         <img src={assetUrl(`assets/xpui/user/${userPicture}`)} alt="" style={{ width: 28, height: 28, borderRadius: 3, border: "1px solid #FFF" }} />
         <div style={{ overflow: "hidden" }}>
           <div style={{ fontWeight: "bold", fontSize: 12 }}>{userName}</div>
@@ -173,10 +168,10 @@ export default function WindowsMessenger(_: { id: string }) {
               <div style={{ fontWeight: "bold" }}>{chatWith.name}</div>
               <div style={{ fontSize: 10, color: "#555" }}>&lt;{chatWith.quote}&gt;</div>
             </div>
-            <button onClick={sendNudge} title="Send a Nudge!" style={{ padding: "2px 8px", fontSize: 11, background: "linear-gradient(180deg,#FFF,#E4E2D0)", border: "1px solid #7F9DB9", borderRadius: 3, cursor: "pointer" }}>
+            <button onClick={sendNudge} title="Send a Nudge!" className="xp-button" style={{ minWidth: 52, height: 21, padding: "1px 7px" }}>
               Nudge
             </button>
-            <button onClick={() => setChatWith(null)} style={{ padding: "2px 8px", fontSize: 11, background: "linear-gradient(180deg,#FFF,#E4E2D0)", border: "1px solid #7F9DB9", borderRadius: 3, cursor: "pointer" }}>
+            <button onClick={() => setChatWith(null)} className="xp-button" style={{ minWidth: 52, height: 21, padding: "1px 7px" }}>
               Back
             </button>
           </div>
@@ -206,9 +201,9 @@ export default function WindowsMessenger(_: { id: string }) {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter") send(); }}
               placeholder="Type a message..."
-              style={{ flex: 1, border: "1px solid #7F9DB9", fontSize: 12, padding: "3px 6px", outline: "none" }}
+              className="xp-input" style={{ flex: 1, fontSize: 12 }}
             />
-            <button onClick={send} style={{ padding: "3px 14px", background: "linear-gradient(180deg,#FFF,#E4E2D0)", border: "1px solid #7F9DB9", borderRadius: 3, cursor: "pointer", fontWeight: "bold" }}>
+            <button onClick={send} className="xp-button" style={{ fontWeight: "bold" }}>
               Send
             </button>
           </div>
@@ -223,17 +218,12 @@ export default function WindowsMessenger(_: { id: string }) {
               key={c.id}
               onClick={() => setChatWith(c)}
               onDoubleClick={() => setChatWith(c)}
-              style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 8px", cursor: "pointer", borderBottom: "1px solid #F0F0F0", userSelect: "none" }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "#EFF4FC"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+              className="xp-contact-row"
             >
               <img src={assetUrl(`assets/xpui/user/${c.avatar}`)} alt="" style={{ width: 28, height: 28, borderRadius: 3, border: "1px solid #B0C4DE" }} />
               <div style={{ flex: 1, overflow: "hidden" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                  <span style={{
-                    width: 7, height: 7, borderRadius: "50%",
-                    background: c.status === "online" ? "#2EB42E" : c.status === "busy" ? "#D50F25" : c.status === "away" ? "#E8A020" : "#AAA"
-                  }} />
+                  <span className="xp-status-dot" style={{ background: c.status === "online" ? "#2EB42E" : c.status === "busy" ? "#D50F25" : c.status === "away" ? "#E8A020" : "#AAA" }} />
                   <span style={{ fontWeight: "bold", color: "#000" }}>{c.name}</span>
                 </div>
                 <div style={{ fontSize: 10, color: "#666", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>

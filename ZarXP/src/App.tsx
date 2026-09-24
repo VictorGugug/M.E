@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useWindowStore } from "./store/windowStore";
 import { useUserStore } from "./store/userStore";
 import { useLangStore } from "./store/langStore";
+import { useFileSystemStore } from "./store/fileSystemStore";
 import Desktop from "./components/shell/Desktop";
 import { playSound } from "./utils/sound";
 import { assetUrl } from "./utils/assets"
@@ -20,8 +21,13 @@ export default function App() {
   const { setBootPhase } = useWindowStore();
   const { userName, userPicture } = useUserStore();
   const t = useLangStore((s) => s.t);
+  const hydrateFileSystem = useFileSystemStore((s) => s.hydrate);
   const [step, setStep] = useState<Step>(initialStep);
   const [power, setPower] = useState<null | "shutting-down" | "standby" | "off">(null);
+
+  useEffect(() => {
+    void hydrateFileSystem();
+  }, [hydrateFileSystem]);
 
   useEffect(() => {
     if (step !== "loading") return;

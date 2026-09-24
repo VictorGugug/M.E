@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect, lazy, Suspense } from "react";
 import { useWindowStore } from "../../store/windowStore";
 import { useLangStore } from "../../store/langStore";
+import { useSettingsStore } from "../../store/settingsStore";
+import { useFileSystemStore } from "../../store/fileSystemStore";
+import { getTrashItems } from "../../store/fileSystem";
 import type { AppId } from "../../types";
 import Taskbar from "./Taskbar";
 import StartMenu from "./StartMenu";
@@ -34,6 +37,7 @@ const Explorer = lazy(() => import("../apps/Explorer"));
 const MyComputer = lazy(() => import("../apps/MyComputer"));
 const MyDocuments = lazy(() => import("../apps/MyDocuments"));
 const RecycleBin = lazy(() => import("../apps/RecycleBin"));
+const FileViewer = lazy(() => import("../apps/FileViewer"));
 const Solitaire = lazy(() => import("../games/Solitaire"));
 const Minesweeper = lazy(() => import("../games/Minesweeper"));
 
@@ -70,6 +74,7 @@ const APP_COMPONENTS: Record<string, React.FC<{ id: string }>> = {
   "user-accounts": UserAccounts,
   "regional-options": RegionalOptions,
   "recycle-bin": RecycleBin,
+  "file-viewer": FileViewer,
   "solitaire": Solitaire,
   "minesweeper": Minesweeper,
 };
@@ -79,13 +84,20 @@ export default function Desktop() {
   const desktopRef = useRef<HTMLDivElement>(null);
   const [ctxMenu, setCtxMenu] = useState<{ x: number; y: number } | null>(null);
   const [activeSub, setActiveSub] = useState<string | null>(null);
+  const [screensaverActive, setScreensaverActive] = useState(false);
+  const screenSaverTimeout = useRef<number | null>(null);
   const t = useLangStore((s) => s.t);
+  const settings = useSettingsStore((s) => s.settings);
+  const fileSystem = useFileSystemStore((state) => state.fileSystem);
+  const hydrated = useFileSystemStore((state) => state.hydrated);
+  const trashHasItems = getTrashItems(fileSystem).length > 0;
+  const desktopFontSize = settings.fontSize === "extra-large" ? 14 : settings.fontSize === "large" ? 13 : 12;
 
   const desktopIcons = [
     { id: "my-computer" as AppId, label: t("myComputer"), icon: "MyComputer.png" },
     { id: "my-documents" as AppId, label: t("myDocuments"), icon: "MyDocuments.png" },
     { id: "network-places" as AppId, label: t("myNetworkPlaces"), icon: "MyNetworkPlaces.png" },
-    { id: "recycle-bin" as AppId, label: t("recycleBin"), icon: "RecycleBinempty.png" },
+    { id: "recycle-bin" as AppId, label: t("recycleBin"), icon: trashHasItems ? "RecycleBinfull.png" : "RecycleBinempty.png" },
     { id: "internet-explorer" as AppId, label: t("internetExplorer"), icon: "InternetExplorer6.png" },
   ];
 
@@ -101,6 +113,39 @@ export default function Desktop() {
     window.addEventListener("click", handler);
     return () => window.removeEventListener("click", handler);
   }, [ctxMenu]);
+
+  useEffect(() => {
+    if (settings.screenSaver !== "windows-xp") {
+      setScreensaverActive(false);
+      return;
+    }
+    const events = ["mousemove", "mousedown", "keydown", "touchstart"];
+    const resetTimer = () => {
+      if (screenSaverTimeout.current !== null) window.clearTimeout(screenSaverTimeout.current);
+      screenSaverTimeout.current = window.setTimeout(() => setScreensaverActive(true), settings.screenSaverMinutes * 60_000);
+    };
+    events.forEach((event) => window.addEventListener(event, resetTimer));
+    resetTimer();
+    return () => {
+      events.forEach((event) => window.removeEventListener(event, resetTimer));
+      if (screenSaverTimeout.current !== null) window.clearTimeout(screenSaverTimeout.current);
+    };
+  }, [settings.screenSaver, settings.screenSaverMinutes]);
+
+  useEffect(() => {
+    if (!screensaverActive) return;
+    const wake = () => setScreensaverActive(false);
+    window.addEventListener("mousemove", wake, { once: true });
+    window.addEventListener("mousedown", wake, { once: true });
+    window.addEventListener("keydown", wake, { once: true });
+    window.addEventListener("touchstart", wake, { once: true });
+    return () => {
+      window.removeEventListener("mousemove", wake);
+      window.removeEventListener("mousedown", wake);
+      window.removeEventListener("keydown", wake);
+      window.removeEventListener("touchstart", wake);
+    };
+  }, [screensaverActive]);
 
   const handleDesktopClick = () => {
     setCtxMenu(null);
@@ -122,18 +167,24 @@ export default function Desktop() {
     setCtxMenu(null);
   };
 
+  if (!hydrated) {
+    return <div className="desktop" style={{ position: "fixed", inset: 0, display: "grid", placeItems: "center", background: "#3A6EA5", color: "#FFF", fontFamily: "Tahoma, sans-serif" }}>Loading...</div>;
+  }
+
   return (
     <div 
-      className="desktop" 
+      className={`desktop theme-${settings.colorScheme} font-${settings.fontSize}`}
       ref={desktopRef} 
       onClick={handleDesktopClick} 
       onContextMenu={handleContextMenu}
       style={{
         position: "fixed",
         inset: 0,
-        backgroundImage: `url(${assetUrl("assets/wallpapers/bliss.webp")})`,
+        backgroundImage: settings.wallpaper === "bliss" ? `url(${assetUrl("assets/wallpapers/bliss.webp")})` : "none",
+        backgroundColor: settings.wallpaper === "none" ? "#3A6EA5" : "#4A7EBB",
         backgroundSize: "cover",
         backgroundPosition: "center",
+        fontSize: desktopFontSize,
         zIndex: 1,
         overflow: "hidden"
       }}
@@ -150,63 +201,49 @@ export default function Desktop() {
       {ctxMenu && (
         <div
           className="desktop-context-menu"
-          style={{
-            left: ctxMenu.x,
-            top: ctxMenu.y,
-            position: "absolute",
-            zIndex: 99999,
-            background: "#FFF",
-            border: "1px solid #ACA899",
-            padding: "2px",
-            boxShadow: "2px 2px 4px rgba(0,0,0,0.3)",
-            fontSize: 11,
-            fontFamily: "Tahoma, sans-serif",
-            minWidth: 160
-          }}
+          style={{ left: ctxMenu.x, top: ctxMenu.y }}
           onClick={(e) => e.stopPropagation()}
         >
           <div
-            className="context-item"
+            className="context-item xp-context-with-submenu"
             onMouseEnter={() => setActiveSub("arrange")}
-            style={{ padding: "3px 18px 3px 22px", position: "relative", cursor: "pointer", display: "flex", justifyContent: "space-between" }}
           >
             <span>{t("arrangeIconsBy")}</span>
-            <span style={{ fontSize: 9 }}>&#9658;</span>
+            <span className="xp-context-arrow">&#9658;</span>
             {activeSub === "arrange" && (
-              <div style={{ position: "absolute", left: "100%", top: -2, background: "#FFF", border: "1px solid #ACA899", padding: 2, minWidth: 130, boxShadow: "2px 2px 4px rgba(0,0,0,0.3)" }}>
-                <div className="context-item" style={{ padding: "3px 12px", cursor: "pointer" }} onClick={() => setCtxMenu(null)}>{t("byName")}</div>
-                <div className="context-item" style={{ padding: "3px 12px", cursor: "pointer" }} onClick={() => setCtxMenu(null)}>{t("bySize")}</div>
-                <div className="context-item" style={{ padding: "3px 12px", cursor: "pointer" }} onClick={() => setCtxMenu(null)}>{t("byType")}</div>
-                <div className="context-item" style={{ padding: "3px 12px", cursor: "pointer" }} onClick={() => setCtxMenu(null)}>{t("byModified")}</div>
-                <div className="context-separator" style={{ height: 1, background: "#ACA899", margin: "2px 0" }} />
-                <div className="context-item" style={{ padding: "3px 12px", cursor: "pointer" }} onClick={() => setCtxMenu(null)}>{t("autoArrange")}</div>
-                <div className="context-item" style={{ padding: "3px 12px", cursor: "pointer" }} onClick={() => setCtxMenu(null)}>{t("alignToGrid")}</div>
+              <div className="xp-context-submenu">
+                <div className="context-item xp-context-shortcut" onClick={() => setCtxMenu(null)}>{t("byName")}</div>
+                <div className="context-item xp-context-shortcut" onClick={() => setCtxMenu(null)}>{t("bySize")}</div>
+                <div className="context-item xp-context-shortcut" onClick={() => setCtxMenu(null)}>{t("byType")}</div>
+                <div className="context-item xp-context-shortcut" onClick={() => setCtxMenu(null)}>{t("byModified")}</div>
+                <div className="context-separator" />
+                <div className="context-item xp-context-shortcut" onClick={() => setCtxMenu(null)}>{t("autoArrange")}</div>
+                <div className="context-item xp-context-shortcut" onClick={() => setCtxMenu(null)}>{t("alignToGrid")}</div>
               </div>
             )}
           </div>
-          <div className="context-item" style={{ padding: "3px 18px 3px 22px", cursor: "pointer" }} onMouseEnter={() => setActiveSub(null)} onClick={() => setCtxMenu(null)}>{t("refresh")}</div>
-          <div className="context-separator" style={{ height: 1, background: "#ACA899", margin: "2px 0" }} />
-          <div className="context-item context-disabled" style={{ padding: "3px 18px 3px 22px", color: "#888" }} onMouseEnter={() => setActiveSub(null)}>{t("paste")}</div>
-          <div className="context-item context-disabled" style={{ padding: "3px 18px 3px 22px", color: "#888" }} onMouseEnter={() => setActiveSub(null)}>{t("pasteShortcut")}</div>
-          <div className="context-separator" style={{ height: 1, background: "#ACA899", margin: "2px 0" }} />
+          <div className="context-item xp-context-shortcut" onMouseEnter={() => setActiveSub(null)} onClick={() => setCtxMenu(null)}>{t("refresh")}</div>
+          <div className="context-separator" />
+          <div className="context-item context-disabled xp-context-shortcut" onMouseEnter={() => setActiveSub(null)}>{t("paste")}</div>
+          <div className="context-item context-disabled xp-context-shortcut" onMouseEnter={() => setActiveSub(null)}>{t("pasteShortcut")}</div>
+          <div className="context-separator" />
           <div
-            className="context-item"
+            className="context-item xp-context-with-submenu"
             onMouseEnter={() => setActiveSub("new")}
-            style={{ padding: "3px 18px 3px 22px", position: "relative", cursor: "pointer", display: "flex", justifyContent: "space-between" }}
           >
             <span>{t("new")}</span>
-            <span style={{ fontSize: 9 }}>&#9658;</span>
+            <span className="xp-context-arrow">&#9658;</span>
             {activeSub === "new" && (
-              <div style={{ position: "absolute", left: "100%", top: -2, background: "#FFF", border: "1px solid #ACA899", padding: 2, minWidth: 150, boxShadow: "2px 2px 4px rgba(0,0,0,0.3)" }}>
-                <div className="context-item" style={{ padding: "3px 12px", cursor: "pointer" }} onClick={() => openApp("explorer")}>{t("folder")}</div>
-                <div className="context-item" style={{ padding: "3px 12px", cursor: "pointer" }} onClick={() => openApp("notepad")}>{t("textDocument")}</div>
-                <div className="context-item" style={{ padding: "3px 12px", cursor: "pointer" }} onClick={() => openApp("paint")}>{t("bitmapImage")}</div>
-                <div className="context-item" style={{ padding: "3px 12px", cursor: "pointer" }} onClick={() => openApp("wordpad")}>{t("wordpadDocument")}</div>
+              <div className="xp-context-submenu">
+                <div className="context-item xp-context-shortcut" onClick={() => openApp("explorer")}>{t("folder")}</div>
+                <div className="context-item xp-context-shortcut" onClick={() => openApp("notepad")}>{t("textDocument")}</div>
+                <div className="context-item xp-context-shortcut" onClick={() => openApp("paint")}>{t("bitmapImage")}</div>
+                <div className="context-item xp-context-shortcut" onClick={() => openApp("wordpad")}>{t("wordpadDocument")}</div>
               </div>
             )}
           </div>
-          <div className="context-separator" style={{ height: 1, background: "#ACA899", margin: "2px 0" }} />
-          <div className="context-item" style={{ padding: "3px 18px 3px 22px", cursor: "pointer", fontWeight: "bold" }} onMouseEnter={() => setActiveSub(null)} onClick={() => openApp("display-properties")}>{t("properties")}</div>
+          <div className="context-separator" />
+          <div className="context-item xp-context-bold xp-context-shortcut" onMouseEnter={() => setActiveSub(null)} onClick={() => openApp("display-properties")}>{t("properties")}</div>
         </div>
       )}
 
@@ -223,6 +260,7 @@ export default function Desktop() {
 
       {startMenuOpen && <StartMenu onOpen={openApp} />}
       <Taskbar onOpen={openApp} />
+      {screensaverActive && <div onClick={() => setScreensaverActive(false)} style={{ position: "fixed", inset: 0, zIndex: 10000, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 18, background: "#000", color: "#FFF", fontFamily: "Tahoma, sans-serif", cursor: "pointer" }}><img src={assetUrl("assets/images/xp-logo.png")} alt="" style={{ width: 180 }} /><span>{t("screenSaverActive")}</span></div>}
     </div>
   );
 }

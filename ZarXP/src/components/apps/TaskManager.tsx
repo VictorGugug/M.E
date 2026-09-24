@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useWindowStore } from "../../store/windowStore";
+import { useFileSystemStore } from "../../store/fileSystemStore";
 import { useLangStore } from "../../store/langStore";
 import { useUserStore } from "../../store/userStore";
 import { assetUrl } from "../../utils/assets";
@@ -42,6 +43,8 @@ export default function TaskManager(_: { id: string }) {
   const [cpuCurrent, setCpuCurrent] = useState(4);
 
   const windows = useWindowStore((s) => s.windows);
+  const fileSystem = useFileSystemStore((s) => s.fileSystem);
+  const windowTitle = (window: typeof windows[0]) => window.resourceId ? fileSystem[window.resourceId]?.name ?? window.title : window.title;
   const closeWindow = useWindowStore((s) => s.closeWindow);
   const focusWindow = useWindowStore((s) => s.focusWindow);
   const openWindow = useWindowStore((s) => s.openWindow);
@@ -135,25 +138,13 @@ export default function TaskManager(_: { id: string }) {
   };
 
   return (
-    <div style={{ width: "100%", height: "100%", background: "#ECE9D8", fontFamily: "Tahoma, sans-serif", fontSize: 11, display: "flex", flexDirection: "column", userSelect: "none", overflow: "hidden" }}>
-      <div style={{ display: "flex", padding: "4px 6px 0", gap: 2, background: "#ECE9D8", borderBottom: "1px solid #ACA899" }}>
+    <div className="xp-app-surface">
+      <div className="xp-tabbar">
         {(["Applications", "Processes", "Performance", "Networking", "Users"] as Tab[]).map((tabName) => (
           <button
             key={tabName}
             onClick={() => setTab(tabName)}
-            style={{
-              padding: "3px 10px",
-              fontSize: 11,
-              fontFamily: "Tahoma, sans-serif",
-              border: "1px solid #ACA899",
-              borderBottom: tab === tabName ? "1px solid #ECE9D8" : "1px solid #ACA899",
-              background: tab === tabName ? "#ECE9D8" : "#E0DCC8",
-              marginBottom: tab === tabName ? -1 : 0,
-              borderRadius: "3px 3px 0 0",
-              cursor: "pointer",
-              fontWeight: tab === tabName ? "bold" : "normal",
-              zIndex: tab === tabName ? 2 : 1,
-            }}
+            className={`xp-tab ${tab === tabName ? "active" : ""}`}
           >
             {tabName === "Applications" ? t("applications") :
              tabName === "Processes" ? t("processes") :
@@ -164,13 +155,13 @@ export default function TaskManager(_: { id: string }) {
         ))}
       </div>
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", padding: 8, overflow: "hidden" }}>
+      <div className="xp-tabpanel" style={{ padding: 8, overflow: "hidden" }}>
         {tab === "Applications" && (
           <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8, overflow: "hidden" }}>
-            <div style={{ flex: 1, background: "#FFF", border: "1px solid #7F9DB9", overflowY: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
+            <div className="xp-scroll-panel" style={{ flex: 1 }}>
+              <table className="xp-data-table">
                 <thead>
-                  <tr style={{ background: "#ECE9D8", borderBottom: "1px solid #ACA899", textAlign: "left" }}>
+                  <tr>
                     <th style={{ padding: "3px 6px", borderRight: "1px solid #ACA899", width: "70%" }}>{t("task")}</th>
                     <th style={{ padding: "3px 6px" }}>{t("status")}</th>
                   </tr>
@@ -181,15 +172,11 @@ export default function TaskManager(_: { id: string }) {
                       key={w.id}
                       onClick={() => setSelectedTask(w.id)}
                       onDoubleClick={() => focusWindow(w.id)}
-                      style={{
-                        background: selectedTask === w.id ? "#0A246A" : "transparent",
-                        color: selectedTask === w.id ? "#FFF" : "#000",
-                        cursor: "pointer"
-                      }}
+                      className={selectedTask === w.id ? "selected" : ""}
                     >
                       <td style={{ padding: "3px 6px", display: "flex", alignItems: "center", gap: 6 }}>
                         {w.icon && <img src={assetUrl(`assets/icons/${w.icon}`)} alt="" style={{ width: 16, height: 16 }} />}
-                        <span>{w.title}</span>
+                         <span>{windowTitle(w)}</span>
                       </td>
                       <td style={{ padding: "3px 6px" }}>{t("running")}</td>
                     </tr>
@@ -201,20 +188,20 @@ export default function TaskManager(_: { id: string }) {
               <button
                 disabled={!selectedTask}
                 onClick={endSelectedTask}
-                style={{ padding: "3px 12px", background: "linear-gradient(180deg,#FFF,#ECE9D8)", border: "1px solid #7F9DB9", borderRadius: 3, cursor: selectedTask ? "pointer" : "default" }}
+                className="xp-button"
               >
                 {t("endTask")}
               </button>
               <button
                 disabled={!selectedTask}
                 onClick={switchSelectedTask}
-                style={{ padding: "3px 12px", background: "linear-gradient(180deg,#FFF,#ECE9D8)", border: "1px solid #7F9DB9", borderRadius: 3, cursor: selectedTask ? "pointer" : "default" }}
+                className="xp-button"
               >
                 {t("switchTo")}
               </button>
               <button
                 onClick={() => openWindow("run")}
-                style={{ padding: "3px 12px", background: "linear-gradient(180deg,#FFF,#ECE9D8)", border: "1px solid #7F9DB9", borderRadius: 3, cursor: "pointer" }}
+                className="xp-button"
               >
                 {t("newTask")}
               </button>
@@ -224,12 +211,12 @@ export default function TaskManager(_: { id: string }) {
 
         {tab === "Processes" && (
           <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8, overflow: "hidden" }}>
-            <div style={{ flex: 1, background: "#FFF", border: "1px solid #7F9DB9", overflowY: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
+            <div className="xp-scroll-panel" style={{ flex: 1 }}>
+              <table className="xp-data-table">
                 <thead>
-                  <tr style={{ background: "#ECE9D8", borderBottom: "1px solid #ACA899", textAlign: "left" }}>
+                  <tr>
                     <th style={{ padding: "3px 6px", borderRight: "1px solid #ACA899" }}>{t("imageName")}</th>
-                    <th style={{ padding: "3px 6px", borderRight: "1px solid #ACA899" }}>User Name</th>
+                    <th style={{ padding: "3px 6px", borderRight: "1px solid #ACA899" }}>{t("userName")}</th>
                     <th style={{ padding: "3px 6px", borderRight: "1px solid #ACA899", textAlign: "right" }}>{t("cpu")}</th>
                     <th style={{ padding: "3px 6px", textAlign: "right" }}>{t("memUsage")}</th>
                   </tr>
@@ -239,11 +226,7 @@ export default function TaskManager(_: { id: string }) {
                     <tr
                       key={p.name + idx}
                       onClick={() => setSelectedProc(p.name)}
-                      style={{
-                        background: selectedProc === p.name ? "#0A246A" : "transparent",
-                        color: selectedProc === p.name ? "#FFF" : "#000",
-                        cursor: "pointer"
-                      }}
+                      className={selectedProc === p.name ? "selected" : ""}
                     >
                       <td style={{ padding: "2px 6px" }}>{p.name}</td>
                       <td style={{ padding: "2px 6px" }}>{p.user}</td>
@@ -256,12 +239,12 @@ export default function TaskManager(_: { id: string }) {
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <label style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11 }}>
-                <input type="checkbox" defaultChecked />
-                Show processes from all users
+                <input className="xp-native-checkbox" type="checkbox" defaultChecked />
+                 {t("showAllUsers")}
               </label>
               <button
                 onClick={endSelectedProc}
-                style={{ padding: "3px 14px", background: "linear-gradient(180deg,#FFF,#ECE9D8)", border: "1px solid #7F9DB9", borderRadius: 3, cursor: "pointer" }}
+                className="xp-button"
               >
                 {t("endProcess")}
               </button>
@@ -272,76 +255,76 @@ export default function TaskManager(_: { id: string }) {
         {tab === "Performance" && (
           <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8, overflowY: "auto" }}>
             <div style={{ display: "grid", gridTemplateColumns: "100px 1fr", gap: 10 }}>
-              <div style={{ border: "1px solid #ACA899", padding: 6, background: "#ECE9D8" }}>
+              <div className="xp-group-box">
                 <div style={{ fontWeight: "bold", fontSize: 10, marginBottom: 4 }}>{t("cpuUsage")}</div>
                 <div style={{ height: 60, background: "#000", display: "flex", alignItems: "flex-end", justifyContent: "center", padding: 2 }}>
                   <div style={{ width: 36, height: `${cpuCurrent}%`, background: "linear-gradient(to top,#00CC00,#00FF00)", transition: "height 0.3s" }} />
                 </div>
                 <div style={{ textAlign: "center", fontWeight: "bold", marginTop: 4, fontSize: 12, color: "#006600" }}>{cpuCurrent}%</div>
               </div>
-              <div style={{ border: "1px solid #ACA899", padding: 6, background: "#ECE9D8" }}>
+              <div className="xp-group-box">
                 <div style={{ fontWeight: "bold", fontSize: 10, marginBottom: 4 }}>{t("cpuUsageHistory")}</div>
                 <canvas ref={canvasCpuRef} width={280} height={76} style={{ width: "100%", height: 76, display: "block" }} />
               </div>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "100px 1fr", gap: 10 }}>
-              <div style={{ border: "1px solid #ACA899", padding: 6, background: "#ECE9D8" }}>
+              <div className="xp-group-box">
                 <div style={{ fontWeight: "bold", fontSize: 10, marginBottom: 4 }}>{t("memUsageHistory")}</div>
                 <div style={{ height: 60, background: "#000", display: "flex", alignItems: "flex-end", justifyContent: "center", padding: 2 }}>
                   <div style={{ width: 36, height: "35%", background: "linear-gradient(to top,#00CC00,#00FF00)" }} />
                 </div>
                 <div style={{ textAlign: "center", fontWeight: "bold", marginTop: 4, fontSize: 11 }}>184 MB</div>
               </div>
-              <div style={{ border: "1px solid #ACA899", padding: 6, background: "#ECE9D8" }}>
-                <div style={{ fontWeight: "bold", fontSize: 10, marginBottom: 4 }}>Page File Usage History</div>
+              <div className="xp-group-box">
+                <div style={{ fontWeight: "bold", fontSize: 10, marginBottom: 4 }}>{t("pageFileUsageHistory")}</div>
                 <canvas ref={canvasMemRef} width={280} height={76} style={{ width: "100%", height: 76, display: "block" }} />
               </div>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, fontSize: 10 }}>
-              <div style={{ border: "1px solid #ACA899", padding: 6 }}>
+              <div className="xp-group-box">
                 <div style={{ fontWeight: "bold", color: "#003399", marginBottom: 2 }}>{t("totals")}</div>
                 <div style={{ display: "flex", justifyContent: "space-between" }}><span>{t("handles")}</span><span>8,420</span></div>
                 <div style={{ display: "flex", justifyContent: "space-between" }}><span>{t("threads")}</span><span>412</span></div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}><span>Processes</span><span>{processes.length}</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}><span>{t("processesLabel")}</span><span>{processes.length}</span></div>
               </div>
-              <div style={{ border: "1px solid #ACA899", padding: 6 }}>
+              <div className="xp-group-box">
                 <div style={{ fontWeight: "bold", color: "#003399", marginBottom: 2 }}>{t("physicalMemory")}</div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}><span>Total</span><span>523,764</span></div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}><span>Available</span><span>284,520</span></div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}><span>System Cache</span><span>198,412</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}><span>{t("total")}</span><span>523,764</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}><span>{t("available")}</span><span>284,520</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}><span>{t("systemCache")}</span><span>198,412</span></div>
               </div>
             </div>
           </div>
         )}
 
         {tab === "Networking" && (
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8, background: "#FFF", border: "1px solid #7F9DB9", padding: 10 }}>
-            <div style={{ fontWeight: "bold", color: "#003399" }}>Local Area Connection</div>
+          <div className="xp-group-box" style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8, background: "#FFF" }}>
+            <div style={{ fontWeight: "bold", color: "#003399" }}>{t("localAreaConnection")}</div>
             <div style={{ height: 100, background: "#000", border: "1px solid #003300", position: "relative" }}>
-              <div style={{ position: "absolute", bottom: 4, left: 8, color: "#00FF00", fontSize: 10 }}>100 Mbps (1.2% Network Utilization)</div>
+               <div style={{ position: "absolute", bottom: 4, left: 8, color: "#00FF00", fontSize: 10 }}>100 Mbps (1.2% {t("networkUtilization")})</div>
             </div>
           </div>
         )}
 
         {tab === "Users" && (
-          <div style={{ flex: 1, background: "#FFF", border: "1px solid #7F9DB9", overflowY: "auto" }}>
+          <div className="xp-scroll-panel" style={{ flex: 1 }}>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
               <thead>
                 <tr style={{ background: "#ECE9D8", borderBottom: "1px solid #ACA899", textAlign: "left" }}>
-                  <th style={{ padding: "3px 6px" }}>User</th>
+                  <th style={{ padding: "3px 6px" }}>{t("user")}</th>
                   <th style={{ padding: "3px 6px" }}>ID</th>
-                  <th style={{ padding: "3px 6px" }}>Status</th>
-                  <th style={{ padding: "3px 6px" }}>Client Name</th>
+                  <th style={{ padding: "3px 6px" }}>{t("status")}</th>
+                  <th style={{ padding: "3px 6px" }}>{t("clientName")}</th>
                 </tr>
               </thead>
               <tbody>
-                <tr style={{ background: "#0A246A", color: "#FFF" }}>
+                <tr className="selected">
                   <td style={{ padding: "3px 6px" }}>{userName}</td>
                   <td style={{ padding: "3px 6px" }}>0</td>
-                  <td style={{ padding: "3px 6px" }}>Active</td>
-                  <td style={{ padding: "3px 6px" }}>Console</td>
+                  <td style={{ padding: "3px 6px" }}>{t("active")}</td>
+                  <td style={{ padding: "3px 6px" }}>{t("console")}</td>
                 </tr>
               </tbody>
             </table>
@@ -349,10 +332,10 @@ export default function TaskManager(_: { id: string }) {
         )}
       </div>
 
-      <div style={{ display: "flex", borderTop: "1px solid #ACA899", background: "#ECE9D8", padding: "2px 8px", fontSize: 10, color: "#333", gap: 16 }}>
-        <span>Processes: {processes.length}</span>
-        <span>CPU Usage: {cpuCurrent}%</span>
-        <span>Commit Charge: 184M / 1258M</span>
+      <div className="xp-status-strip" style={{ justifyContent: "flex-start", gap: 16 }}>
+         <span>{t("processesStatus")}: {processes.length}</span>
+         <span>{t("cpuUsageStatus")}: {cpuCurrent}%</span>
+         <span>{t("commitChargeStatus")}: 184M / 1258M</span>
       </div>
     </div>
   );

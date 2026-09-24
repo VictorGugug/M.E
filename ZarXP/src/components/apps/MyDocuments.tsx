@@ -1,47 +1,107 @@
-import { assetUrl } from "../../utils/assets"
-export default function MyDocuments(_: { id: string }) {
-  const items = [
-    { name: "My Music", type: "File Folder", icon: "FolderClosed.png", date: "5/12/2006 3:14 PM" },
-    { name: "My Pictures", type: "File Folder", icon: "FolderClosed.png", date: "5/12/2006 3:14 PM" },
-    { name: "My Videos", type: "File Folder", icon: "FolderClosed.png", date: "5/12/2006 3:14 PM" },
-    { name: "School Report.doc", type: "Microsoft Word Document", icon: "DOC.png", date: "6/20/2006 10:32 AM" },
-    { name: "Budget Spreadsheet.xls", type: "Microsoft Excel Worksheet", icon: "GenericDocument.png", date: "6/18/2006 4:15 PM" },
-    { name: "Notes.txt", type: "Text Document", icon: "TXT.png", date: "6/25/2006 9:00 AM" },
-    { name: "Family Photo.jpg", type: "JPEG Image", icon: "JPG.png", date: "6/10/2006 2:45 PM" },
-    { name: "Resume.doc", type: "Microsoft Word Document", icon: "DOC.png", date: "6/22/2006 11:20 AM" },
-    { name: "Screenshot.png", type: "PNG Image", icon: "Bitmap.png", date: "6/28/2006 8:05 PM" },
-  ];
+import { useState } from "react";
+import { getChildren, getFileAppId } from "../../store/fileSystem";
+import { useFileSystemStore } from "../../store/fileSystemStore";
+import { useLangStore } from "../../store/langStore";
+import { useWindowStore } from "../../store/windowStore";
+import { assetUrl } from "../../utils/assets";
+
+const OL = assetUrl("assets/xpui");
+const IC = assetUrl("assets/icons");
+
+function iconFor(name: string, kind: "folder" | "file"): string {
+  if (kind === "folder") return `${OL}/icon/folder/closed.png`;
+  const extension = name.split(".").pop()?.toLowerCase();
+  if (extension === "txt") return `${IC}/TXT.png`;
+  if (extension === "doc") return `${IC}/DOC.png`;
+  if (extension === "xls") return `${IC}/GenericDocument.png`;
+  if (extension === "jpg" || extension === "jpeg") return `${IC}/JPG.png`;
+  if (extension === "png") return `${IC}/Bitmap.png`;
+  return `${IC}/GenericDocument.png`;
+}
+
+export default function MyDocuments({ id }: { id: string }) {
+  const fileSystem = useFileSystemStore((state) => state.fileSystem);
+  const deleteItem = useFileSystemStore((state) => state.deleteItem);
+  const openWindow = useWindowStore((state) => state.openWindow);
+  const t = useLangStore((state) => state.t);
+  const appId = useWindowStore((state) => state.windows.find((window) => window.id === id)?.appId);
+  const folderId = appId === "my-pictures" ? "pictures" : appId === "my-music" ? "music" : appId === "my-videos" ? "videos" : "documents";
+  const folderName = folderId === "pictures" ? t("myPictures") : folderId === "music" ? t("myMusic") : folderId === "videos" ? t("myVideos") : t("myDocuments");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const items = getChildren(fileSystem, folderId);
+  const selected = items.find((item) => item.id === selectedId);
+
+  const handleDelete = () => {
+    if (!selected) return;
+    deleteItem(selected.id);
+    setSelectedId(null);
+  };
 
   return (
-    <div style={{ width: "100%", height: "100%", background: "#FFF", fontFamily: "Tahoma, sans-serif", fontSize: 11, display: "flex", flexDirection: "column", userSelect: "none" }}>
-      <div style={{ padding: "4px 8px", background: "#ECE9D8", borderBottom: "1px solid #ACA899", display: "flex", alignItems: "center", gap: 4, fontWeight: "bold" }}>
-        <img src={assetUrl("assets/icons/FolderOpened.png")} alt="" style={{ width: 16, height: 16 }} />
-        <span>My Documents</span>
+    <div className="xp-app-surface">
+      <div className="xp-explorer-head">
+        <div className="xp-menubar">
+          {[t("file"), t("edit"), t("view"), t("favorites"), t("tools"), t("help")].map((item) => <button className="xp-toolbar-button" key={item}>{item}</button>)}
+          <img src={`${OL}/logo/flag.png`} alt="" style={{ width: 18, height: 18, marginLeft: "auto" }} />
+        </div>
+        <div className="xp-toolbar">
+          <button className="xp-toolbar-button" disabled><img src={`${OL}/interface/explorer/back.png`} alt="" style={{ height: 22 }} />{t("back")}</button>
+          <button className="xp-toolbar-button" disabled><img src={`${OL}/interface/explorer/forward.png`} alt="" style={{ height: 22 }} /></button>
+          <button className="xp-toolbar-button" onClick={() => openWindow("search")}><img src={`${OL}/interface/explorer/search.png`} alt="" style={{ height: 22 }} />{t("search")}</button>
+          <button className="xp-toolbar-button" onClick={() => openWindow("explorer")}><img src={`${OL}/interface/explorer/folders.png`} alt="" style={{ height: 22 }} />{t("folders")}</button>
+          <div className="xp-toolbar-separator" />
+          <button className="xp-toolbar-button"><img src={`${OL}/interface/explorer/views.png`} alt="" style={{ height: 22 }} />{t("views")}</button>
+        </div>
+        <div className="xp-address">
+          <span className="addr-label">{t("address")}</span>
+          <div className="xp-input" style={{ display: "flex", alignItems: "center", gap: 5, flex: 1, minHeight: 22 }}><img src={`${IC}/FolderOpened.png`} alt="" style={{ width: 14, height: 14 }} />{folderName}</div>
+          <button className="xp-toolbar-button"><img src={`${OL}/interface/explorer/go.png`} alt="" style={{ height: 18 }} />{t("go")}</button>
+        </div>
       </div>
-      <div style={{ flex: 1, overflow: "auto" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr style={{ background: "#ECE9D8" }}>
-              <th style={thStyle}>Name</th>
-              <th style={thStyle}>Type</th>
-              <th style={thStyle}>Date Modified</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((item) => (
-              <tr key={item.name}>
-                <td style={tdStyle}><img src={assetUrl(`assets/icons/${item.icon}`)} alt="" style={{ width: 16, height: 16, marginRight: 4, verticalAlign: "middle" }} />{item.name}</td>
-                <td style={tdStyle}>{item.type}</td>
-                <td style={tdStyle}>{item.date}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="xp-explorer-middle">
+        <div className="xp-side-panel">
+          <div className="xp-task-pane">
+            <div className="xp-task-pane-title">{t("systemTasks")}</div>
+            <div className="xp-task-pane-body">
+              <button className="xp-task-link" onClick={() => openWindow("system-properties")}><img src={`${IC}/Information.png`} alt="" />{t("viewSystemInformation")}</button>
+              <button className="xp-task-link" onClick={() => openWindow("settings")}><img src={`${OL}/interface/programs/defaults.png`} alt="" />{t("addOrRemovePrograms")}</button>
+              <button className="xp-task-link" onClick={() => openWindow("display-properties")}><img src={`${IC}/DisplayProperties.png`} alt="" />{t("changeASetting")}</button>
+            </div>
+          </div>
+          <div className="xp-task-pane">
+            <div className="xp-task-pane-title">{t("otherPlaces")}</div>
+            <div className="xp-task-pane-body">
+              <button className="xp-task-link" onClick={() => openWindow("my-computer")}><img src={`${OL}/icon/computer.png`} alt="" />{t("myComputer")}</button>
+              <button className="xp-task-link" onClick={() => openWindow("my-documents")}><img src={`${OL}/icon/folder/documents.png`} alt="" />{t("myDocuments")}</button>
+              <button className="xp-task-link" onClick={() => openWindow("my-pictures")}><img src={`${OL}/icon/folder/pictures.png`} alt="" />{t("myPictures")}</button>
+              <button className="xp-task-link" onClick={() => openWindow("my-music")}><img src={`${OL}/icon/folder/music.png`} alt="" />{t("myMusic")}</button>
+            </div>
+          </div>
+          <div className="xp-task-pane">
+            <div className="xp-task-pane-title">{t("details")}</div>
+            <div className="xp-task-pane-body"><strong>{folderName}</strong><br /><span className="xp-small">{t("systemFolder")}</span></div>
+          </div>
+        </div>
+        <div className="xp-content-panel">
+          <div className="xp-folder-body">
+            <div className="xp-folder-group">
+              <div className="xp-folder-group-title">{t("filesStoredIn")} {folderName}</div>
+              <div className="xp-folder-grid">
+                {items.length === 0 ? <span className="xp-small">{t("folderEmpty")}</span> : items.map((item) => (
+                   <button key={item.id} className={`xp-folder-tile ${selectedId === item.id ? "selected" : ""}`} onClick={() => setSelectedId(item.id)} onDoubleClick={() => item.kind === "file" && openWindow(getFileAppId(item), item.id)}>
+                    <img src={iconFor(item.name, item.kind)} alt="" />
+                    <span title={item.name}>{item.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="xp-status-strip">
+            <button className="xp-button" onClick={handleDelete} disabled={!selected}>{t("delete")}</button>
+            <span>{items.length} {t("objects")}</span>
+          </div>
+        </div>
       </div>
-      <div style={{ borderTop: "1px solid #ACA899", padding: "3px 8px", background: "#ECE9D8", fontSize: 10, color: "#666" }}>{items.length} object(s)</div>
     </div>
   );
 }
-
-const thStyle: React.CSSProperties = { borderBottom: "1px solid #808080", padding: "2px 4px", textAlign: "left", fontSize: 11, fontWeight: "bold" };
-const tdStyle: React.CSSProperties = { padding: "2px 4px", fontSize: 11, borderBottom: "1px solid #D4D0C8" };
