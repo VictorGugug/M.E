@@ -4,6 +4,9 @@ import { useFileSystemStore } from "../../store/fileSystemStore";
 import { useLangStore, type StringKey } from "../../store/langStore";
 import { useWindowStore } from "../../store/windowStore";
 import { assetUrl } from "../../utils/assets";
+import { playSound, XP_SOUNDS } from "../../utils/sound";
+import MenuBar from "../shell/MenuBar";
+import { cmd, sep } from "../shell/menuModel";
 
 const OL = assetUrl("assets/xpui");
 const IC = assetUrl("assets/icons");
@@ -33,6 +36,7 @@ export default function Explorer({ id }: { id: string }) {
   const fileSystem = useFileSystemStore((state) => state.fileSystem);
   const deleteItem = useFileSystemStore((state) => state.deleteItem);
   const openWindow = useWindowStore((state) => state.openWindow);
+  const closeWindow = useWindowStore((state) => state.closeWindow);
   const t = useLangStore((state) => state.t);
   const resourceId = useWindowStore((state) => state.windows.find((window) => window.id === id)?.resourceId);
   const resourceIsFolder = Boolean(resourceId && fileSystem[resourceId]?.kind === "folder");
@@ -92,16 +96,24 @@ export default function Explorer({ id }: { id: string }) {
   const handleDelete = () => {
     if (!selected) return;
     deleteItem(selected.id);
+    playSound(XP_SOUNDS.recycle);
     setSelectedId(null);
   };
 
   return (
     <div className="xp-app-surface">
       <div className="xp-explorer-head">
-        <div className="xp-menubar">
-          {[t("file"), t("edit"), t("view"), t("favorites"), t("tools"), t("help")].map((item) => <button className="xp-toolbar-button" key={item}>{item}</button>)}
-          <img src={`${OL}/logo/flag.png`} alt="" style={{ width: 18, height: 18, marginLeft: "auto" }} />
-        </div>
+        <MenuBar
+          trailing={<img src={`${OL}/logo/flag.png`} alt="" style={{ width: 18, height: 18 }} />}
+          menus={[
+            { label: `&${t("file")}`, entries: [cmd(t("newFile")), cmd(t("createShortcut")), sep, cmd(t("delete"), handleDelete, { disabled: !selected }), cmd(t("rename")), cmd(t("properties")), sep, cmd(t("closeWindow"), () => closeWindow(id))] },
+            { label: `&${t("edit")}`, entries: [cmd(t("undo")), cmd(t("redo")), sep, cmd(t("cut")), cmd(t("copy")), cmd(t("paste")), sep, cmd(t("selectAll"))] },
+            { label: `&${t("view")}`, entries: [cmd(t("toolbars")), cmd(t("statusBar")), sep, cmd(t("viewTiles")), cmd(t("viewIcons")), cmd(t("viewList")), cmd(t("details")), sep, cmd(t("refresh"))] },
+            { label: `&${t("favorites")}`, entries: [cmd(t("addToFavorites")), cmd(t("organizeFavorites"))] },
+            { label: `&${t("tools")}`, entries: [cmd(t("mapNetworkDrive")), cmd(t("disconnectNetworkDrive")), sep, cmd(t("folderOptions"))] },
+            { label: `&${t("help")}`, entries: [cmd(t("helpAndSupportCenter"), () => openWindow("system-properties")), sep, cmd(t("aboutWindows"))] },
+          ]}
+        />
         <div className="xp-toolbar">
           <button className="xp-toolbar-button" onClick={() => { if (current.parentId && fileSystem[current.parentId]) { setCurrentId(current.parentId); setSelectedId(null); } }} disabled={!current.parentId}><img src={`${OL}/interface/explorer/up.png`} alt="" style={{ height: 22 }} />{t("up")}</button>
           <button className="xp-toolbar-button" onClick={handleDelete} disabled={!selected}><img src={`${IC}/Delete.png`} alt="" style={{ height: 20 }} />{t("delete")}</button>

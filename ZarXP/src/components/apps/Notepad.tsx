@@ -3,13 +3,15 @@ import { useFileSystemStore } from "../../store/fileSystemStore";
 import { isTextFile } from "../../store/fileSystem";
 import { useWindowStore } from "../../store/windowStore";
 import { useLangStore } from "../../store/langStore";
-import { XP_SOUNDS, playSound } from "../../utils/sound";
+import MenuBar from "../shell/MenuBar";
+import { cmd, sep } from "../shell/menuModel";
 
 export default function Notepad({ id }: { id: string }) {
   const resourceId = useWindowStore((state) => state.windows.find((window) => window.id === id)?.resourceId);
   const fileSystem = useFileSystemStore((state) => state.fileSystem);
   const updateFile = useFileSystemStore((state) => state.updateFile);
   const setResource = useWindowStore((state) => state.setResource);
+  const closeWindow = useWindowStore((state) => state.closeWindow);
   const t = useLangStore((state) => state.t);
   const resourceNode = resourceId ? fileSystem[resourceId] : undefined;
   const editable = !resourceNode || isTextFile(resourceNode);
@@ -39,7 +41,6 @@ export default function Notepad({ id }: { id: string }) {
     setLocalFileName("");
     setError("");
     setStatus("Ln 1, Col 1");
-    playSound(XP_SOUNDS.menuCommand, 0.2);
   };
 
   const handleSave = () => {
@@ -55,7 +56,6 @@ export default function Notepad({ id }: { id: string }) {
       anchor.click();
       URL.revokeObjectURL(url);
     }
-    playSound(XP_SOUNDS.menuCommand, 0.2);
   };
 
   const handleOpen = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,7 +67,6 @@ export default function Notepad({ id }: { id: string }) {
     void file.text().then((content) => {
       setText(content);
       updateStatus(content);
-      playSound(XP_SOUNDS.menuCommand, 0.2);
     }).catch(() => {
       setText("");
       setError(t("fileReadError"));
@@ -77,6 +76,31 @@ export default function Notepad({ id }: { id: string }) {
 
   return (
     <div className="xp-app-surface">
+      <MenuBar menus={[
+        { label: `&${t("file")}`, entries: [
+          cmd(t("newFile"), handleNew),
+          cmd(t("openFile"), () => fileRef.current?.click()),
+          cmd(t("saveFile"), handleSave, { disabled: !editable }),
+          cmd(t("saveAs"), () => fileRef.current?.click()),
+          sep,
+          cmd(t("pageSetup")),
+          cmd(t("print"), () => window.print()),
+          sep,
+          cmd(t("exit"), () => closeWindow(id)),
+        ] },
+        { label: `&${t("edit")}`, entries: [
+          cmd(t("undo")), sep,
+          cmd(t("cut")), cmd(t("copy")), cmd(t("paste")), cmd(t("delete")), sep,
+          cmd(t("selectAll")),
+          cmd(t("timeDate")),
+        ] },
+        { label: `&${t("format")}`, entries: [
+          cmd(t("wordWrap"), () => setWordWrap((value) => !value), { checked: wordWrap }),
+          cmd(t("font")),
+        ] },
+        { label: `&${t("view")}`, entries: [cmd(t("statusBar"), undefined, { checked: true })] },
+        { label: `&${t("help")}`, entries: [cmd(t("helpTopics")), sep, cmd(t("aboutNotepad"))] },
+      ]} />
       <div className="xp-toolbar">
         <button className="xp-toolbar-button" onClick={handleNew}>{t("newFile")}</button>
         <button className="xp-toolbar-button" onClick={() => fileRef.current?.click()}>{t("openFile")}</button>

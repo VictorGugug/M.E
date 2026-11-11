@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { useLangStore } from "../../store/langStore";
+import MenuBar from "../shell/MenuBar";
+import { cmd, sep } from "../shell/menuModel";
 
 const numBtn: React.CSSProperties = {
   color: "#000080",
@@ -29,13 +32,6 @@ const memBtn: React.CSSProperties = {
   fontSize: 11,
 };
 
-const menuStyle: React.CSSProperties = {
-  padding: "2px 7px",
-  fontSize: 11,
-  cursor: "pointer",
-  borderRadius: 2,
-};
-
 function B({ style, children, onClick, title }: { style?: React.CSSProperties; children: React.ReactNode; onClick: () => void; title?: string }) {
   return (
     <button style={{ ...numBtn, ...style }} onClick={onClick} title={title}>{children}</button>
@@ -43,6 +39,7 @@ function B({ style, children, onClick, title }: { style?: React.CSSProperties; c
 }
 
 export default function Calculator(_: { id: string }) {
+  const t = useLangStore((s) => s.t);
   const [display, setDisplay] = useState("0.");
   const [prev, setPrev] = useState<number | null>(null);
   const [op, setOp] = useState<string | null>(null);
@@ -117,11 +114,11 @@ export default function Calculator(_: { id: string }) {
 
   return (
     <div style={{ width: "100%", height: "100%", background: "#ECE9D8", display: "flex", flexDirection: "column", fontFamily: "Tahoma, sans-serif", userSelect: "none", padding: 2 }}>
-      <div style={{ display: "flex", gap: 2, padding: "1px 2px 3px", borderBottom: "1px solid #C0BBA1" }}>
-        <span style={menuStyle}>View</span>
-        <span style={menuStyle}>Edit</span>
-        <span style={menuStyle}>Help</span>
-      </div>
+      <MenuBar menus={[
+        { label: `&${t("edit")}`, entries: [cmd(t("copy")), cmd(t("paste"))] },
+        { label: `&${t("view")}`, entries: [cmd(t("standard"), undefined, { checked: true }), cmd(t("scientific")), cmd(t("digitGrouping"))] },
+        { label: `&${t("help")}`, entries: [cmd(t("helpTopics")), sep, cmd(t("aboutCalculator"))] },
+      ]} />
       <div style={{ margin: "6px 4px 4px", background: "#FFF", border: "2px inset #ACA899", padding: "1px 4px", textAlign: "right", fontSize: 16, fontWeight: "bold", fontFamily: "Tahoma, sans-serif", overflow: "hidden", height: 22, lineHeight: "20px", color: "#000" }}>
         {display}
       </div>

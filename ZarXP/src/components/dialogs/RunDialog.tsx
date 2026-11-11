@@ -4,6 +4,7 @@ import { useFileSystemStore } from "../../store/fileSystemStore";
 import { findNodeByPath, getFileAppId, normalizeRunCommand } from "../../store/fileSystem";
 import { useLangStore } from "../../store/langStore";
 import { assetUrl } from "../../utils/assets";
+import { playSound, XP_SOUNDS } from "../../utils/sound";
 
 export default function RunDialog({ id }: { id: string }) {
   const [value, setValue] = useState("");
@@ -14,18 +15,24 @@ export default function RunDialog({ id }: { id: string }) {
   const t = useLangStore((state) => state.t);
 
   const handleRun = () => {
-    if (!value.trim()) {
+    const trimmed = value.trim();
+    if (!trimmed) {
+      playSound(XP_SOUNDS.error);
       setError(t("runCannotFind"));
       return;
     }
-    const appId = normalizeRunCommand(value);
+    const [firstWord, ...rest] = trimmed.split(/\s+/);
+    const appId = normalizeRunCommand(trimmed) ?? normalizeRunCommand(firstWord);
     if (appId) {
-      openWindow(appId);
+      const restArg = rest.join(" ").replace(/^["']|["']$/g, "").trim();
+      const targetNode = restArg ? findNodeByPath(fileSystem, restArg) : undefined;
+      openWindow(appId, targetNode?.id);
       closeWindow(id);
       return;
     }
-    const node = findNodeByPath(fileSystem, value);
+    const node = findNodeByPath(fileSystem, trimmed);
     if (!node) {
+      playSound(XP_SOUNDS.error);
       setError(t("runCannotFind"));
       return;
     }

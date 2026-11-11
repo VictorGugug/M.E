@@ -20,14 +20,17 @@ test("creates a navigable virtual file system", () => {
   assert.deepEqual(getChildren(fileSystem, "root").map((node) => node.name), [
     "Desktop",
     "My Documents",
-    "My Music",
-    "My Pictures",
-    "My Videos",
     "Recycle Bin",
   ]);
   assert.equal(getChildren(fileSystem, "documents").some((node) => node.name === "Readme.txt"), true);
-  assert.equal(getChildren(fileSystem, "documents").length, 7);
+  assert.equal(getChildren(fileSystem, "documents").some((node) => node.name === "My Pictures"), true);
+  assert.equal(getChildren(fileSystem, "documents").some((node) => node.name === "My Music"), true);
+  assert.equal(getChildren(fileSystem, "documents").some((node) => node.name === "My Videos"), true);
+  assert.equal(getChildren(fileSystem, "documents").length, 10);
   assert.equal(getNodePath(fileSystem, "readme"), "C:\\My Documents\\Readme.txt");
+  assert.equal(getNodePath(fileSystem, "pictures"), "C:\\My Documents\\My Pictures");
+  assert.equal(getNodePath(fileSystem, "music"), "C:\\My Documents\\My Music");
+  assert.equal(getNodePath(fileSystem, "videos"), "C:\\My Documents\\My Videos");
 });
 
 test("resolves Run paths to virtual files and folders", () => {
@@ -90,11 +93,9 @@ test("loads the initial file system when IndexedDB is unavailable", async () => 
   assert.deepEqual(getChildren(fileSystem, "root").map((node) => node.name), [
     "Desktop",
     "My Documents",
-    "My Music",
-    "My Pictures",
-    "My Videos",
     "Recycle Bin",
   ]);
+  assert.equal(getChildren(fileSystem, "documents").length, 10);
 });
 
 test("searches active files and folders by name", () => {

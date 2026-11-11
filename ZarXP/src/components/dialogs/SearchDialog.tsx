@@ -116,7 +116,7 @@ export default function SearchDialog({ id }: { id: string }) {
         </div>
         <div className="xp-search-rover">
            <div className="xp-search-bubble">{searching ? t("searchingFiles") : t("whatFind")}</div>
-          <div className="xp-search-rover-image" onClick={() => setRoverPose((pose) => pose === "idle" ? "read" : pose === "read" ? "think" : "idle")} title="Rover" style={{ transform: roverPose === "idle" ? `scale(${1 + (wagFrame % 2) * .03}) rotate(${(wagFrame - 1.5) * 1.5}deg)` : "none", transition: "transform .3s ease-in-out" }}><img src={getRoverImg()} alt="Rover" style={{ height: 74, imageRendering: "crisp-edges", filter: "drop-shadow(1px 2px 2px rgba(0,0,0,.35))" }} /></div>
+          <div className="xp-search-rover-image" onClick={() => setRoverPose((pose) => pose === "idle" ? "read" : pose === "read" ? "think" : "idle")} title={t("roverLabel")} style={{ transform: roverPose === "idle" ? `scale(${1 + (wagFrame % 2) * .03}) rotate(${(wagFrame - 1.5) * 1.5}deg)` : "none", transition: "transform .3s ease-in-out" }}><img src={getRoverImg()} alt={t("roverLabel")} style={{ height: 74, imageRendering: "crisp-edges", filter: "drop-shadow(1px 2px 2px rgba(0,0,0,.35))" }} /></div>
         </div>
       </div>
       <div className="xp-search-results">

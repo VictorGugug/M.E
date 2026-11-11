@@ -1,4 +1,8 @@
 import { useRef, useState, useEffect, useCallback } from "react";
+import { useLangStore } from "../../store/langStore";
+import { useWindowStore } from "../../store/windowStore";
+import MenuBar from "../shell/MenuBar";
+import { cmd, sep } from "../shell/menuModel";
 
 const COLORS = [
   "#000000","#808080","#800000","#808000","#008000","#008080","#000080","#800080",
@@ -21,7 +25,9 @@ const TOOLS = [
   { id: "pick", label: "Pick Color", icon: svgIcon('<circle cx="7" cy="7" r="4" fill="none" stroke="#000" stroke-width="1.4"/><path d="M10 10l4 4" stroke="#000" stroke-width="1.6"/>') },
 ];
 
-export default function Paint(_: { id: string }) {
+export default function Paint({ id }: { id: string }) {
+  const t = useLangStore((state) => state.t);
+  const closeWindow = useWindowStore((state) => state.closeWindow);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const snapshotRef = useRef<ImageData | null>(null);
   const [color, setColor] = useState("#000000");
@@ -158,6 +164,14 @@ export default function Paint(_: { id: string }) {
 
   return (
     <div className="xp-app-surface">
+      <MenuBar menus={[
+        { label: `&${t("file")}`, entries: [cmd(t("newFile"), clearCanvas), cmd(t("openFile")), cmd(t("saveFile")), cmd(t("saveAs")), sep, cmd(t("print"), () => window.print()), sep, cmd(t("exit"), () => closeWindow(id))] },
+        { label: `&${t("edit")}`, entries: [cmd(t("undo")), cmd(t("redo")), sep, cmd(t("cut")), cmd(t("copy")), cmd(t("paste"))] },
+        { label: `&${t("view")}`, entries: [cmd(t("toolBox"), undefined, { checked: true }), cmd(t("colorBox"), undefined, { checked: true }), cmd(t("statusBar"))] },
+        { label: `&${t("image")}`, entries: [cmd(t("flipRotate")), cmd(t("stretchSkew")), sep, cmd(t("invertColors")), cmd(t("clearImage"), clearCanvas), sep, cmd(t("attributes"))] },
+        { label: `&${t("colors")}`, entries: [cmd(t("editColors"))] },
+        { label: `&${t("help")}`, entries: [cmd(t("helpTopics")), sep, cmd(t("aboutPaint"))] },
+      ]} />
       <div className="xp-toolbar">
         <button className="xp-toolbar-button" onClick={clearCanvas}>File &gt; New</button>
         <button className="xp-toolbar-button" onClick={clearCanvas}>Clear Image</button>

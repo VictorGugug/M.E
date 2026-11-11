@@ -4,6 +4,7 @@ import { useFileSystemStore } from "../../store/fileSystemStore";
 import { useLangStore } from "../../store/langStore";
 import type { AppId } from "../../types";
 import { assetUrl } from "../../utils/assets";
+import { playSound, XP_SOUNDS } from "../../utils/sound";
 
 const OL = assetUrl("assets/xpui");
 const IC = assetUrl("assets/icons");
@@ -23,7 +24,7 @@ export default function Taskbar({ onOpen }: { onOpen: (id: AppId) => void }) {
   const zMax = Math.max(0, ...windows.map((w) => w.zIndex));
   const t = useLangStore((s) => s.t);
   const fileSystem = useFileSystemStore((state) => state.fileSystem);
-  const windowTitle = (win: typeof windows[0]) => win.resourceId ? fileSystem[win.resourceId]?.name ?? win.title : win.title;
+  const windowTitle = (win: typeof windows[0]) => win.resourceId ? fileSystem[win.resourceId]?.name ?? win.title : (win.titleKey ? t(win.titleKey) : win.title);
   const handleIconKey = (event: React.KeyboardEvent, action: () => void) => {
     if (event.key !== "Enter" && event.key !== " ") return;
     event.preventDefault();
@@ -38,11 +39,10 @@ export default function Taskbar({ onOpen }: { onOpen: (id: AppId) => void }) {
       const now = new Date();
       let hours = now.getHours();
       const minutes = now.getMinutes().toString().padStart(2, "0");
-      const ampm = hours >= 12 ? "P.M." : "A.M.";
+      const ampm = hours >= 12 ? "PM" : "AM";
       hours = hours % 12;
       hours = hours ? hours : 12;
-      const hourStr = hours.toString().padStart(2, "0");
-      setClock(`${hourStr}:${minutes} ${ampm}`);
+      setClock(`${hours}:${minutes} ${ampm}`);
     };
     update();
     const iv = setInterval(update, 1000);
@@ -58,6 +58,13 @@ export default function Taskbar({ onOpen }: { onOpen: (id: AppId) => void }) {
     window.addEventListener("click", close);
     return () => window.removeEventListener("click", close);
   }, [volOpen, taskbarCtx]);
+
+  useEffect(() => {
+    if (!balloon) return;
+    playSound(XP_SOUNDS.balloon, 0.3);
+    const timer = window.setTimeout(() => setBalloon(null), 12000);
+    return () => window.clearTimeout(timer);
+  }, [balloon]);
 
   const handleAppClick = (win: typeof windows[0]) => {
     if (win.state === "minimized") restoreWindow(win.id);
@@ -102,6 +109,7 @@ export default function Taskbar({ onOpen }: { onOpen: (id: AppId) => void }) {
             key={win.id}
             onClick={(e) => { e.stopPropagation(); handleAppClick(win); }}
             className={win.state !== "minimized" && win.zIndex === zMax ? "xp-task-btn xp-task-btn-active" : "xp-task-btn"}
+            data-win-id={win.id}
           >
             {win.icon && <img src={assetUrl(`assets/icons/${win.icon}`)} alt="" />}
             <span>{windowTitle(win)}</span>

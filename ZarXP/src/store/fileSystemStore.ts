@@ -72,9 +72,23 @@ export async function loadFileSystem(): Promise<FileSystemState> {
     const request = database.transaction(STORE_NAME, "readonly").objectStore(STORE_NAME).get(STATE_KEY);
     const stored = await requestResult<unknown>(request);
     if (!isValidFileSystemState(stored)) return fallback;
-    const recycleBin = stored["recycle-bin"];
-    if (recycleBin?.parentId === "system") return { ...stored, "recycle-bin": { ...recycleBin, parentId: "root" } };
-    return stored;
+    let result = stored;
+    const recycleBin = result["recycle-bin"];
+    if (recycleBin?.parentId === "system") {
+      result = { ...result, "recycle-bin": { ...recycleBin, parentId: "root" } };
+    }
+    const music = result.music;
+    const pictures = result.pictures;
+    const videos = result.videos;
+    if (music?.parentId === "root" || pictures?.parentId === "root" || videos?.parentId === "root") {
+      result = {
+        ...result,
+        ...(music?.parentId === "root" ? { music: { ...music, parentId: "documents" } } : {}),
+        ...(pictures?.parentId === "root" ? { pictures: { ...pictures, parentId: "documents" } } : {}),
+        ...(videos?.parentId === "root" ? { videos: { ...videos, parentId: "documents" } } : {}),
+      };
+    }
+    return result;
   } catch (error) {
     reportStorageError("load", error);
     return fallback;

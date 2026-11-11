@@ -1,11 +1,97 @@
-import { useState } from "react";
 import { useWindowStore } from "../../store/windowStore";
+import { useLangStore } from "../../store/langStore";
 import { assetUrl } from "../../utils/assets";
 
-export default function ShutdownDialog({ id }: { id: string }) {
-  const [action, setAction] = useState("shut-down");
-  const closeWindow = useWindowStore((state) => state.closeWindow);
-  const confirm = () => window.dispatchEvent(new CustomEvent("zarxp-power", { detail: { action } }));
+const choiceStyle: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 8,
+  width: 92,
+  minHeight: 80,
+  padding: "10px 4px",
+  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.28), inset 1px 1px 0 rgba(255, 255, 255, 0.85)",
+  borderRadius: 4,
+  cursor: "pointer",
+};
 
-  return <div className="xp-dialog-surface"><div className="xp-dialog-body"><div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}><div style={{ width: 38, height: 38, display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(180deg,#F28A5E,#D43B1E)", border: "1px solid #B22B10", borderRadius: 4 }}><img src={assetUrl("assets/icons/Power.png")} alt="" style={{ width: 24, height: 24 }} /></div><div><div style={{ fontWeight: "bold", color: "#0A246A" }}>Shut Down Windows</div><div>What do you want the computer to do?</div></div></div><div className="xp-group-box"><label className="xp-form-row"><input className="xp-native-checkbox" type="radio" name="shutdown-action" checked={action === "shut-down"} onChange={() => setAction("shut-down")} />Shut down</label><label className="xp-form-row"><input className="xp-native-checkbox" type="radio" name="shutdown-action" checked={action === "restart"} onChange={() => setAction("restart")} />Restart</label><label className="xp-form-row"><input className="xp-native-checkbox" type="radio" name="shutdown-action" checked={action === "stand-by"} onChange={() => setAction("stand-by")} />Stand by</label><div className="xp-form-row" style={{ marginTop: 8 }}><label className="xp-form-label" htmlFor="shutdown-option">Option:</label><select id="shutdown-option" className="xp-select" value={action} onChange={(event) => setAction(event.target.value)}><option value="shut-down">Shut down</option><option value="restart">Restart</option><option value="stand-by">Stand by</option></select></div></div></div><div className="xp-dialog-footer center"><button className="xp-button" onClick={confirm}>OK</button><button className="xp-button" onClick={() => closeWindow(id)}>Cancel</button><button className="xp-button">Help</button></div></div>;
+export default function ShutdownDialog({ id }: { id: string }) {
+  const closeWindow = useWindowStore((state) => state.closeWindow);
+  const t = useLangStore((state) => state.t);
+  const power = (action: "stand-by" | "shut-down" | "restart") =>
+    window.dispatchEvent(new CustomEvent("zarxp-power", { detail: { action } }));
+
+  const choices = [
+    { action: "stand-by" as const, label: t("standBy"), icon: "Standby.png" },
+    { action: "shut-down" as const, label: t("turnOffButton"), icon: "Power.png" },
+    { action: "restart" as const, label: t("restart"), icon: "Restart.png" },
+  ];
+
+  return (
+    <div className="xp-dialog-surface" style={{ display: "flex", flexDirection: "column", height: "100%", userSelect: "none" }}>
+      <div
+        style={{
+          background: "linear-gradient(to right, #002D96 0%, #2B79EE 100%)",
+          borderBottom: "1px solid #001D6E",
+          padding: "10px 14px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <span
+          style={{
+            color: "#FFFFFF",
+            fontSize: 15,
+            fontWeight: "bold",
+            textShadow: "1px 1px 2px rgba(0, 0, 0, 0.65)",
+            letterSpacing: "0.2px",
+          }}
+        >
+          {t("turnOffComputer")}
+        </span>
+        <img
+          src={assetUrl("assets/icons/WindowsFlag.png")}
+          alt=""
+          style={{ width: 22, height: 22, filter: "drop-shadow(1px 1px 2px rgba(0,0,0,0.5))" }}
+        />
+      </div>
+
+      <div
+        className="xp-dialog-body"
+        style={{
+          flex: 1,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 16,
+          padding: "16px 14px",
+        }}
+      >
+        {choices.map((choice) => (
+          <button
+            key={choice.action}
+            className="xp-button"
+            style={choiceStyle}
+            onClick={() => power(choice.action)}
+            aria-label={choice.label}
+          >
+            <img
+              src={assetUrl(`assets/icons/${choice.icon}`)}
+              alt=""
+              style={{ width: 32, height: 32, filter: "drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35))" }}
+            />
+            <span style={{ fontSize: 11, textAlign: "center" }}>{choice.label}</span>
+          </button>
+        ))}
+      </div>
+
+      <div className="xp-dialog-footer" style={{ padding: "8px 14px", display: "flex", justifyContent: "flex-end" }}>
+        <button className="xp-button" onClick={() => closeWindow(id)} style={{ minWidth: 75 }}>
+          {t("cancel")}
+        </button>
+      </div>
+    </div>
+  );
 }

@@ -1,6 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { assetUrl } from "../../utils/assets";
 import { useUserStore } from "../../store/userStore";
+import { useLangStore } from "../../store/langStore";
+import { useWindowStore } from "../../store/windowStore";
+import MenuBar from "../shell/MenuBar";
+import { cmd, sep } from "../shell/menuModel";
 import { playSound } from "../../utils/sound";
 
 const OL = assetUrl("assets/xpui");
@@ -13,40 +17,6 @@ interface Contact {
   quote: string;
 }
 
-const CONTACTS: Contact[] = [
-  { id: "zelly", name: "Zelly", avatar: "snowflake.png", status: "online", quote: "Exploring Windows XP!" },
-  { id: "bill", name: "Bill Gates", avatar: "chess.png", status: "online", quote: "Where do you want to go today?" },
-  { id: "rover", name: "Rover", avatar: "dog.png", status: "online", quote: "Ready to search your files!" },
-  { id: "admin", name: "Administrator", avatar: "car.png", status: "busy", quote: "Running system updates..." },
-  { id: "guest", name: "Guest User", avatar: "duck.png", status: "offline", quote: "Be right back" },
-];
-
-const BOT_REPLIES: Record<string, string[]> = {
-  zelly: [
-    "Hey! How is your ZarXP desktop looking today?",
-    "I love the classic Luna blue theme, it brings back memories!",
-    "Did you try changing your account picture in User Accounts?",
-    "Have you checked out the retro pages on Internet Explorer?",
-    "Everything is running super smooth!",
-    "Talk to you in a bit!"
-  ],
-  bill: [
-    "Welcome to the new era of personal computing!",
-    "Windows XP combines the reliability of NT with the consumer ease of 98.",
-    "Great work on this system.",
-    "Remember: 640K ought to be enough for anybody. Just kidding!",
-  ],
-  rover: [
-    "Woof! What would you like me to find for you in My Computer?",
-    "Bark! I can search for pictures, music, or documents!",
-    "Woof woof! Wagging tail!",
-  ],
-  admin: [
-    "System security is optimal. No unauthorized modifications detected.",
-    "Services are operating within normal parameters.",
-  ],
-};
-
 interface ChatMessage {
   sender: string;
   text: string;
@@ -54,19 +24,29 @@ interface ChatMessage {
   isSystem?: boolean;
 }
 
-export default function WindowsMessenger(_: { id: string }) {
+export default function WindowsMessenger({ id }: { id: string }) {
   const { userName, userPicture } = useUserStore();
+  const t = useLangStore((state) => state.t);
+  const closeWindow = useWindowStore((state) => state.closeWindow);
   const [signedIn, setSignedIn] = useState(true);
   const [chatWith, setChatWith] = useState<Contact | null>(null);
   const [messages, setMessages] = useState<Record<string, ChatMessage[]>>({
     zelly: [
-      { sender: "Zelly", text: "Hi! Welcome to Windows Messenger!", time: "12:00 PM" }
+      { sender: "Zelly", text: t("msgrWelcome"), time: "12:00 PM" }
     ]
   });
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [shaking, setShaking] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  const contacts: Contact[] = [
+    { id: "zelly", name: "Zelly", avatar: "snowflake.png", status: "online", quote: t("msgrQuoteZelly") },
+    { id: "bill", name: "Bill Gates", avatar: "chess.png", status: "online", quote: t("msgrQuoteBill") },
+    { id: "rover", name: "Rover", avatar: "dog.png", status: "online", quote: t("msgrQuoteRover") },
+    { id: "admin", name: "Administrator", avatar: "car.png", status: "busy", quote: t("msgrQuoteAdmin") },
+    { id: "guest", name: "Guest User", avatar: "duck.png", status: "offline", quote: t("msgrQuoteGuest") },
+  ];
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -93,7 +73,13 @@ export default function WindowsMessenger(_: { id: string }) {
     setIsTyping(true);
     setTimeout(() => {
       setIsTyping(false);
-      const pool = BOT_REPLIES[contactId] || ["Received! Have a great day!"];
+      const pools: Record<string, string[]> = {
+        zelly: [t("msgrReplyZelly1"), t("msgrReplyZelly2"), t("msgrReplyZelly3"), t("msgrReplyZelly4"), t("msgrReplyZelly5"), t("msgrReplyZelly6")],
+        bill: [t("msgrReplyBill1"), t("msgrReplyBill2"), t("msgrReplyBill3"), t("msgrReplyBill4")],
+        rover: [t("msgrReplyRover1"), t("msgrReplyRover2"), t("msgrReplyRover3")],
+        admin: [t("msgrReplyAdmin1"), t("msgrReplyAdmin2")],
+      };
+      const pool = pools[contactId] || [t("msgrReplyDefault")];
       const reply = pool[Math.floor(Math.random() * pool.length)];
       setMessages((prev) => ({
         ...prev,
@@ -101,7 +87,7 @@ export default function WindowsMessenger(_: { id: string }) {
       }));
       playSound("Windows XP Ding.wav", 0.4);
     }, 1500);
-  }, [input, chatWith, userName]);
+  }, [input, chatWith, userName, t]);
 
   const sendNudge = useCallback(() => {
     if (!chatWith) return;
@@ -114,7 +100,7 @@ export default function WindowsMessenger(_: { id: string }) {
       ...prev,
       [contactId]: [
         ...(prev[contactId] || []),
-        { sender: "", text: "You have just sent a Nudge!", time: getTimeString(), isSystem: true }
+        { sender: "", text: t("msgrNudgeSent"), time: getTimeString(), isSystem: true }
       ]
     }));
 
@@ -126,23 +112,23 @@ export default function WindowsMessenger(_: { id: string }) {
         ...prev,
         [contactId]: [
           ...(prev[contactId] || []),
-          { sender: "", text: `${chatWith.name} has just sent you a Nudge!`, time: getTimeString(), isSystem: true }
+          { sender: "", text: `${chatWith.name} ${t("msgrNudgeReceived")}`, time: getTimeString(), isSystem: true }
         ]
       }));
     }, 2000);
-  }, [chatWith]);
+  }, [chatWith, t]);
 
   if (!signedIn) {
     return (
       <div style={{ width: "100%", height: "100%", background: "linear-gradient(180deg,#5AA0E8 0%,#2E71C8 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 20, fontFamily: "Tahoma, sans-serif" }}>
         <img src={`${OL}/icon/messenger.png`} alt="" style={{ width: 64, height: 64 }} />
-        <div style={{ color: "#FFF", fontSize: 16, fontWeight: "bold", marginTop: 12 }}>Windows Messenger</div>
-        <div style={{ color: "#D8E8FC", fontSize: 12, marginTop: 4 }}>Sign in to connect with your contacts</div>
+        <div style={{ color: "#FFF", fontSize: 16, fontWeight: "bold", marginTop: 12 }}>{t("messenger")}</div>
+        <div style={{ color: "#D8E8FC", fontSize: 12, marginTop: 4 }}>{t("signInPrompt")}</div>
         <button
           onClick={() => setSignedIn(true)}
           style={{ marginTop: 20, padding: "5px 22px", fontSize: 12, fontWeight: "bold", background: "linear-gradient(180deg,#FFF,#ECE9D8)", border: "1px solid #7F9DB9", borderRadius: 3, cursor: "pointer" }}
         >
-          Sign In
+          {t("signIn")}
         </button>
       </div>
     );
@@ -152,11 +138,40 @@ export default function WindowsMessenger(_: { id: string }) {
     <div
       className="xp-app-surface" style={{ transform: shaking ? "translate(3px, 2px)" : "none", transition: "transform 0.05s" }}
     >
+      <MenuBar menus={[
+        { label: `&${t("file")}`, entries: [
+          cmd(t("signOut"), () => setSignedIn(false)),
+          sep,
+          cmd(t("closeWindow"), () => closeWindow(id)),
+        ] },
+        { label: `&${t("edit")}`, entries: [
+          cmd(t("cut")), cmd(t("copy")), cmd(t("paste")), sep, cmd(t("selectAll")),
+        ] },
+        { label: `&${t("actions")}`, entries: [
+          cmd(t("sendNudge"), sendNudge, { disabled: !chatWith }),
+          sep,
+          cmd(t("invite")),
+          cmd(t("sendFile")),
+          sep,
+          cmd(t("startVideo")),
+        ] },
+        { label: `&${t("tools")}`, entries: [
+          cmd(t("addContact")),
+          sep,
+          cmd(t("options")),
+        ] },
+        { label: `&${t("help")}`, entries: [
+          cmd(t("helpTopics")),
+          sep,
+          cmd(t("aboutMessenger")),
+        ] },
+      ]} />
+
       <div className="xp-messenger-header">
         <img src={assetUrl(`assets/xpui/user/${userPicture}`)} alt="" style={{ width: 28, height: 28, borderRadius: 3, border: "1px solid #FFF" }} />
         <div style={{ overflow: "hidden" }}>
           <div style={{ fontWeight: "bold", fontSize: 12 }}>{userName}</div>
-          <div style={{ fontSize: 10, color: "#D8E8FC" }}>Online - Windows XP</div>
+          <div style={{ fontSize: 10, color: "#D8E8FC" }}>{t("onlineWindowsXp")}</div>
         </div>
       </div>
 
@@ -168,11 +183,11 @@ export default function WindowsMessenger(_: { id: string }) {
               <div style={{ fontWeight: "bold" }}>{chatWith.name}</div>
               <div style={{ fontSize: 10, color: "#555" }}>&lt;{chatWith.quote}&gt;</div>
             </div>
-            <button onClick={sendNudge} title="Send a Nudge!" className="xp-button" style={{ minWidth: 52, height: 21, padding: "1px 7px" }}>
-              Nudge
+            <button onClick={sendNudge} title={t("sendNudge")} className="xp-button" style={{ minWidth: 52, height: 21, padding: "1px 7px" }}>
+              {t("nudge")}
             </button>
             <button onClick={() => setChatWith(null)} className="xp-button" style={{ minWidth: 52, height: 21, padding: "1px 7px" }}>
-              Back
+              {t("back")}
             </button>
           </div>
 
@@ -181,7 +196,7 @@ export default function WindowsMessenger(_: { id: string }) {
               <div key={idx} style={m.isSystem ? { color: "#C00000", fontWeight: "bold", fontStyle: "italic", textAlign: "center", margin: "4px 0" } : {}}>
                 {!m.isSystem && (
                   <div style={{ color: m.sender === userName ? "#0000CC" : "#C00000", fontWeight: "bold", fontSize: 11 }}>
-                    {m.sender} says ({m.time}):
+                    {m.sender} {t("msgrSays")} ({m.time}):
                   </div>
                 )}
                 <div style={{ color: "#000", paddingLeft: m.isSystem ? 0 : 8, fontSize: 12 }}>{m.text}</div>
@@ -189,7 +204,7 @@ export default function WindowsMessenger(_: { id: string }) {
             ))}
             {isTyping && (
               <div style={{ color: "#777", fontStyle: "italic", fontSize: 10, paddingLeft: 8 }}>
-                {chatWith.name} is typing a message...
+                {chatWith.name} {t("isTyping")}
               </div>
             )}
             <div ref={chatEndRef} />
@@ -200,20 +215,20 @@ export default function WindowsMessenger(_: { id: string }) {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter") send(); }}
-              placeholder="Type a message..."
+              placeholder={t("typeMessage")}
               className="xp-input" style={{ flex: 1, fontSize: 12 }}
             />
             <button onClick={send} className="xp-button" style={{ fontWeight: "bold" }}>
-              Send
+              {t("send")}
             </button>
           </div>
         </div>
       ) : (
         <div style={{ flex: 1, display: "flex", flexDirection: "column", background: "#FFF", overflowY: "auto" }}>
           <div style={{ padding: "4px 8px", background: "#ECE9D8", borderBottom: "1px solid #D4D0C8", fontWeight: "bold", fontSize: 11 }}>
-            Contacts ({CONTACTS.filter((c) => c.status !== "offline").length} online)
+            {t("contacts")} ({contacts.filter((c) => c.status !== "offline").length} {t("onlineLabel")})
           </div>
-          {CONTACTS.map((c) => (
+          {contacts.map((c) => (
             <div
               key={c.id}
               onClick={() => setChatWith(c)}

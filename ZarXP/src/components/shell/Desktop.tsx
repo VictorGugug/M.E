@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, lazy, Suspense } from "react";
+import { useState, useRef, useEffect, useCallback, lazy, Suspense } from "react";
 import { useWindowStore } from "../../store/windowStore";
 import { useLangStore } from "../../store/langStore";
 import { useSettingsStore } from "../../store/settingsStore";
@@ -40,6 +40,8 @@ const RecycleBin = lazy(() => import("../apps/RecycleBin"));
 const FileViewer = lazy(() => import("../apps/FileViewer"));
 const Solitaire = lazy(() => import("../games/Solitaire"));
 const Minesweeper = lazy(() => import("../games/Minesweeper"));
+const NetworkPlaces = lazy(() => import("../apps/NetworkPlaces"));
+const SetProgramAccess = lazy(() => import("../apps/SetProgramAccess"));
 
 const APP_COMPONENTS: Record<string, React.FC<{ id: string }>> = {
   "notepad": Notepad,
@@ -63,12 +65,13 @@ const APP_COMPONENTS: Record<string, React.FC<{ id: string }>> = {
   "my-pictures": MyDocuments,
   "my-music": MyDocuments,
   "my-videos": MyDocuments,
-  "network-places": ControlPanel,
+  "network-places": NetworkPlaces,
   "outlook-express": OutlookExpress,
   "tour-xp": TourXP,
   "msn-messenger": WindowsMessenger,
   "wordpad": Wordpad,
-  "settings": ControlPanel,
+  "settings": SetProgramAccess,
+  "set-program-access": SetProgramAccess,
   "about-xp": AboutXP,
   "security-center": SecurityCenter,
   "user-accounts": UserAccounts,
@@ -84,6 +87,7 @@ export default function Desktop() {
   const desktopRef = useRef<HTMLDivElement>(null);
   const [ctxMenu, setCtxMenu] = useState<{ x: number; y: number } | null>(null);
   const [activeSub, setActiveSub] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string | null>(null);
   const [screensaverActive, setScreensaverActive] = useState(false);
   const screenSaverTimeout = useRef<number | null>(null);
   const t = useLangStore((s) => s.t);
@@ -132,28 +136,16 @@ export default function Desktop() {
     };
   }, [settings.screenSaver, settings.screenSaverMinutes]);
 
-  useEffect(() => {
-    if (!screensaverActive) return;
-    const wake = () => setScreensaverActive(false);
-    window.addEventListener("mousemove", wake, { once: true });
-    window.addEventListener("mousedown", wake, { once: true });
-    window.addEventListener("keydown", wake, { once: true });
-    window.addEventListener("touchstart", wake, { once: true });
-    return () => {
-      window.removeEventListener("mousemove", wake);
-      window.removeEventListener("mousedown", wake);
-      window.removeEventListener("keydown", wake);
-      window.removeEventListener("touchstart", wake);
-    };
-  }, [screensaverActive]);
 
   const handleDesktopClick = () => {
     setCtxMenu(null);
+    setSelected(null);
     closeStartMenu();
   };
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
+    setSelected(null);
     setCtxMenu({
       x: Math.min(e.clientX, window.innerWidth - 180),
       y: Math.min(e.clientY, window.innerHeight - 240)
@@ -191,7 +183,13 @@ export default function Desktop() {
     >
       <div className="desktop-icons">
         {desktopIcons.map((icon) => (
-          <button key={icon.id} className="desktop-icon" onDoubleClick={() => openApp(icon.id)}>
+          <button
+            key={icon.id}
+            className={selected === icon.id ? "desktop-icon selected" : "desktop-icon"}
+            onClick={(e) => { e.stopPropagation(); setSelected(icon.id); setCtxMenu(null); closeStartMenu(); }}
+            onDoubleClick={() => openApp(icon.id)}
+            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); openApp(icon.id); } }}
+          >
             <img src={assetUrl(`assets/icons/${icon.icon}`)} alt={icon.label} />
             <span>{icon.label}</span>
           </button>
@@ -260,7 +258,225 @@ export default function Desktop() {
 
       {startMenuOpen && <StartMenu onOpen={openApp} />}
       <Taskbar onOpen={openApp} />
-      {screensaverActive && <div onClick={() => setScreensaverActive(false)} style={{ position: "fixed", inset: 0, zIndex: 10000, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 18, background: "#000", color: "#FFF", fontFamily: "Tahoma, sans-serif", cursor: "pointer" }}><img src={assetUrl("assets/images/xp-logo.png")} alt="" style={{ width: 180 }} /><span>{t("screenSaverActive")}</span></div>}
+      {screensaverActive && <ScreensaverCanvas onDismiss={() => setScreensaverActive(false)} />}
+    </div>
+  );
+}
+
+function ScreensaverCanvas({ onDismiss }: { onDismiss: () => void }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isDismissing, setIsDismissing] = useState(false);
+  const dismissingRef = useRef(false);
+  const startPos = useRef<{ x: number; y: number } | null>(null);
+  const mousePos = useRef<{ x: number; y: number }>({ x: -1000, y: -1000 });
+
+  const dismissSmoothly = useCallback(() => {
+    if (dismissingRef.current) return;
+    dismissingRef.current = true;
+    setIsDismissing(true);
+    window.setTimeout(() => {
+      onDismiss();
+    }, 280);
+  }, [onDismiss]);
+
+  useEffect(() => {
+    const onMouseMove = (e: MouseEvent) => {
+      mousePos.current = { x: e.clientX, y: e.clientY };
+      if (!startPos.current) {
+        startPos.current = { x: e.clientX, y: e.clientY };
+        return;
+      }
+      const dx = e.clientX - startPos.current.x;
+      const dy = e.clientY - startPos.current.y;
+      if (Math.hypot(dx, dy) > 6) {
+        dismissSmoothly();
+      }
+    };
+    const onKeyDown = () => dismissSmoothly();
+    const onMouseDown = () => dismissSmoothly();
+    const onTouchStart = () => dismissSmoothly();
+
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("mousedown", onMouseDown);
+    window.addEventListener("touchstart", onTouchStart);
+
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("mousedown", onMouseDown);
+      window.removeEventListener("touchstart", onTouchStart);
+    };
+  }, [dismissSmoothly]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let animId: number;
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    const onResize = () => {
+      if (!canvas) return;
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    };
+    window.addEventListener("resize", onResize);
+
+    const img = new Image();
+    img.src = assetUrl("assets/images/xp-logo.png");
+
+    const numStars = 60;
+    const stars = Array.from({ length: numStars }, () => ({
+      x: (Math.random() - 0.5) * 1600,
+      y: (Math.random() - 0.5) * 1200,
+      z: Math.random() * 800 + 100,
+      vz: Math.random() * 1.5 + 0.8,
+      size: Math.random() * 2 + 1,
+    }));
+
+    const baseW = 200;
+    const baseH = 120;
+    let x = width / 2;
+    let y = height / 2;
+    let z = 0;
+    let vx = (Math.random() > 0.5 ? 1 : -1) * (2.2 + Math.random() * 0.8);
+    let vy = (Math.random() > 0.5 ? 1 : -1) * (1.8 + Math.random() * 0.8);
+    let vz = 1.2;
+    let pitch = 0;
+    let yaw = 0;
+    let roll = 0;
+    let dPitch = 0.012;
+    let dYaw = 0.016;
+    let dRoll = 0.006;
+
+    const render = () => {
+      ctx.fillStyle = "#000000";
+      ctx.fillRect(0, 0, width, height);
+
+      const cx = width / 2;
+      const cy = height / 2;
+      ctx.fillStyle = "#FFFFFF";
+      for (const star of stars) {
+        star.z -= star.vz;
+        if (star.z <= 10) {
+          star.z = 800;
+          star.x = (Math.random() - 0.5) * 1600;
+          star.y = (Math.random() - 0.5) * 1200;
+        }
+        const k = 400 / star.z;
+        const px = cx + star.x * k;
+        const py = cy + star.y * k;
+        if (px >= 0 && px <= width && py >= 0 && py <= height) {
+          const alpha = Math.min(1, Math.max(0.1, 1 - star.z / 800));
+          ctx.globalAlpha = alpha;
+          ctx.beginPath();
+          ctx.arc(px, py, star.size * Math.min(2.5, k), 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      ctx.globalAlpha = 1;
+
+      x += vx;
+      y += vy;
+      z += vz;
+      pitch += dPitch;
+      yaw += dYaw;
+      roll += dRoll;
+
+      if (z > 220) {
+        z = 220;
+        vz = -Math.abs(vz);
+      } else if (z < -180) {
+        z = -180;
+        vz = Math.abs(vz);
+      }
+
+      const focal = 500;
+      const scale = focal / (focal + z);
+      const halfW = (baseW * scale) / 2;
+      const halfH = (baseH * scale) / 2;
+
+      const mdx = x - mousePos.current.x;
+      const mdy = y - mousePos.current.y;
+      const dist = Math.hypot(mdx, mdy);
+      if (dist < 150 && dist > 1) {
+        const force = (150 - dist) * 0.003;
+        vx += (mdx / dist) * force;
+        vy += (mdy / dist) * force;
+      }
+
+      if (x - halfW <= 0) {
+        x = halfW;
+        vx = Math.abs(vx) * (0.98 + Math.random() * 0.04);
+        dYaw = (Math.random() - 0.5) * 0.035;
+      } else if (x + halfW >= width) {
+        x = width - halfW;
+        vx = -Math.abs(vx) * (0.98 + Math.random() * 0.04);
+        dYaw = (Math.random() - 0.5) * 0.035;
+      }
+
+      if (y - halfH <= 0) {
+        y = halfH;
+        vy = Math.abs(vy) * (0.98 + Math.random() * 0.04);
+        dPitch = (Math.random() - 0.5) * 0.035;
+      } else if (y + halfH >= height) {
+        y = height - halfH;
+        vy = -Math.abs(vy) * (0.98 + Math.random() * 0.04);
+        dPitch = (Math.random() - 0.5) * 0.035;
+      }
+
+      const speed = Math.hypot(vx, vy);
+      if (speed > 5) {
+        vx = (vx / speed) * 5;
+        vy = (vy / speed) * 5;
+      } else if (speed < 1.8) {
+        vx = (vx / speed) * 1.8;
+        vy = (vy / speed) * 1.8;
+      }
+
+      if (img.complete && img.naturalWidth > 0) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.scale(scale, scale);
+        ctx.rotate(roll);
+        ctx.transform(Math.cos(yaw), Math.sin(pitch) * 0.35, 0, Math.cos(pitch), 0, 0);
+
+        ctx.shadowColor = "rgba(40, 120, 255, 0.45)";
+        ctx.shadowBlur = 20;
+
+        ctx.drawImage(img, -baseW / 2, -baseH / 2, baseW, baseH);
+        ctx.restore();
+      }
+
+      animId = requestAnimationFrame(render);
+    };
+
+    animId = requestAnimationFrame(render);
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener("resize", onResize);
+    };
+  }, []);
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 10000,
+        backgroundColor: "#000",
+        opacity: isDismissing ? 0 : 1,
+        transition: "opacity 280ms ease-out",
+        cursor: "none",
+        overflow: "hidden",
+      }}
+    >
+      <canvas ref={canvasRef} style={{ display: "block", width: "100%", height: "100%" }} />
     </div>
   );
 }

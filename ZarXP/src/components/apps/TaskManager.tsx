@@ -4,6 +4,8 @@ import { useFileSystemStore } from "../../store/fileSystemStore";
 import { useLangStore } from "../../store/langStore";
 import { useUserStore } from "../../store/userStore";
 import { assetUrl } from "../../utils/assets";
+import MenuBar from "../shell/MenuBar";
+import { cmd, sep } from "../shell/menuModel";
 
 type Tab = "Applications" | "Processes" | "Performance" | "Networking" | "Users";
 
@@ -33,7 +35,7 @@ const INITIAL_PROCESSES: ProcessItem[] = [
   { name: "spoolsv.exe", user: "SYSTEM", cpu: 0, mem: 3620 },
 ];
 
-export default function TaskManager(_: { id: string }) {
+export default function TaskManager({ id }: { id: string }) {
   const [tab, setTab] = useState<Tab>("Applications");
   const [selectedTask, setSelectedTask] = useState<string | null>(null);
   const [selectedProc, setSelectedProc] = useState<string>("taskmgr.exe");
@@ -139,6 +141,31 @@ export default function TaskManager(_: { id: string }) {
 
   return (
     <div className="xp-app-surface">
+      <MenuBar menus={[
+        { label: `&${t("file")}`, entries: [
+          cmd(t("newTask"), () => openWindow("run")),
+          sep,
+          cmd(t("exit"), () => closeWindow(id)),
+        ] },
+        { label: `&${t("optionsMenu")}`, entries: [
+          cmd(t("alwaysOnTop")),
+          cmd(t("minimizeOnUse")),
+        ] },
+        { label: `&${t("view")}`, entries: [
+          cmd(t("refresh")),
+          sep,
+          cmd(t("applications"), () => setTab("Applications"), { checked: tab === "Applications" }),
+          cmd(t("processes"), () => setTab("Processes"), { checked: tab === "Processes" }),
+          cmd(t("performance"), () => setTab("Performance"), { checked: tab === "Performance" }),
+          cmd(t("networking"), () => setTab("Networking"), { checked: tab === "Networking" }),
+          cmd(t("users"), () => setTab("Users"), { checked: tab === "Users" }),
+        ] },
+        { label: `&${t("help")}`, entries: [
+          cmd(t("helpTopics")),
+          sep,
+          cmd(t("aboutTaskManager")),
+        ] },
+      ]} />
       <div className="xp-tabbar">
         {(["Applications", "Processes", "Performance", "Networking", "Users"] as Tab[]).map((tabName) => (
           <button
@@ -231,7 +258,7 @@ export default function TaskManager(_: { id: string }) {
                       <td style={{ padding: "2px 6px" }}>{p.name}</td>
                       <td style={{ padding: "2px 6px" }}>{p.user}</td>
                       <td style={{ padding: "2px 6px", textAlign: "right" }}>{String(p.cpu).padStart(2, "0")}</td>
-                      <td style={{ padding: "2px 6px", textAlign: "right" }}>{p.mem.toLocaleString()} K</td>
+                      <td style={{ padding: "2px 6px", textAlign: "right" }}>{p.mem.toLocaleString()} {t("unitK")}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -274,7 +301,7 @@ export default function TaskManager(_: { id: string }) {
                 <div style={{ height: 60, background: "#000", display: "flex", alignItems: "flex-end", justifyContent: "center", padding: 2 }}>
                   <div style={{ width: 36, height: "35%", background: "linear-gradient(to top,#00CC00,#00FF00)" }} />
                 </div>
-                <div style={{ textAlign: "center", fontWeight: "bold", marginTop: 4, fontSize: 11 }}>184 MB</div>
+                <div style={{ textAlign: "center", fontWeight: "bold", marginTop: 4, fontSize: 11 }}>184 {t("unitMb")}</div>
               </div>
               <div className="xp-group-box">
                 <div style={{ fontWeight: "bold", fontSize: 10, marginBottom: 4 }}>{t("pageFileUsageHistory")}</div>
@@ -285,15 +312,15 @@ export default function TaskManager(_: { id: string }) {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, fontSize: 10 }}>
               <div className="xp-group-box">
                 <div style={{ fontWeight: "bold", color: "#003399", marginBottom: 2 }}>{t("totals")}</div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}><span>{t("handles")}</span><span>8,420</span></div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}><span>{t("threads")}</span><span>412</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}><span>{t("handles")}</span><span>{t("handlesValue")}</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}><span>{t("threads")}</span><span>{t("threadsValue")}</span></div>
                 <div style={{ display: "flex", justifyContent: "space-between" }}><span>{t("processesLabel")}</span><span>{processes.length}</span></div>
               </div>
               <div className="xp-group-box">
                 <div style={{ fontWeight: "bold", color: "#003399", marginBottom: 2 }}>{t("physicalMemory")}</div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}><span>{t("total")}</span><span>523,764</span></div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}><span>{t("available")}</span><span>284,520</span></div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}><span>{t("systemCache")}</span><span>198,412</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}><span>{t("total")}</span><span>{t("totalMemoryValue")}</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}><span>{t("available")}</span><span>{t("availableMemoryValue")}</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}><span>{t("systemCache")}</span><span>{t("systemCacheValue")}</span></div>
               </div>
             </div>
           </div>
@@ -303,7 +330,7 @@ export default function TaskManager(_: { id: string }) {
           <div className="xp-group-box" style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8, background: "#FFF" }}>
             <div style={{ fontWeight: "bold", color: "#003399" }}>{t("localAreaConnection")}</div>
             <div style={{ height: 100, background: "#000", border: "1px solid #003300", position: "relative" }}>
-               <div style={{ position: "absolute", bottom: 4, left: 8, color: "#00FF00", fontSize: 10 }}>100 Mbps (1.2% {t("networkUtilization")})</div>
+               <div style={{ position: "absolute", bottom: 4, left: 8, color: "#00FF00", fontSize: 10 }}>100 {t("unitMbps")} ({t("networkUtilizationValue")}% {t("networkUtilization")})</div>
             </div>
           </div>
         )}
@@ -314,7 +341,7 @@ export default function TaskManager(_: { id: string }) {
               <thead>
                 <tr style={{ background: "#ECE9D8", borderBottom: "1px solid #ACA899", textAlign: "left" }}>
                   <th style={{ padding: "3px 6px" }}>{t("user")}</th>
-                  <th style={{ padding: "3px 6px" }}>ID</th>
+                  <th style={{ padding: "3px 6px" }}>{t("id")}</th>
                   <th style={{ padding: "3px 6px" }}>{t("status")}</th>
                   <th style={{ padding: "3px 6px" }}>{t("clientName")}</th>
                 </tr>
@@ -335,7 +362,7 @@ export default function TaskManager(_: { id: string }) {
       <div className="xp-status-strip" style={{ justifyContent: "flex-start", gap: 16 }}>
          <span>{t("processesStatus")}: {processes.length}</span>
          <span>{t("cpuUsageStatus")}: {cpuCurrent}%</span>
-         <span>{t("commitChargeStatus")}: 184M / 1258M</span>
+         <span>{t("commitChargeStatus")}: 184{t("unitM")} / 1258{t("unitM")}</span>
       </div>
     </div>
   );

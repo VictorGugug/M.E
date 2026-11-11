@@ -1,6 +1,5 @@
 import { useState } from "react";
 import type { AppId } from "../../types";
-import { playSound } from "../../utils/sound";
 import { assetUrl } from "../../utils/assets";
 import { useUserStore } from "../../store/userStore";
 import { useLangStore } from "../../store/langStore";
@@ -24,7 +23,6 @@ export default function StartMenu({ onOpen }: { onOpen: (id: AppId) => void }) {
   const lang = useLangStore((s) => s.lang);
 
   const handleOpen = (id: AppId) => {
-    playSound("Windows XP Menu Command.wav", 0.15);
     onOpen(id);
   };
 
@@ -52,7 +50,7 @@ export default function StartMenu({ onOpen }: { onOpen: (id: AppId) => void }) {
 
   const rightSecondary = [
     { id: "control-panel" as AppId, label: t("controlPanel"), icon: `${OL}/icon/folder/control.png` },
-    { id: "settings" as AppId, label: t("setProgramAccess"), icon: `${OL}/interface/programs/defaults.png` },
+    { id: "set-program-access" as AppId, label: t("setProgramAccess"), icon: `${OL}/interface/programs/defaults.png` },
     { id: "system-properties" as AppId, label: t("helpAndSupport"), icon: `${OL}/icon/help.png` },
     { id: "search" as AppId, label: t("search"), icon: `${OL}/icon/search.png` },
     { id: "run" as AppId, label: t("run"), icon: `${OL}/icon/run.png` },

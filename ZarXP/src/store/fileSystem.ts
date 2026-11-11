@@ -2,19 +2,58 @@ import type { AppId } from "../types";
 
 const RUN_COMMANDS: Record<string, AppId> = {
   cmd: "terminal",
+  "cmd.exe": "terminal",
+  terminal: "terminal",
+  calc: "calculator",
+  "calc.exe": "calculator",
+  calculator: "calculator",
+  "calculator.exe": "calculator",
+  winver: "about-xp",
+  "winver.exe": "about-xp",
+  "about-xp": "about-xp",
+  notepad: "notepad",
+  "notepad.exe": "notepad",
+  wordpad: "wordpad",
+  "wordpad.exe": "wordpad",
+  write: "wordpad",
+  "write.exe": "wordpad",
+  sol: "solitaire",
+  "sol.exe": "solitaire",
+  solitaire: "solitaire",
+  "solitaire.exe": "solitaire",
+  winmine: "minesweeper",
+  "winmine.exe": "minesweeper",
+  minesweeper: "minesweeper",
+  "minesweeper.exe": "minesweeper",
+  wmplayer: "media-player",
+  "wmplayer.exe": "media-player",
+  "media-player": "media-player",
   control: "control-panel",
   "control.exe": "control-panel",
-  "cmd.exe": "terminal",
+  "control-panel": "control-panel",
   explorer: "explorer",
   "explorer.exe": "explorer",
   mspaint: "paint",
   "mspaint.exe": "paint",
-  notepad: "notepad",
-  "notepad.exe": "notepad",
   paint: "paint",
   "paint.exe": "paint",
-  wordpad: "wordpad",
-  "wordpad.exe": "wordpad",
+  taskmgr: "task-manager",
+  "taskmgr.exe": "task-manager",
+  "task-manager": "task-manager",
+  iexplore: "internet-explorer",
+  "iexplore.exe": "internet-explorer",
+  "sysdm.cpl": "system-properties",
+  "desk.cpl": "display-properties",
+  "timedate.cpl": "date-time",
+  "mmsys.cpl": "volume",
+  "intl.cpl": "regional-options",
+  "wscui.cpl": "security-center",
+  "nusrmgr.cpl": "user-accounts",
+  "ncpa.cpl": "network-places",
+  "netsetup.cpl": "network-places",
+  "network-places": "network-places",
+  "appwiz.cpl": "set-program-access",
+  "set-program-access": "set-program-access",
 };
 
 export type FileNodeKind = "folder" | "file";
@@ -68,6 +107,154 @@ export function findNodeByPath(fileSystem: FileSystemState, value: string): Virt
   return current;
 }
 
+export interface ResolvedAddressResult {
+  kind: "folder" | "file" | "app" | "error";
+  targetId?: string;
+  displayPath?: string;
+  appId?: AppId;
+  error?: string;
+}
+
+export function resolveAddressPath(
+  arg1: FileSystemState | string,
+  arg2: string | FileSystemState,
+  currentFolderId: string = "root"
+): ResolvedAddressResult {
+  let fileSystem: FileSystemState;
+  let rawInput: string;
+
+  if (typeof arg1 === "string") {
+    rawInput = arg1;
+    fileSystem = arg2 as FileSystemState;
+  } else {
+    fileSystem = arg1;
+    rawInput = arg2 as string;
+  }
+
+  const cleaned = (rawInput ?? "").trim().replace(/^["']|["']$/g, "");
+  if (!cleaned) {
+    return { kind: "error", error: "Please enter a valid path." };
+  }
+
+  const lower = cleaned.toLowerCase().replace(/[\\/]+$/, "");
+
+  // 1. Canonical system aliases
+  if (lower === "my computer" || lower === "computer" || lower === "") {
+    return { kind: "folder", targetId: "root", displayPath: "My Computer" };
+  }
+  if (lower === "c:" || lower === "c:\\" || lower === "c:/" || cleaned.toLowerCase() === "c:\\" || cleaned.toLowerCase() === "c:/") {
+    return { kind: "folder", targetId: "root", displayPath: "C:\\" };
+  }
+  if (lower === "my documents" || lower === "documents" || lower === "c:\\my documents" || lower === "c:/my documents") {
+    return { kind: "folder", targetId: "documents", displayPath: getNodePath(fileSystem, "documents") };
+  }
+  if (
+    lower === "my pictures" ||
+    lower === "pictures" ||
+    lower === "c:\\my pictures" ||
+    lower === "c:\\my documents\\my pictures" ||
+    lower === "c:/my documents/my pictures"
+  ) {
+    return { kind: "folder", targetId: "pictures", displayPath: getNodePath(fileSystem, "pictures") };
+  }
+  if (
+    lower === "my music" ||
+    lower === "music" ||
+    lower === "c:\\my music" ||
+    lower === "c:\\my documents\\my music" ||
+    lower === "c:/my documents/my music"
+  ) {
+    return { kind: "folder", targetId: "music", displayPath: getNodePath(fileSystem, "music") };
+  }
+  if (
+    lower === "my videos" ||
+    lower === "videos" ||
+    lower === "c:\\my videos" ||
+    lower === "c:\\my documents\\my videos" ||
+    lower === "c:/my documents/my videos"
+  ) {
+    return { kind: "folder", targetId: "videos", displayPath: getNodePath(fileSystem, "videos") };
+  }
+  if (lower === "recycle bin" || lower === "recycle") {
+    return { kind: "folder", targetId: "recycle-bin", displayPath: "Recycle Bin" };
+  }
+  if (lower === "control panel" || lower === "control") {
+    return { kind: "app", appId: "control-panel" };
+  }
+  if (lower === "my network places" || lower === "network places") {
+    return { kind: "app", appId: "network-places" };
+  }
+  if (lower === "set program access and defaults" || lower === "set program access") {
+    return { kind: "app", appId: "set-program-access" };
+  }
+
+  // 2. Relative child in current folder
+  const children = getChildren(fileSystem, currentFolderId);
+  const matchedChild = children.find(
+    (c) => c.name.toLowerCase() === lower || c.name.toLowerCase() === cleaned.toLowerCase()
+  );
+  if (matchedChild) {
+    if (matchedChild.kind === "folder") {
+      return { kind: "folder", targetId: matchedChild.id, displayPath: getNodePath(fileSystem, matchedChild.id) };
+    }
+    return {
+      kind: "file",
+      targetId: matchedChild.id,
+      appId: getFileAppId(matchedChild),
+      displayPath: getNodePath(fileSystem, matchedChild.id),
+    };
+  }
+
+  // 3. Absolute path via findNodeByPath
+  const node = findNodeByPath(fileSystem, cleaned);
+  if (node) {
+    if (node.kind === "folder") {
+      return {
+        kind: "folder",
+        targetId: node.id,
+        displayPath: node.id === "root" ? "My Computer" : getNodePath(fileSystem, node.id),
+      };
+    }
+    return {
+      kind: "file",
+      targetId: node.id,
+      appId: getFileAppId(node),
+      displayPath: getNodePath(fileSystem, node.id),
+    };
+  }
+
+  // 4. Case-insensitive node name match anywhere in the file system
+  const matchedAny = Object.values(fileSystem).find(
+    (n) => n.deletedAt === undefined && n.name.toLowerCase() === lower
+  );
+  if (matchedAny) {
+    if (matchedAny.kind === "folder") {
+      return {
+        kind: "folder",
+        targetId: matchedAny.id,
+        displayPath: matchedAny.id === "root" ? "My Computer" : getNodePath(fileSystem, matchedAny.id),
+      };
+    }
+    return {
+      kind: "file",
+      targetId: matchedAny.id,
+      appId: getFileAppId(matchedAny),
+      displayPath: getNodePath(fileSystem, matchedAny.id),
+    };
+  }
+
+  // 5. Run command alias (e.g. calc, notepad, cmd)
+  const runId = normalizeRunCommand(cleaned);
+  if (runId) {
+    return { kind: "app", appId: runId };
+  }
+
+  return {
+    kind: "error",
+    error: `Windows cannot find '${cleaned}'. Check the spelling and try again.`,
+  };
+}
+
 export function isValidFileSystemState(value: unknown): value is FileSystemState {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const entries = Object.entries(value as Record<string, unknown>);
@@ -109,9 +296,9 @@ export function createInitialFileSystem(): FileSystemState {
     root: { id: "root", parentId: "", name: "My Computer", kind: "folder" },
     desktop: { id: "desktop", parentId: "root", name: "Desktop", kind: "folder" },
     documents: { id: "documents", parentId: "root", name: "My Documents", kind: "folder" },
-    music: { id: "music", parentId: "root", name: "My Music", kind: "folder" },
-    pictures: { id: "pictures", parentId: "root", name: "My Pictures", kind: "folder" },
-    videos: { id: "videos", parentId: "root", name: "My Videos", kind: "folder" },
+    music: { id: "music", parentId: "documents", name: "My Music", kind: "folder" },
+    pictures: { id: "pictures", parentId: "documents", name: "My Pictures", kind: "folder" },
+    videos: { id: "videos", parentId: "documents", name: "My Videos", kind: "folder" },
     "recycle-bin": { id: "recycle-bin", parentId: "root", name: "Recycle Bin", kind: "folder" },
     readme: { id: "readme", parentId: "documents", name: "Readme.txt", kind: "file", content: "Welcome to Windows XP." },
     "school-report": { id: "school-report", parentId: "documents", name: "School Report.doc", kind: "file" },

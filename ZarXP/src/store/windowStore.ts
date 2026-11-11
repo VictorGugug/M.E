@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { WindowConfig, AppId, AppDefinition } from "../types";
+import type { StringKey } from "./langStore";
 
 const APPS: Record<AppId, AppDefinition> = {
   "my-computer": { id: "my-computer", title: "My Computer", icon: "MyComputer.png", defaultWidth: 720, defaultHeight: 520, menuBar: false, statusBar: false },
@@ -10,7 +11,7 @@ const APPS: Record<AppId, AppDefinition> = {
   "recycle-bin": { id: "recycle-bin", title: "Recycle Bin", icon: "RecycleBinempty.png", defaultWidth: 640, defaultHeight: 460, menuBar: false, statusBar: false },
   "internet-explorer": { id: "internet-explorer", title: "Internet Explorer", icon: "InternetExplorer6.png", defaultWidth: 800, defaultHeight: 550, menuBar: false, statusBar: false, minWidth: 480, minHeight: 320 },
   "outlook-express": { id: "outlook-express", title: "Outlook Express", icon: "OutlookExpress.png", defaultWidth: 700, defaultHeight: 480, menuBar: true, statusBar: false },
-  "tour-xp": { id: "tour-xp", title: "Tour Windows XP", icon: "TourXP.png", defaultWidth: 560, defaultHeight: 400, menuBar: true },
+  "tour-xp": { id: "tour-xp", title: "Tour Windows XP", icon: "TourXP.png", defaultWidth: 560, defaultHeight: 400, menuBar: false },
   "msn-messenger": { id: "msn-messenger", title: "Windows Messenger", icon: "WindowsMessenger.png", defaultWidth: 280, defaultHeight: 440, menuBar: true },
   wordpad: { id: "wordpad", title: "Document - WordPad", icon: "Wordpad.png", defaultWidth: 620, defaultHeight: 450, menuBar: true, statusBar: false, minWidth: 380, minHeight: 280 },
   notepad: { id: "notepad", title: "Untitled - Notepad", icon: "Notepad.png", defaultWidth: 500, defaultHeight: 400, menuBar: true, statusBar: false, minWidth: 300, minHeight: 200 },
@@ -23,20 +24,21 @@ const APPS: Record<AppId, AppDefinition> = {
   "task-manager": { id: "task-manager", title: "Windows Task Manager", icon: "TaskManager.png", defaultWidth: 480, defaultHeight: 460, resizable: false },
   run: { id: "run", title: "Run", icon: "Run.png", defaultWidth: 380, defaultHeight: 150, resizable: false },
   search: { id: "search", title: "Search Results", icon: "Search.png", defaultWidth: 540, defaultHeight: 420, minWidth: 460, minHeight: 340, resizable: false },
-  shutdown: { id: "shutdown", title: "Shut Down Windows", icon: "Power.png", defaultWidth: 380, defaultHeight: 300, resizable: false },
+  shutdown: { id: "shutdown", title: "Turn Off Computer", icon: "Power.png", defaultWidth: 380, defaultHeight: 220, resizable: false },
   "system-properties": { id: "system-properties", title: "System Properties", icon: "SystemProperties.png", defaultWidth: 480, defaultHeight: 420, resizable: false },
   "display-properties": { id: "display-properties", title: "Display Properties", icon: "DisplayProperties.png", defaultWidth: 450, defaultHeight: 400, resizable: false },
   volume: { id: "volume", title: "Volume Control", icon: "Volume.png", defaultWidth: 300, defaultHeight: 250, resizable: false },
   "date-time": { id: "date-time", title: "Date and Time Properties", icon: "DateandTime.png", defaultWidth: 420, defaultHeight: 360, resizable: false },
-  "about-xp": { id: "about-xp", title: "About Windows", icon: "WindowsFlag.png", defaultWidth: 400, defaultHeight: 350, resizable: false },
-  "security-center": { id: "security-center", title: "Windows Security Center", icon: "SecurityCenter.png", defaultWidth: 640, defaultHeight: 480, menuBar: true, statusBar: false, minWidth: 480, minHeight: 360 },
-  "user-accounts": { id: "user-accounts", title: "User Accounts", icon: "UserAccounts.png", defaultWidth: 700, defaultHeight: 500, menuBar: true, statusBar: false, minWidth: 560, minHeight: 420 },
+  "about-xp": { id: "about-xp", title: "About Windows", icon: "WindowsFlag.png", defaultWidth: 400, defaultHeight: 360, resizable: false },
+  "security-center": { id: "security-center", title: "Windows Security Center", icon: "SecurityCenter.png", defaultWidth: 640, defaultHeight: 480, menuBar: false, statusBar: false, minWidth: 480, minHeight: 360 },
+  "user-accounts": { id: "user-accounts", title: "User Accounts", icon: "UserAccounts.png", defaultWidth: 700, defaultHeight: 500, menuBar: false, statusBar: false, minWidth: 560, minHeight: 420 },
   "regional-options": { id: "regional-options", title: "Regional and Language Options", icon: "RegionalSettings.png", defaultWidth: 480, defaultHeight: 420, resizable: false },
   explorer: { id: "explorer", title: "Windows Explorer", icon: "Explorer.png", defaultWidth: 650, defaultHeight: 450, menuBar: false, statusBar: false },
   solitaire: { id: "solitaire", title: "Solitaire", icon: "Solitaire.png", defaultWidth: 500, defaultHeight: 450, resizable: false },
   minesweeper: { id: "minesweeper", title: "Minesweeper", icon: "Minesweeper.png", defaultWidth: 250, defaultHeight: 320, resizable: false },
-  settings: { id: "settings", title: "Settings", icon: "SettingsAlert.png", defaultWidth: 500, defaultHeight: 400, menuBar: false, statusBar: false },
-  "network-places": { id: "network-places", title: "My Network Places", icon: "MyNetworkPlaces.png", defaultWidth: 550, defaultHeight: 400, menuBar: false, statusBar: false },
+  settings: { id: "settings", title: "Set Program Access and Defaults", icon: "DefaultProgramsSP1Version.png", defaultWidth: 520, defaultHeight: 440, resizable: false, menuBar: false, statusBar: false },
+  "set-program-access": { id: "set-program-access", title: "Set Program Access and Defaults", icon: "DefaultProgramsSP1Version.png", defaultWidth: 520, defaultHeight: 440, resizable: false, menuBar: false, statusBar: false },
+  "network-places": { id: "network-places", title: "My Network Places", icon: "MyNetworkPlaces.png", defaultWidth: 680, defaultHeight: 460, menuBar: false, statusBar: false },
 };
 
 interface WindowStore {
@@ -44,7 +46,7 @@ interface WindowStore {
   nextZ: number;
   bootPhase: "loading" | "login" | "welcome" | "desktop" | "bios";
   startMenuOpen: boolean;
-  openWindow: (appId: AppId, resourceId?: string) => void;
+  openWindow: (appId: AppId | "cmd", resourceId?: string) => void;
   closeWindow: (id: string) => void;
   minimizeWindow: (id: string) => void;
   maximizeWindow: (id: string) => void;
@@ -63,6 +65,45 @@ interface WindowStore {
 
 const RESOURCE_SCOPED_APPS = new Set<AppId>(["notepad", "explorer", "file-viewer"]);
 
+const TITLE_KEYS: Partial<Record<AppId, StringKey>> = {
+  "my-computer": "myComputer",
+  "my-documents": "myDocuments",
+  "my-pictures": "myPictures",
+  "my-music": "myMusic",
+  "my-videos": "myVideos",
+  "recycle-bin": "recycleBin",
+  "internet-explorer": "internetExplorer",
+  "outlook-express": "titleOutlookExpress",
+  "tour-xp": "tour",
+  "msn-messenger": "titleWindowsMessenger",
+  wordpad: "titleWordpad",
+  notepad: "titleNotepad",
+  "file-viewer": "titleFileViewer",
+  paint: "titlePaint",
+  calculator: "calculator",
+  "media-player": "titleMediaPlayer",
+  terminal: "titleCommandPrompt",
+  "control-panel": "controlPanel",
+  "task-manager": "titleTaskManager",
+  run: "run",
+  search: "searchResults",
+  shutdown: "turnOffComputer",
+  "system-properties": "titleSystemProperties",
+  "display-properties": "titleDisplayProperties",
+  volume: "titleVolumeControl",
+  "date-time": "dateTimeProperties",
+  "about-xp": "aboutWindows",
+  "security-center": "titleSecurityCenter",
+  "user-accounts": "titleUserAccounts",
+  "regional-options": "regionalOptions",
+  explorer: "titleExplorer",
+  solitaire: "titleSolitaire",
+  minesweeper: "titleMinesweeper",
+  "network-places": "myNetworkPlaces",
+  settings: "setProgramAccess",
+  "set-program-access": "setProgramAccess",
+};
+
 let winCounter = 0;
 
 export const useWindowStore = create<WindowStore>((set, get) => ({
@@ -73,16 +114,17 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
 
   getApp: (id: AppId) => APPS[id],
 
-  openWindow: (appId: AppId, resourceId?: string) => {
-    const app = APPS[appId];
+  openWindow: (appId: AppId | "cmd", resourceId?: string) => {
+    const resolvedId: AppId = (appId as string) === "cmd" ? "terminal" : (appId as AppId);
+    const app = APPS[resolvedId];
     if (!app) return;
-    const matchesResource = (window: WindowConfig) => resourceId ? window.resourceId === resourceId : !RESOURCE_SCOPED_APPS.has(appId) || window.resourceId === undefined;
-    const existing = get().windows.find((w) => w.appId === appId && w.state !== "minimized" && matchesResource(w));
+    const matchesResource = (window: WindowConfig) => resourceId ? window.resourceId === resourceId : !RESOURCE_SCOPED_APPS.has(resolvedId) || window.resourceId === undefined;
+    const existing = get().windows.find((w) => w.appId === resolvedId && w.state !== "minimized" && matchesResource(w));
     if (existing) {
       get().focusWindow(existing.id);
       return;
     }
-    const minimized = get().windows.find((w) => w.appId === appId && w.state === "minimized" && matchesResource(w));
+    const minimized = get().windows.find((w) => w.appId === resolvedId && w.state === "minimized" && matchesResource(w));
     if (minimized) {
       get().restoreWindow(minimized.id);
       return;
@@ -93,7 +135,7 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
     const isCentered = [
       "task-manager", "shutdown", "run", "date-time",
       "display-properties", "system-properties", "regional-options", "about-xp"
-    ].includes(appId);
+    ].includes(resolvedId);
 
     const winW = app.defaultWidth;
     const winH = app.defaultHeight;
@@ -108,7 +150,7 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
       : 50 + offset;
 
     const win: WindowConfig = {
-      id, appId, resourceId, title: app.title, icon: app.icon,
+      id, appId: resolvedId, resourceId, title: app.title, titleKey: TITLE_KEYS[resolvedId], icon: app.icon,
       x: posX, y: posY,
       width: winW, height: winH,
       state: "normal", zIndex: get().nextZ,
